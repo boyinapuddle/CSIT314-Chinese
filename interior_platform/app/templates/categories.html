@@ -1,1 +1,49 @@
-{% extends 'base.html' %}{% block content %}<section class="section"><div class="section-head"><div><p class="eyebrow dark">PLATFORM MANAGEMENT</p><h1>IDP Categories</h1></div><form class="search"><input name="q" value="{{request.args.get('q','')}}" placeholder="Search categories"><button>Search</button></form></div><div class="split"><form class="panel" method="post"><h3>Create category</h3><label>Name<input name="name" required></label><label>Description<textarea name="description" required></textarea></label><button class="btn">Create category</button></form><div class="stack">{% for c in items %}<article class="manage-card"><div><span class="status {{c.status|lower}}">{{c.status}}</span><h3>{{c.name}}</h3><p>{{c.description}}</p></div><div><button class="link" data-toggle="cat-{{c.category_id}}">Edit</button>{% if c.status=='Active' %}<form class="inline" method="post" action="{{url_for('main.suspend_category',cid=c.category_id)}}"><button class="link danger">Suspend</button></form>{% endif %}</div></article><form id="cat-{{c.category_id}}" class="inline-edit panel hidden" method="post" action="{{url_for('main.edit_category',cid=c.category_id)}}"><input name="name" value="{{c.name}}"><input name="description" value="{{c.description}}"><button class="btn small">Save</button></form>{% endfor %}</div></div></section>{% endblock %}
+{% extends 'base.html' %}
+{% block content %}
+<section class="section">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow dark">PLATFORM MANAGEMENT</p>
+            <h1>IDP Categories</h1>
+        </div>
+        <form class="search">
+            <input name="q" value="{{ request.args.get('q', '') }}" placeholder="Search categories">
+            <button>Search</button>
+        </form>
+    </div>
+
+    <div class="split">
+        <form class="panel" method="post">
+            <h3>Create category</h3>
+            <label>Name<input name="name" required></label>
+            <label>Description<textarea name="description" required></textarea></label>
+            <button class="btn">Create category</button>
+        </form>
+
+        <div class="stack">
+            {% for c in items %}
+            <article class="manage-card">
+                <div>
+                    <span class="status {{ c.status|lower }}">{{ c.status }}</span>
+                    <h3>{{ c.name }}</h3>
+                    <p>{{ c.description }}</p>
+                </div>
+                <div>
+                    <button class="link" data-toggle="cat-{{ c.category_id }}">Edit</button>
+                    {% if c.status == 'Active' %}
+                    <form class="inline" method="post" action="{{ url_for('main.suspend_category', category_id=c.category_id) }}">
+                        <button class="link danger">Suspend</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </article>
+            <form id="cat-{{ c.category_id }}" class="inline-edit panel hidden" method="post" action="{{ url_for('main.edit_category', category_id=c.category_id) }}">
+                <input name="name" value="{{ c.name }}">
+                <input name="description" value="{{ c.description }}">
+                <button class="btn small">Save</button>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

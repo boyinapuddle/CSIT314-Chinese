@@ -1,290 +1,397 @@
-from .services import (
-    AuthenticationService, SessionService, ProfileService, AccountService,
-    CompanyService, ProjectService, FavouriteService, AnalyticsService,
-    CategoryService, ReportService,
+from .entities import (
+    ActivityEvent,
+    Company,
+    DailyReport,
+    Favourite,
+    IDP,
+    IDPCategory,
+    MonthlyReport,
+    ShortlistMetric,
+    UserAccount,
+    UserProfile,
+    UserSession,
+    ViewMetric,
+    WeeklyReport,
 )
 
 
-# Part 1 - User Admin: profiles/accounts/login/logout (US01-US12)
-class CreateUserProfileController:  # US01
-    def __init__(self): self.service = ProfileService()
-    def create(self, name, description=""): return self.service.create(name, description)
+def _account_id(session_context):
+    return session_context.get("account_id")
 
 
-class ViewUserProfileController:  # US02
-    def __init__(self): self.service = ProfileService()
-    def view(self, profile_id): return self.service.get(profile_id)
+def _session_id(session_context):
+    return session_context.get("session_id")
 
 
-class UpdateUserProfileController:  # US03
-    def __init__(self): self.service = ProfileService()
-    def update(self, profile_id, name, description=""): return self.service.update(profile_id, name, description)
+ROLE_LOGIN_CONTROLLERS = {}
 
 
-class SuspendUserProfileController:  # US04
-    def __init__(self): self.service = ProfileService()
-    def suspend(self, profile_id): return self.service.suspend(profile_id)
+class AuthenticationController:
+    def login(self, username, password):
+        account = UserAccount.find_by_username(username)
+        if not account or account["status"] != "Active":
+            return None
+        if not UserAccount.verify_password(account, password):
+            return None
+        profile = UserProfile.get_profile(account["profile_id"])
+        if not profile or profile["status"] != "Active":
+            return None
+        controller_class = ROLE_LOGIN_CONTROLLERS.get(profile["name"])
+        if not controller_class:
+            return None
+        return controller_class().complete_login(account, profile)
 
 
-class SearchUserProfileController:  # US05
-    def __init__(self): self.service = ProfileService()
-    def search(self, keyword=""): return self.service.search(keyword)
+class RoleLoginControllerBase:
+    role = ""
+
+    def complete_login(self, account, profile):
+        if profile["name"] != self.role:
+            return None
+        session_id = UserSession.create_session(account["account_id"], self.role)
+        return account, session_id
 
 
-class CreateUserAccountController:  # US06
-    def __init__(self): self.service = AccountService()
+class CreateUserProfileController:
+    def create(self, name, description=""):
+        return UserProfile.create_profile(name, description)
+
+
+class ViewUserProfileController:
+    def view(self, profile_id):
+        return UserProfile.get_profile(profile_id)
+
+
+class UpdateUserProfileController:
+    def update(self, profile_id, name, description=""):
+        return UserProfile.update_profile(profile_id, name, description)
+
+
+class SuspendUserProfileController:
+    def suspend(self, profile_id):
+        return UserProfile.suspend_profile(profile_id)
+
+
+class SearchUserProfileController:
+    def search(self, keyword=""):
+        return UserProfile.search_profiles(keyword)
+
+
+class CreateUserAccountController:
     def create(self, username, password, profile_id, display_name, email):
-        return self.service.create(username, password, profile_id, display_name, email)
+        return UserAccount.create_account(username, password, profile_id, display_name, email)
+
+    def profiles(self):
+        return UserProfile.search_profiles("")
 
 
-class ViewUserAccountController:  # US07
-    def __init__(self): self.service = AccountService()
-    def view(self, account_id): return self.service.get(account_id)
+class ViewUserAccountController:
+    def view(self, account_id):
+        return UserAccount.get_account(account_id)
 
 
-class UpdateUserAccountController:  # US08
-    def __init__(self): self.service = AccountService()
+class UpdateUserAccountController:
     def update(self, account_id, display_name, email, profile_id):
-        return self.service.update(account_id, display_name, email, profile_id)
+        return UserAccount.update_account(account_id, display_name, email, profile_id)
 
 
-class SuspendUserAccountController:  # US09
-    def __init__(self): self.service = AccountService()
-    def suspend(self, account_id): return self.service.suspend(account_id)
+class SuspendUserAccountController:
+    def suspend(self, account_id):
+        return UserAccount.suspend_account(account_id)
 
 
-class SearchUserAccountController:  # US10
-    def __init__(self): self.service = AccountService()
-    def search(self, keyword=""): return self.service.search(keyword)
+class SearchUserAccountController:
+    def search(self, keyword=""):
+        return UserAccount.search_accounts(keyword)
 
 
-class UserAdminLoginController:  # US11
-    ROLE = "User Admin"
-    def __init__(self): self.service = AuthenticationService()
-    def login(self, username, password): return self.service.login(username, password, self.ROLE)
+class UserAdminLoginController(RoleLoginControllerBase):
+    role = "User Admin"
 
 
-class UserAdminLogoutController:  # US12
-    def __init__(self): self.service = SessionService()
-    def logout(self, session_id): return self.service.stop(session_id)
+class UserAdminLogoutController:
+    def logout(self, session_context):
+        session_id = _session_id(session_context)
+        if session_id:
+            return UserSession.invalidate_session(session_id)
+        return 0
 
 
-# Part 2 - Interior Designer company information/login/logout (US13-US19)
-class CreateCompanyInformationController:  # US13
-    def __init__(self): self.service = CompanyService()
-    def create(self, designer_id, data): return self.service.save(designer_id, data)
+class CreateCompanyInformationController:
+    def create(self, session_context, data):
+        designer_id = _account_id(session_context)
+        return Company.create_company(designer_id, data)
 
 
-class ViewCompanyInformationController:  # US14
-    def __init__(self): self.service = CompanyService()
-    def view(self, designer_id): return self.service.get(designer_id)
+class ViewCompanyInformationController:
+    def view(self, session_context):
+        designer_id = _account_id(session_context)
+        return Company.get_company(designer_id)
 
 
-class UpdateCompanyInformationController:  # US15
-    def __init__(self): self.service = CompanyService()
-    def update(self, designer_id, data): return self.service.save(designer_id, data)
+class UpdateCompanyInformationController:
+    def update(self, session_context, data):
+        designer_id = _account_id(session_context)
+        return Company.update_company(designer_id, data)
 
 
-class DeleteCompanyInformationController:  # US16
-    def __init__(self): self.service = CompanyService()
-    def delete(self, designer_id): return self.service.delete(designer_id)
+class DeleteCompanyInformationController:
+    def delete(self, session_context):
+        designer_id = _account_id(session_context)
+        return Company.delete_company(designer_id)
 
 
-class SearchCompanyInformationController:  # US17
-    def __init__(self): self.service = CompanyService()
-    def search(self, designer_id, keyword=""): return self.service.search(designer_id, keyword)
+class SearchCompanyInformationController:
+    def search(self, session_context, keyword=""):
+        designer_id = _account_id(session_context)
+        return Company.search_company(designer_id, keyword)
 
 
-class InteriorDesignerLoginController:  # US18
-    ROLE = "Interior Designer"
-    def __init__(self): self.service = AuthenticationService()
-    def login(self, username, password): return self.service.login(username, password, self.ROLE)
+class InteriorDesignerLoginController(RoleLoginControllerBase):
+    role = "Interior Designer"
 
 
-class InteriorDesignerLogoutController:  # US19
-    def __init__(self): self.service = SessionService()
-    def logout(self, session_id): return self.service.stop(session_id)
+class InteriorDesignerLogoutController:
+    def logout(self, session_context):
+        session_id = _session_id(session_context)
+        if session_id:
+            return UserSession.invalidate_session(session_id)
+        return 0
 
 
-# Part 3 - Interior Designer current/past IDP portfolio (US20-US29)
-class CreateCurrentIDPController:  # US20
-    def __init__(self): self.service = ProjectService()
-    def create(self, designer_id, data): return self.service.create(designer_id, data, "Current")
+class CreateCurrentIDPController:
+    def create(self, session_context, data):
+        designer_id = _account_id(session_context)
+        return IDP.create_project(designer_id, data, "Current")
 
+    def categories(self):
+        return IDPCategory.get_categories(True)
 
-class ViewCurrentIDPController:  # US21
-    def __init__(self): self.service = ProjectService()
-    def view(self, designer_id, keyword=""): return self.service.owned(designer_id, "Current", keyword)
 
+class ViewCurrentIDPController:
+    def view(self, session_context):
+        designer_id = _account_id(session_context)
+        return IDP.get_owned_projects(designer_id, "Current")
 
-class UpdateCurrentIDPController:  # US22
-    def __init__(self): self.service = ProjectService()
-    def update(self, project_id, designer_id, data):
-        payload = dict(data); payload["project_status"] = "Current"
-        return self.service.update(project_id, designer_id, payload)
 
+class UpdateCurrentIDPController:
+    def update(self, session_context, project_id, data):
+        designer_id = _account_id(session_context)
+        return IDP.update_owned_project(project_id, designer_id, data, "Current")
 
-class DeleteCurrentIDPController:  # US23
-    def __init__(self): self.service = ProjectService()
-    def delete(self, project_id, designer_id): return self.service.delete(project_id, designer_id, "Current")
 
+class DeleteCurrentIDPController:
+    def delete(self, session_context, project_id):
+        designer_id = _account_id(session_context)
+        return IDP.delete_owned_project(project_id, designer_id, "Current")
 
-class SearchCurrentIDPController:  # US24
-    def __init__(self): self.service = ProjectService()
-    def search(self, designer_id, keyword=""): return self.service.owned(designer_id, "Current", keyword)
 
+class SearchCurrentIDPController:
+    def search(self, session_context, keyword=""):
+        designer_id = _account_id(session_context)
+        return IDP.search_owned_projects(designer_id, "Current", keyword)
 
-class CreatePastIDPController:  # US25
-    def __init__(self): self.service = ProjectService()
-    def create(self, designer_id, data): return self.service.create(designer_id, data, "Past")
 
+class CreatePastIDPController:
+    def create(self, session_context, data):
+        designer_id = _account_id(session_context)
+        return IDP.create_project(designer_id, data, "Past")
 
-class ViewPastIDPController:  # US26
-    def __init__(self): self.service = ProjectService()
-    def view(self, designer_id, keyword=""): return self.service.owned(designer_id, "Past", keyword)
+    def categories(self):
+        return IDPCategory.get_categories(True)
 
 
-class UpdatePastIDPController:  # US27
-    def __init__(self): self.service = ProjectService()
-    def update(self, project_id, designer_id, data):
-        payload = dict(data); payload["project_status"] = "Past"
-        return self.service.update(project_id, designer_id, payload)
+class ViewPastIDPController:
+    def view(self, session_context):
+        designer_id = _account_id(session_context)
+        return IDP.get_owned_projects(designer_id, "Past")
 
 
-class DeletePastIDPController:  # US28
-    def __init__(self): self.service = ProjectService()
-    def delete(self, project_id, designer_id): return self.service.delete(project_id, designer_id, "Past")
+class UpdatePastIDPController:
+    def update(self, session_context, project_id, data):
+        designer_id = _account_id(session_context)
+        return IDP.update_owned_project(project_id, designer_id, data, "Past")
 
 
-class SearchPastIDPController:  # US29
-    def __init__(self): self.service = ProjectService()
-    def search(self, designer_id, keyword=""): return self.service.owned(designer_id, "Past", keyword)
+class DeletePastIDPController:
+    def delete(self, session_context, project_id):
+        designer_id = _account_id(session_context)
+        return IDP.delete_owned_project(project_id, designer_id, "Past")
 
 
-# Part 4 - Customer IDP discovery/favourites/login/logout (US30-US36)
-class SearchAvailableIDPController:  # US30
-    def __init__(self): self.service = ProjectService()
-    def search(self, keyword=""): return self.service.available(keyword)
+class SearchPastIDPController:
+    def search(self, session_context, keyword=""):
+        designer_id = _account_id(session_context)
+        return IDP.search_owned_projects(designer_id, "Past", keyword)
 
 
-class ViewAvailableIDPController:  # US31
-    def __init__(self): self.service = ProjectService()
-    def view(self, project_id, customer_id): return self.service.view(project_id, customer_id)
+class SearchAvailableIDPController:
+    def search(self, keyword=""):
+        return IDP.search_available_projects(keyword)
 
 
-class SaveIDPController:  # US32
-    def __init__(self): self.service = FavouriteService()
-    def save(self, customer_id, project_id): return self.service.save(customer_id, project_id)
+class ViewAvailableIDPController:
+    def view(self, session_context, project_id):
+        customer_id = _account_id(session_context)
+        project = IDP.get_available_project(project_id)
+        if project:
+            IDP.record_view(project_id, customer_id)
+            project = IDP.get_available_project(project_id)
+        return project
 
 
-class SearchSavedIDPController:  # US33
-    def __init__(self): self.service = FavouriteService()
-    def search(self, customer_id, keyword=""): return self.service.search(customer_id, keyword)
+class SaveIDPController:
+    def save(self, session_context, project_id):
+        customer_id = _account_id(session_context)
+        return Favourite.save_project(customer_id, project_id)
 
 
-class ViewSavedIDPController:  # US34
-    def __init__(self): self.service = FavouriteService()
-    def view(self, customer_id): return self.service.search(customer_id, "")
+class SearchSavedIDPController:
+    def search(self, session_context, keyword=""):
+        customer_id = _account_id(session_context)
+        return Favourite.search_saved_projects(customer_id, keyword)
 
 
-class CustomerLoginController:  # US35
-    ROLE = "Customer"
-    def __init__(self): self.service = AuthenticationService()
-    def login(self, username, password): return self.service.login(username, password, self.ROLE)
+class ViewSavedIDPController:
+    def view(self, session_context):
+        customer_id = _account_id(session_context)
+        return Favourite.view_saved_projects(customer_id)
 
 
-class CustomerLogoutController:  # US36
-    def __init__(self): self.service = SessionService()
-    def logout(self, session_id): return self.service.stop(session_id)
+class CustomerLoginController(RoleLoginControllerBase):
+    role = "Customer"
 
 
-# Part 5 - Interior Designer IDP interest metrics (US37-US38)
-class ViewIDPViewsController:  # US37
-    def __init__(self): self.service = AnalyticsService()
-    def view(self, designer_id): return self.service.designer_metric_rows(designer_id, "views")
+class CustomerLogoutController:
+    def logout(self, session_context):
+        session_id = _session_id(session_context)
+        if session_id:
+            return UserSession.invalidate_session(session_id)
+        return 0
 
 
-class ViewIDPShortlistsController:  # US38
-    def __init__(self): self.service = AnalyticsService()
-    def view(self, designer_id): return self.service.designer_metric_rows(designer_id, "shortlists")
+class ViewIDPViewsController:
+    def view(self, session_context):
+        designer_id = _account_id(session_context)
+        return ViewMetric.for_designer(designer_id)
 
 
-# Part 6 - Platform Manager categories/reports/login/logout (US39-US48)
-class CreateIDPCategoryController:  # US39
-    def __init__(self): self.service = CategoryService()
-    def create(self, name, description=""): return self.service.create(name, description)
+class ViewIDPShortlistsController:
+    def view(self, session_context):
+        designer_id = _account_id(session_context)
+        return ShortlistMetric.for_designer(designer_id)
 
 
-class ViewIDPCategoryController:  # US40
-    def __init__(self): self.service = CategoryService()
-    def view(self, category_id): return self.service.get(category_id)
-    def view_all(self): return self.service.search("")
+class CreateIDPCategoryController:
+    def create(self, name, description=""):
+        return IDPCategory.create_category(name, description)
 
 
-class UpdateIDPCategoryController:  # US41
-    def __init__(self): self.service = CategoryService()
-    def update(self, category_id, name, description=""): return self.service.update(category_id, name, description)
+class ViewIDPCategoryController:
+    def view(self, category_id):
+        return IDPCategory.get_category(category_id)
 
+    def view_all(self):
+        return IDPCategory.get_categories()
 
-class SuspendIDPCategoryController:  # US42
-    def __init__(self): self.service = CategoryService()
-    def suspend(self, category_id): return self.service.suspend(category_id)
 
+class UpdateIDPCategoryController:
+    def update(self, category_id, name, description=""):
+        return IDPCategory.update_category(category_id, name, description)
 
-class SearchIDPCategoryController:  # US43
-    def __init__(self): self.service = CategoryService()
-    def search(self, keyword=""): return self.service.search(keyword)
 
+class SuspendIDPCategoryController:
+    def suspend(self, category_id):
+        return IDPCategory.suspend_category(category_id)
 
-class GenerateDailyReportController:  # US44
-    def __init__(self): self.service = ReportService()
-    def generate(self, date_value=None): return self.service.generate("daily", date_value)
 
+class SearchIDPCategoryController:
+    def search(self, keyword=""):
+        return IDPCategory.search_categories(keyword)
 
-class GenerateWeeklyReportController:  # US45
-    def __init__(self): self.service = ReportService()
-    def generate(self, date_value=None): return self.service.generate("weekly", date_value)
 
+class GenerateDailyReportController:
+    def generate(self, date_value=None):
+        return DailyReport.generate(date_value)
 
-class GenerateMonthlyReportController:  # US46
-    def __init__(self): self.service = ReportService()
-    def generate(self, date_value=None): return self.service.generate("monthly", date_value)
 
+class GenerateWeeklyReportController:
+    def generate(self, date_value=None):
+        return WeeklyReport.generate(date_value)
 
-class PlatformManagerLoginController:  # US47
-    ROLE = "Platform Manager"
-    def __init__(self): self.service = AuthenticationService()
-    def login(self, username, password): return self.service.login(username, password, self.ROLE)
 
+class GenerateMonthlyReportController:
+    def generate(self, date_value=None):
+        return MonthlyReport.generate(date_value)
 
-class PlatformManagerLogoutController:  # US48
-    def __init__(self): self.service = SessionService()
-    def logout(self, session_id): return self.service.stop(session_id)
+
+class PlatformManagerLoginController(RoleLoginControllerBase):
+    role = "Platform Manager"
+
+
+class PlatformManagerLogoutController:
+    def logout(self, session_context):
+        session_id = _session_id(session_context)
+        if session_id:
+            return UserSession.invalidate_session(session_id)
+        return 0
+
+
+ROLE_LOGIN_CONTROLLERS.update({
+    "User Admin": UserAdminLoginController,
+    "Interior Designer": InteriorDesignerLoginController,
+    "Customer": CustomerLoginController,
+    "Platform Manager": PlatformManagerLoginController,
+})
 
 
 STORY_CONTROLLERS = {
-    1: CreateUserProfileController, 2: ViewUserProfileController,
-    3: UpdateUserProfileController, 4: SuspendUserProfileController,
-    5: SearchUserProfileController, 6: CreateUserAccountController,
-    7: ViewUserAccountController, 8: UpdateUserAccountController,
-    9: SuspendUserAccountController, 10: SearchUserAccountController,
-    11: UserAdminLoginController, 12: UserAdminLogoutController,
-    13: CreateCompanyInformationController, 14: ViewCompanyInformationController,
-    15: UpdateCompanyInformationController, 16: DeleteCompanyInformationController,
-    17: SearchCompanyInformationController, 18: InteriorDesignerLoginController,
-    19: InteriorDesignerLogoutController, 20: CreateCurrentIDPController,
-    21: ViewCurrentIDPController, 22: UpdateCurrentIDPController,
-    23: DeleteCurrentIDPController, 24: SearchCurrentIDPController,
-    25: CreatePastIDPController, 26: ViewPastIDPController,
-    27: UpdatePastIDPController, 28: DeletePastIDPController,
-    29: SearchPastIDPController, 30: SearchAvailableIDPController,
-    31: ViewAvailableIDPController, 32: SaveIDPController,
-    33: SearchSavedIDPController, 34: ViewSavedIDPController,
-    35: CustomerLoginController, 36: CustomerLogoutController,
-    37: ViewIDPViewsController, 38: ViewIDPShortlistsController,
-    39: CreateIDPCategoryController, 40: ViewIDPCategoryController,
-    41: UpdateIDPCategoryController, 42: SuspendIDPCategoryController,
-    43: SearchIDPCategoryController, 44: GenerateDailyReportController,
-    45: GenerateWeeklyReportController, 46: GenerateMonthlyReportController,
-    47: PlatformManagerLoginController, 48: PlatformManagerLogoutController,
+    1: CreateUserProfileController,
+    2: ViewUserProfileController,
+    3: UpdateUserProfileController,
+    4: SuspendUserProfileController,
+    5: SearchUserProfileController,
+    6: CreateUserAccountController,
+    7: ViewUserAccountController,
+    8: UpdateUserAccountController,
+    9: SuspendUserAccountController,
+    10: SearchUserAccountController,
+    11: UserAdminLoginController,
+    12: UserAdminLogoutController,
+    13: CreateCompanyInformationController,
+    14: ViewCompanyInformationController,
+    15: UpdateCompanyInformationController,
+    16: DeleteCompanyInformationController,
+    17: SearchCompanyInformationController,
+    18: InteriorDesignerLoginController,
+    19: InteriorDesignerLogoutController,
+    20: CreateCurrentIDPController,
+    21: ViewCurrentIDPController,
+    22: UpdateCurrentIDPController,
+    23: DeleteCurrentIDPController,
+    24: SearchCurrentIDPController,
+    25: CreatePastIDPController,
+    26: ViewPastIDPController,
+    27: UpdatePastIDPController,
+    28: DeletePastIDPController,
+    29: SearchPastIDPController,
+    30: SearchAvailableIDPController,
+    31: ViewAvailableIDPController,
+    32: SaveIDPController,
+    33: SearchSavedIDPController,
+    34: ViewSavedIDPController,
+    35: CustomerLoginController,
+    36: CustomerLogoutController,
+    37: ViewIDPViewsController,
+    38: ViewIDPShortlistsController,
+    39: CreateIDPCategoryController,
+    40: ViewIDPCategoryController,
+    41: UpdateIDPCategoryController,
+    42: SuspendIDPCategoryController,
+    43: SearchIDPCategoryController,
+    44: GenerateDailyReportController,
+    45: GenerateWeeklyReportController,
+    46: GenerateMonthlyReportController,
+    47: PlatformManagerLoginController,
+    48: PlatformManagerLogoutController,
 }

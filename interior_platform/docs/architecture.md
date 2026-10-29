@@ -1,102 +1,111 @@
 # Architecture and class inventory
 
-The implementation follows the Boundary-Control-Entity (BCE) direction used in the supplied user stories and diagrams. **Every user story now has its own unique Control/Controller class.** Shared services and repositories remain underneath those controls so business rules and SQLite access are not duplicated.
+The application follows the Boundary Control Entity structure used in the supplied user stories and diagrams.
+
+## Program flow
+
+The normal use case flow is
+
+`Browser or actor -> Flask route -> Story Boundary -> Story Controller -> Entity -> Repository -> SQLite`
+
+The result returns through the same use case layers
+
+`SQLite -> Repository -> Entity -> Story Controller -> Story Boundary -> Flask response -> Browser or actor`
+
+The Flask route is transport code. It selects the correct Boundary for the requested use case. The Boundary receives form or query input and sends it to its matching Controller. The Controller coordinates the use case. The Entity performs the domain operation. The Repository performs the SQL operation.
+
+For ownership sensitive stories the Boundary passes the trusted session context to the Controller. The Controller obtains the account identifier from that context. Designer and customer identifiers are not accepted from editable form fields.
 
 ## Class count
 
-- Story-specific Controllers: **48 classes (one per user story)**
-- Entities: 14 classes
-- Repositories: 9 classes
-- Services: 12 classes
-- Boundaries: 8 classes
-- Total: **91 classes**
+The application keeps one Controller mapping for each of the 48 user stories. Login stories 11, 18, 35 and 47 share one LoginBoundary because they use the same login page and credential submission flow. Their role specific Controllers remain separate for user story traceability.
 
-The 48 controllers are intentionally use-case specific; the remaining classes provide reusable domain, persistence, service, and UI-boundary responsibilities.
+The main domain layer contains these Entity classes
 
-## BCE direction
+1. UserProfile
+2. UserAccount
+3. UserSession
+4. Company
+5. IDP
+6. Favourite
+7. IDPCategory
+8. ActivityEvent
+9. ViewMetric
+10. ShortlistMetric
+11. ReportSummary
+12. DailyReport
+13. WeeklyReport
+14. MonthlyReport
 
-Typical request flow:
+The persistence layer contains BaseRepository plus repositories for profiles, accounts, sessions, companies, categories, projects, favourites and activity events.
 
-`HTML/Jinja Boundary -> Story-specific Controller -> Service -> Repository -> Entity/SQLite`
+## User story traceability
 
-Examples:
+| Story | Boundary | Controller |
+| --- | --- | --- |
+| 1 | CreateUserProfileBoundary | CreateUserProfileController |
+| 2 | ViewUserProfileBoundary | ViewUserProfileController |
+| 3 | UpdateUserProfileBoundary | UpdateUserProfileController |
+| 4 | SuspendUserProfileBoundary | SuspendUserProfileController |
+| 5 | SearchUserProfileBoundary | SearchUserProfileController |
+| 6 | CreateUserAccountBoundary | CreateUserAccountController |
+| 7 | ViewUserAccountBoundary | ViewUserAccountController |
+| 8 | UpdateUserAccountBoundary | UpdateUserAccountController |
+| 9 | SuspendUserAccountBoundary | SuspendUserAccountController |
+| 10 | SearchUserAccountBoundary | SearchUserAccountController |
+| 11 | LoginBoundary | UserAdminLoginController |
+| 12 | UserAdminLogoutBoundary | UserAdminLogoutController |
+| 13 | CreateCompanyInformationBoundary | CreateCompanyInformationController |
+| 14 | ViewCompanyInformationBoundary | ViewCompanyInformationController |
+| 15 | UpdateCompanyInformationBoundary | UpdateCompanyInformationController |
+| 16 | DeleteCompanyInformationBoundary | DeleteCompanyInformationController |
+| 17 | SearchCompanyInformationBoundary | SearchCompanyInformationController |
+| 18 | LoginBoundary | InteriorDesignerLoginController |
+| 19 | InteriorDesignerLogoutBoundary | InteriorDesignerLogoutController |
+| 20 | CreateCurrentIDPBoundary | CreateCurrentIDPController |
+| 21 | ViewCurrentIDPBoundary | ViewCurrentIDPController |
+| 22 | UpdateCurrentIDPBoundary | UpdateCurrentIDPController |
+| 23 | DeleteCurrentIDPBoundary | DeleteCurrentIDPController |
+| 24 | SearchCurrentIDPBoundary | SearchCurrentIDPController |
+| 25 | CreatePastIDPBoundary | CreatePastIDPController |
+| 26 | ViewPastIDPBoundary | ViewPastIDPController |
+| 27 | UpdatePastIDPBoundary | UpdatePastIDPController |
+| 28 | DeletePastIDPBoundary | DeletePastIDPController |
+| 29 | SearchPastIDPBoundary | SearchPastIDPController |
+| 30 | SearchAvailableIDPBoundary | SearchAvailableIDPController |
+| 31 | ViewAvailableIDPBoundary | ViewAvailableIDPController |
+| 32 | SaveIDPBoundary | SaveIDPController |
+| 33 | SearchSavedIDPBoundary | SearchSavedIDPController |
+| 34 | ViewSavedIDPBoundary | ViewSavedIDPController |
+| 35 | LoginBoundary | CustomerLoginController |
+| 36 | CustomerLogoutBoundary | CustomerLogoutController |
+| 37 | ViewIDPViewsBoundary | ViewIDPViewsController |
+| 38 | ViewIDPShortlistsBoundary | ViewIDPShortlistsController |
+| 39 | CreateIDPCategoryBoundary | CreateIDPCategoryController |
+| 40 | ViewIDPCategoryBoundary | ViewIDPCategoryController |
+| 41 | UpdateIDPCategoryBoundary | UpdateIDPCategoryController |
+| 42 | SuspendIDPCategoryBoundary | SuspendIDPCategoryController |
+| 43 | SearchIDPCategoryBoundary | SearchIDPCategoryController |
+| 44 | GenerateDailyReportBoundary | GenerateDailyReportController |
+| 45 | GenerateWeeklyReportBoundary | GenerateWeeklyReportController |
+| 46 | GenerateMonthlyReportBoundary | GenerateMonthlyReportController |
+| 47 | LoginBoundary | PlatformManagerLoginController |
+| 48 | PlatformManagerLogoutBoundary | PlatformManagerLogoutController |
 
-- `AdminBoundary -> CreateUserProfileController -> ProfileService -> ProfileRepository -> UserProfile`
-- `DesignerPortfolioBoundary -> SearchPastIDPController -> ProjectService -> ProjectRepository -> IDP`
-- `CustomerExploreBoundary -> ViewAvailableIDPController -> ProjectService -> ProjectRepository -> IDP`
-- `FavouriteBoundary -> SaveIDPController -> FavouriteService -> FavouriteRepository -> Favourite`
-- `PlatformBoundary -> GenerateWeeklyReportController -> ReportService -> ActivityRepository`
+## Login flow
 
-## 1:1 user story to Control class mapping
+The login page submits only username and password to LoginBoundary. LoginBoundary calls AuthenticationController. AuthenticationController asks UserAccount for the account, verifies that the account is active, asks UserAccount to verify the password, and asks UserProfile for the linked profile. The active profile name determines the role on the server. AuthenticationController then delegates the verified account and profile to the matching role specific login Controller. That Controller asks UserSession to create the authenticated session. The route stores the returned account identifier, role, display name and session identifier in the Flask session and redirects to the dashboard.
 
-| User story | Dedicated controller |
-|---:|---|
-| 1 | `CreateUserProfileController` |
-| 2 | `ViewUserProfileController` |
-| 3 | `UpdateUserProfileController` |
-| 4 | `SuspendUserProfileController` |
-| 5 | `SearchUserProfileController` |
-| 6 | `CreateUserAccountController` |
-| 7 | `ViewUserAccountController` |
-| 8 | `UpdateUserAccountController` |
-| 9 | `SuspendUserAccountController` |
-| 10 | `SearchUserAccountController` |
-| 11 | `UserAdminLoginController` |
-| 12 | `UserAdminLogoutController` |
-| 13 | `CreateCompanyInformationController` |
-| 14 | `ViewCompanyInformationController` |
-| 15 | `UpdateCompanyInformationController` |
-| 16 | `DeleteCompanyInformationController` |
-| 17 | `SearchCompanyInformationController` |
-| 18 | `InteriorDesignerLoginController` |
-| 19 | `InteriorDesignerLogoutController` |
-| 20 | `CreateCurrentIDPController` |
-| 21 | `ViewCurrentIDPController` |
-| 22 | `UpdateCurrentIDPController` |
-| 23 | `DeleteCurrentIDPController` |
-| 24 | `SearchCurrentIDPController` |
-| 25 | `CreatePastIDPController` |
-| 26 | `ViewPastIDPController` |
-| 27 | `UpdatePastIDPController` |
-| 28 | `DeletePastIDPController` |
-| 29 | `SearchPastIDPController` |
-| 30 | `SearchAvailableIDPController` |
-| 31 | `ViewAvailableIDPController` |
-| 32 | `SaveIDPController` |
-| 33 | `SearchSavedIDPController` |
-| 34 | `ViewSavedIDPController` |
-| 35 | `CustomerLoginController` |
-| 36 | `CustomerLogoutController` |
-| 37 | `ViewIDPViewsController` |
-| 38 | `ViewIDPShortlistsController` |
-| 39 | `CreateIDPCategoryController` |
-| 40 | `ViewIDPCategoryController` |
-| 41 | `UpdateIDPCategoryController` |
-| 42 | `SuspendIDPCategoryController` |
-| 43 | `SearchIDPCategoryController` |
-| 44 | `GenerateDailyReportController` |
-| 45 | `GenerateWeeklyReportController` |
-| 46 | `GenerateMonthlyReportController` |
-| 47 | `PlatformManagerLoginController` |
-| 48 | `PlatformManagerLogoutController` |
+The browser does not submit a role. The role is trusted only after it is read from the linked UserProfile in the database.
 
-## Shared-layer rationale
+## Logout flow
 
-A unique controller does **not** mean copying SQL or validation 48 times. The controller represents the BCE **Control** for one user story, while services/repositories are shared where the underlying domain rule is the same. This keeps direct traceability to the sequence/BCE diagrams while preserving maintainable code.
+The logout Boundary passes the trusted session context to the matching logout Controller. The Controller obtains the current session identifier and asks UserSession to invalidate it. The Flask route then clears the local Flask session.
 
-## Security/business rules reflected from stories
+## Designer and customer ownership
 
-- Role is resolved from the account's linked profile, never trusted from editable form input.
-- Each role's login/logout story has its own controller.
-- Designer/customer identifiers are read from the authenticated Flask session.
-- Suspended accounts or profiles cannot authenticate.
-- A favourite uses a unique `(customer_id, project_id)` constraint to prevent duplicates.
-- Owned project update/delete SQL includes `designer_id`.
-- Past/current deletion also includes project status in the predicate.
-- Customer project view only shows visible projects and captures a view on successful detail access.
-- Category suspension removes the category from active category choices while preserving historical links.
-- Reports are read-only aggregations and daily/weekly/monthly generation have separate controllers.
+Company, portfolio, favourite and metric Controllers read the authenticated account identifier from the trusted session context. Editable forms do not supply designer or customer ownership identifiers.
 
-## Traceability test
+## Structural tests
 
-`tests/test_story_controllers.py` automatically checks that stories 1-48 are all present, mapped to 48 distinct controller classes, and follow the controller naming convention. This is suitable as a CI regression check if later refactoring accidentally removes or reuses a story controller.
+`tests/test_story_controllers.py` verifies that all 48 stories have Controller mappings, all 48 story Controllers remain unique, the four login stories share LoginBoundary, and all non login story Boundaries remain unique.
