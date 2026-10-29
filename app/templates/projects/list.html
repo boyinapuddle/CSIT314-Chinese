@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ project_status|capitalize }} projects | Interior Design Platform{% endblock %}
+{% block content %}
+<section class="company-panel">
+  <p class="eyebrow">DESIGNER WORKSPACE</p><h1>{% if searching %}Search {{ project_status }} projects{% else %}{{ project_status|capitalize }} projects{% endif %}</h1>
+  {% if company %}
+    <p class="muted">{{ 'Ongoing work' if project_status == 'current' else 'Completed work' }} by {{ company.name }}.</p>
+    <div class="actions"><a href="{{ url_for('create_' ~ project_status ~ '_project.create') }}">Create {{ project_status }} project</a>
+      {% if searching %}<a href="{{ url_for('view_' ~ project_status ~ '_project.index') }}">All {{ project_status }} projects</a>{% endif %}
+    </div>
+    <form method="get" action="{{ url_for('search_' ~ project_status ~ '_project.search') }}" class="form">
+      <label for="q">Search project titles and descriptions</label>
+      <input id="q" name="q" maxlength="200" value="{{ query if searching else '' }}" required>
+      <button type="submit" class="primary">Search</button>
+    </form>
+    {% if searching and error %}<p role="alert">{{ error }}</p>
+    {% elif searching and not query %}<p>Enter a word or phrase to search your {{ project_status }} projects.</p>
+    {% elif projects %}
+      <div class="tiles">{% for project in projects %}<article class="tile">
+        <h2><a href="{{ url_for('view_' ~ project_status ~ '_project.detail', project_id=project.id) }}">{{ project.title }}</a></h2>
+        <p>{{ (project.description or 'No description provided.')|truncate(180) }}</p>
+      </article>{% endfor %}</div>
+    {% elif searching %}<p>No matching {{ project_status }} projects.</p>
+    {% else %}<p>You haven't added any {{ project_status }} projects yet.</p>{% endif %}
+  {% else %}
+    <p>Create your company before adding or searching projects.</p>
+    <a href="{{ url_for('create_company.create') }}">Create company</a>
+  {% endif %}
+</section>
+{% endblock %}

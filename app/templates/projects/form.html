@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if editing else 'Create' }} {{ project_status }} project | Interior Design Platform{% endblock %}
+{% block content %}
+<section class="company-panel">
+  <p class="eyebrow">{{ project_status|upper }} PROJECTS</p><h1>{{ 'Edit' if editing else 'Create' }} {{ project_status }} project</h1>
+  <p class="muted">Title is required. Add an optional description of your {{ 'ongoing work' if project_status == 'current' else 'completed work' }}.</p>
+  <form method="post" class="form">
+    {{ form.hidden_tag() }}
+    {% for field in [form.title, form.description] %}
+      {{ field.label }}
+      {{ field(aria_invalid='true' if field.errors else 'false', aria_describedby=field.id ~ '-errors') }}
+      <div id="{{ field.id }}-errors">{% for error in field.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>
+    {% endfor %}
+    <button type="submit" class="primary">{{ 'Save changes' if editing else 'Create project' }}</button>
+    <a href="{{ url_for('view_' ~ project_status ~ '_project.detail', project_id=project.id) if editing else url_for('view_' ~ project_status ~ '_project.index') }}">Cancel</a>
+  </form>
+</section>
+{% endblock %}

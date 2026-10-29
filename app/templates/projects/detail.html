@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }} | {{ project_status|capitalize }} project{% endblock %}
+{% block content %}
+<section class="company-panel">
+  <p class="eyebrow">{{ project_status|upper }} PROJECT</p><h1>{{ project.title }}</h1>
+  <dl class="company-details">
+    <dt>Company</dt><dd>{{ project.company.name }}</dd>
+    <dt>Description</dt><dd>{{ project.description or 'Not provided' }}</dd>
+    <dt>Created</dt><dd>{{ project.created_at.strftime('%Y-%m-%d') }}</dd>
+  </dl>
+  <div class="actions">
+    <a href="{{ url_for('update_' ~ project_status ~ '_project.update', project_id=project.id) }}">Edit project</a>
+    <a href="{{ url_for('delete_' ~ project_status ~ '_project.delete', project_id=project.id) }}">Delete project</a>
+    <a href="{{ url_for('view_' ~ project_status ~ '_project.index') }}">All {{ project_status }} projects</a>
+    <a href="{{ url_for('view_project_views.view', project_id=project.id) }}">View count</a>
+    <a href="{{ url_for('view_project_shortlists.view', project_id=project.id) }}">Shortlist count</a>
+    <a href="{{ url_for('public_projects.detail', project_id=project.id) }}">Public project page</a>
+  </div>
+  <p class="muted">Share the public project page URL so visitors can view and shortlist this project.</p>
+</section>
+{% endblock %}

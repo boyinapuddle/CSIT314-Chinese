@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Search company details | Interior Design Platform{% endblock %}
+{% block content %}
+<section class="company-panel">
+  <p class="eyebrow">COMPANY INFORMATION</p><h1>Search your company details</h1>
+  <p class="muted">Find a word or phrase in your company's name, description, email, phone or address.</p>
+  <form method="get" class="form">
+    <label for="q">Search terms</label><input id="q" name="q" value="{{ query }}" maxlength="200" required>
+    <button type="submit" class="primary">Search</button>
+  </form>
+  {% if error %}<p role="alert">{{ error }}</p>
+  {% elif not company %}<p>Create your company before searching its details.</p>
+  {% elif query %}
+    {% if matches %}<dl class="company-details">{% for label, value in matches %}<dt>{{ label }}</dt><dd>{{ value }}</dd>{% endfor %}</dl>
+    {% else %}<p>No matching company details.</p>{% endif %}
+  {% endif %}
+  <p><a href="{{ url_for('view_company.index') }}">Back to company</a></p>
+</section>
+{% endblock %}

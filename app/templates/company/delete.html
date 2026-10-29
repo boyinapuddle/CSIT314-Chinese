@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Delete company | Interior Design Platform{% endblock %}
+{% block content %}
+<section class="company-panel">
+  <p class="eyebrow">COMPANY INFORMATION</p><h1>Delete {{ company.name }}?</h1>
+  {% if project_count %}
+    <p role="alert">This company has {{ project_count }} project(s). Deletion is blocked to protect the projects, views and shortlists. Remove the projects first.</p>
+  {% else %}
+    <p>This permanently removes your company information. This action cannot be undone.</p>
+    <form method="post" class="form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label><input type="checkbox" name="confirmation" value="delete" required> I confirm that I want to delete this company.</label>
+      <button type="submit" class="primary danger">Delete company permanently</button>
+    </form>
+  {% endif %}
+  <p><a href="{{ url_for('view_company.detail', company_id=company.id) }}">Back to company</a></p>
+</section>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if editing else 'Create' }} company | Interior Design Platform{% endblock %}
+{% block content %}
+<section class="company-panel">
+  <p class="eyebrow">COMPANY INFORMATION</p>
+  <h1>{{ 'Edit your company' if editing else 'Create your company' }}</h1>
+  <p class="muted">Company name is required. All other fields are optional.</p>
+  <form method="post" class="form">
+    {{ form.hidden_tag() }}
+    {% for field in [form.name, form.description, form.email, form.phone, form.address] %}
+      {{ field.label }}
+      {{ field(aria_invalid='true' if field.errors else 'false', aria_describedby=field.id ~ '-errors') }}
+      <div id="{{ field.id }}-errors">{% for error in field.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>
+    {% endfor %}
+    <button type="submit" class="primary">{{ 'Save changes' if editing else 'Create company' }}</button>
+    <a href="{{ url_for('view_company.index') }}">Cancel</a>
+  </form>
+</section>
+{% endblock %}

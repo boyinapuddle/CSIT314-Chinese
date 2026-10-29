@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Delete {{ project_status }} project | Interior Design Platform{% endblock %}
+{% block content %}
+<section class="company-panel">
+  <p class="eyebrow">{{ project_status|upper }} PROJECTS</p><h1>Delete {{ project.title }}?</h1>
+  <p>This permanently removes the project and all its recorded views and shortlists. This action cannot be undone.</p>
+  <p>Currently recorded: {{ counts.views }} view(s) and {{ counts.shortlists }} shortlist(s).</p>
+  <form method="post" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label><input type="checkbox" name="confirmation" value="delete" required> I confirm that I want to delete this project and its analytics.</label>
+    <button type="submit" class="primary danger">Delete project permanently</button>
+  </form>
+  <p><a href="{{ url_for('view_' ~ project_status ~ '_project.detail', project_id=project.id) }}">Cancel</a></p>
+</section>
+{% endblock %}

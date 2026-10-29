@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Sign in | Interior Design Platform{% endblock %}
+{% block content %}
+<section class="auth-panel"><p class="eyebrow">INTERIOR DESIGNER PORTAL</p><h1>Welcome back.</h1><p class="muted">Sign in to manage your design portfolio.</p>
+<form method="post" action="{{ url_for('auth.login') }}" class="form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="username" required maxlength="254">
+<label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+<button type="submit" class="primary">Sign in</button></form></section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }} | {{ project.company.name }}{% endblock %}
+{% block content %}
+<section class="company-panel">
+  <p class="eyebrow">{{ project.status|upper }} PROJECT / {{ project.company.name }}</p>
+  <h1>{{ project.title }}</h1>
+  <dl class="company-details"><dt>Description</dt><dd>{{ project.description or 'Not provided' }}</dd></dl>
+  {% if owner %}
+    <p class="muted">You are previewing your own public page. This visit does not count, and you cannot shortlist your own project while signed in.</p>
+    <a href="{{ url_for('view_' ~ project.status ~ '_project.detail', project_id=project.id) }}">Back to project management</a>
+  {% elif shortlisted %}
+    <p role="status">You have shortlisted this project in this browser.</p>
+  {% else %}
+    <form method="post" action="{{ url_for('public_projects.shortlist', project_id=project.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="primary" type="submit">Shortlist project</button>
+    </form>
+    <p class="muted">No account needed. Your browser remembers your shortlist.</p>
+  {% endif %}
+</section>
+{% endblock %}
