@@ -5,9 +5,9 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewCompanyInformationBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewCompanyInformationController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Company<br/><br/>+get_company(designer_id)"]
+    N1["boundary<br/>ViewCompanyInformationBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewCompanyInformationController<br/><br/>+view()"]
+    N3["entity<br/>Company<br/><br/>+get_company(designer_id)"]
     N0 -->|"request(session)"| N1
     N1 -->|"view(session)"| N2
     N2 -->|"get_company(designer_id)"| N3

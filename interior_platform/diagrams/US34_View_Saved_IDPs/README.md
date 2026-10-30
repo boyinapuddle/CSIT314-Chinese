@@ -5,9 +5,9 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewSavedIDPBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewSavedIDPController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Favourite<br/><br/>+view_saved_projects(customer_id)"]
+    N1["boundary<br/>ViewSavedIDPBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewSavedIDPController<br/><br/>+view()"]
+    N3["entity<br/>Favourite<br/><br/>+view_saved_projects(customer_id)"]
     N0 -->|"request(session)"| N1
     N1 -->|"view(session)"| N2
     N2 -->|"view_saved_projects(customer_id)"| N3

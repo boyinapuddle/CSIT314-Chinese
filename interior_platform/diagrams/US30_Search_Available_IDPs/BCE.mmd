@@ -1,8 +1,8 @@
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchAvailableIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchAvailableIDPController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+search_available_projects(keyword)"]
+    N1["boundary<br/>SearchAvailableIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchAvailableIDPController<br/><br/>+search()"]
+    N3["entity<br/>IDP<br/><br/>+search_available_projects(keyword)"]
     N0 -->|"submit(keyword)"| N1
     N1 -->|"search(keyword)"| N2
     N2 -->|"search_available_projects(keyword)"| N3

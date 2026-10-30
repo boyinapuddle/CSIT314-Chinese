@@ -1,11 +1,11 @@
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>LoginBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>AuthenticationController<br/><br/>+login()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
-    N5["&lt;&lt;control&gt;&gt;<br/>PlatformManagerLoginController<br/><br/>+complete_login(account, profile)"]
-    N6["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+create_session(account_id, role)"]
+    N1["boundary<br/>LoginBoundary<br/><br/>+submit()"]
+    N2["control<br/>AuthenticationController<br/><br/>+login()"]
+    N3["entity<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
+    N4["entity<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
+    N5["control<br/>PlatformManagerLoginController<br/><br/>+complete_login(account, profile)"]
+    N6["entity<br/>Session<br/><br/>+create_session(account_id, role)"]
     N0 -->|"submit username and password"| N1
     N1 -->|"login(username, password)"| N2
     N2 -->|"find_by_username(username)"| N3

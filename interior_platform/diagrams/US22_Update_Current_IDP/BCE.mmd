@@ -1,10 +1,10 @@
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdateCurrentIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdateCurrentIDPController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+update_owned_project(project_id, designer_id, data, "Current")"]
+    N1["boundary<br/>UpdateCurrentIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdateCurrentIDPController<br/><br/>+update()"]
+    N3["entity<br/>IDP<br/><br/>+update_owned_project(project_id, designer_id, data, statusCurrent)"]
     N0 -->|"submit(session, project_id, form)"| N1
     N1 -->|"update(session, project_id, data)"| N2
-    N2 -->|"update_owned_project(project_id, designer_id, data, &quot;Current&quot;)"| N3
+    N2 -->|"update_owned_project(project_id, designer_id, data, statusCurrent)"| N3
     N3 -->|"updated or rejected"| N2
     N2 -->|"result"| N1

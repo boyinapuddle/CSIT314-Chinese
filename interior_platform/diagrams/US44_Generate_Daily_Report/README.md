@@ -5,10 +5,10 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>GenerateDailyReportBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>GenerateDailyReportController<br/><br/>+generate()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>DailyReport<br/><br/>+generate(date_value)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
+    N1["boundary<br/>GenerateDailyReportBoundary<br/><br/>+submit()"]
+    N2["control<br/>GenerateDailyReportController<br/><br/>+generate()"]
+    N3["entity<br/>DailyReport<br/><br/>+generate(date_value)"]
+    N4["entity<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
     N0 -->|"submit(date_value)"| N1
     N1 -->|"generate(date_value)"| N2
     N2 -->|"generate(date_value)"| N3

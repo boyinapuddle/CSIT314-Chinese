@@ -5,9 +5,9 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewIDPCategoryBoundary<br/><br/>+request()<br/>+request_all()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewIDPCategoryController<br/><br/>+view()<br/>+view_all()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+get_category(category_id)<br/>+get_categories()"]
+    N1["boundary<br/>ViewIDPCategoryBoundary<br/><br/>+request()<br/>+request_all()"]
+    N2["control<br/>ViewIDPCategoryController<br/><br/>+view()<br/>+view_all()"]
+    N3["entity<br/>IDPCategory<br/><br/>+get_category(category_id)<br/>+get_categories()"]
     N0 -->|"request(category_id) or request_all()"| N1
     N1 -->|"view(category_id) or view_all()"| N2
     N2 -->|"get_category(category_id) or get_categories()"| N3

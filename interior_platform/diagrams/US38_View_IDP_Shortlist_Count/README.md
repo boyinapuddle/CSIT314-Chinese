@@ -5,10 +5,10 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewIDPShortlistsBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewIDPShortlistsController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>ShortlistMetric<br/><br/>+for_designer(designer_id)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+get_designer_projects_with_metrics(designer_id)"]
+    N1["boundary<br/>ViewIDPShortlistsBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewIDPShortlistsController<br/><br/>+view()"]
+    N3["entity<br/>ShortlistMetric<br/><br/>+for_designer(designer_id)"]
+    N4["entity<br/>IDP<br/><br/>+get_designer_projects_with_metrics(designer_id)"]
     N0 -->|"request(session)"| N1
     N1 -->|"view(session)"| N2
     N2 -->|"for_designer(designer_id)"| N3

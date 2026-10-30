@@ -1,8 +1,8 @@
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewUserProfileBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewUserProfileController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
+    N1["boundary<br/>ViewUserProfileBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewUserProfileController<br/><br/>+view()"]
+    N3["entity<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
     N0 -->|"request(profile_id)"| N1
     N1 -->|"view(profile_id)"| N2
     N2 -->|"get_profile(profile_id)"| N3

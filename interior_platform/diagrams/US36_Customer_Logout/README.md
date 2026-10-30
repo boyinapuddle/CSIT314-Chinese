@@ -5,9 +5,9 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CustomerLogoutBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CustomerLogoutController<br/><br/>+logout()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+invalidate_session(session_id)"]
+    N1["boundary<br/>CustomerLogoutBoundary<br/><br/>+submit()"]
+    N2["control<br/>CustomerLogoutController<br/><br/>+logout()"]
+    N3["entity<br/>Session<br/><br/>+invalidate_session(session_id)"]
     N0 -->|"submit(session_context)"| N1
     N1 -->|"logout(session_context)"| N2
     N2 -->|"invalidate_session(session_id)"| N3

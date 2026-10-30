@@ -5,15 +5,15 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CreateCurrentIDPBoundary<br/><br/>+submit()<br/>+categories()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CreateCurrentIDPController<br/><br/>+create()<br/>+categories()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+create_project(designer_id, data, "Current")"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+get_categories(active_only=True)"]
+    N1["boundary<br/>CreateCurrentIDPBoundary<br/><br/>+submit()<br/>+categories()"]
+    N2["control<br/>CreateCurrentIDPController<br/><br/>+create()<br/>+categories()"]
+    N3["entity<br/>IDP<br/><br/>+create_project(designer_id, data, statusCurrent)"]
+    N4["entity<br/>IDPCategory<br/><br/>+get_categories(active_only=True)"]
     N0 -->|"open project form"| N1
     N1 -->|"categories()"| N2
     N2 -->|"get_categories(active_only=True)"| N4
     N4 -->|"active categories"| N2
-    N2 -->|"create_project(designer_id, data, &quot;Current&quot;)"| N3
+    N2 -->|"create_project(designer_id, data, statusCurrent)"| N3
     N3 -->|"project_id"| N2
     N2 -->|"result"| N1
 ```

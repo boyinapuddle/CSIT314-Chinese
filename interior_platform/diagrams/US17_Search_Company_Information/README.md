@@ -5,9 +5,9 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchCompanyInformationBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchCompanyInformationController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Company<br/><br/>+search_company(designer_id, keyword)"]
+    N1["boundary<br/>SearchCompanyInformationBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchCompanyInformationController<br/><br/>+search()"]
+    N3["entity<br/>Company<br/><br/>+search_company(designer_id, keyword)"]
     N0 -->|"submit(session, keyword)"| N1
     N1 -->|"search(session, keyword)"| N2
     N2 -->|"search_company(designer_id, keyword)"| N3

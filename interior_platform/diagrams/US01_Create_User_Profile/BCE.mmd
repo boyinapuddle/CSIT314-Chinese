@@ -1,8 +1,8 @@
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CreateUserProfileBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CreateUserProfileController<br/><br/>+create()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+create_profile(name, description, role)<br/>+search_profiles(keyword)"]
+    N1["boundary<br/>CreateUserProfileBoundary<br/><br/>+submit()"]
+    N2["control<br/>CreateUserProfileController<br/><br/>+create()"]
+    N3["entity<br/>UserProfile<br/><br/>+create_profile(name, description, role)<br/>+search_profiles(keyword)"]
     N0 -->|"submit(name, description, role)"| N1
     N1 -->|"create(name, description, role)"| N2
     N2 -->|"create_profile(name, description, role)"| N3

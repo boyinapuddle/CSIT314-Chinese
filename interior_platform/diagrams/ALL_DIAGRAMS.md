@@ -1,15 +1,18 @@
 # All BCE and Sequence Diagrams
 
-## User Story 1: Create User Profile
 
-### BCE
+---
+
+# User Story 1: Create User Profile
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CreateUserProfileBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CreateUserProfileController<br/><br/>+create()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+create_profile(name, description, role)<br/>+search_profiles(keyword)"]
+    N1["boundary<br/>CreateUserProfileBoundary<br/><br/>+submit()"]
+    N2["control<br/>CreateUserProfileController<br/><br/>+create()"]
+    N3["entity<br/>UserProfile<br/><br/>+create_profile(name, description, role)<br/>+search_profiles(keyword)"]
     N0 -->|"submit(name, description, role)"| N1
     N1 -->|"create(name, description, role)"| N2
     N2 -->|"create_profile(name, description, role)"| N3
@@ -17,7 +20,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -33,16 +36,18 @@ sequenceDiagram
     P1->>P0: success or validation message
 ```
 
-## User Story 2: View User Profile
+---
 
-### BCE
+# User Story 2: View User Profile
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewUserProfileBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewUserProfileController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
+    N1["boundary<br/>ViewUserProfileBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewUserProfileController<br/><br/>+view()"]
+    N3["entity<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
     N0 -->|"request(profile_id)"| N1
     N1 -->|"view(profile_id)"| N2
     N2 -->|"get_profile(profile_id)"| N3
@@ -50,7 +55,7 @@ flowchart LR
     N2 -->|"profile details"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -66,16 +71,18 @@ sequenceDiagram
     P1->>P0: display profile
 ```
 
-## User Story 3: Update User Profile
+---
 
-### BCE
+# User Story 3: Update User Profile
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdateUserProfileBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdateUserProfileController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+update_profile(profile_id, name, description, role)"]
+    N1["boundary<br/>UpdateUserProfileBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdateUserProfileController<br/><br/>+update()"]
+    N3["entity<br/>UserProfile<br/><br/>+update_profile(profile_id, name, description, role)"]
     N0 -->|"submit(profile_id, name, description, role)"| N1
     N1 -->|"update(...)"| N2
     N2 -->|"update_profile(...) including last active admin validation"| N3
@@ -83,7 +90,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -99,16 +106,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 4: Manage User Profile Status
+---
 
-### BCE
+# User Story 4: Manage User Profile Status
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SuspendUserProfileBoundary<br/><br/>+submit()<br/>+reactivate()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SuspendUserProfileController<br/><br/>+suspend()<br/>+reactivate()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+suspend_profile(profile_id)<br/>+reactivate_profile(profile_id)"]
+    N1["boundary<br/>SuspendUserProfileBoundary<br/><br/>+submit()<br/>+reactivate()"]
+    N2["control<br/>SuspendUserProfileController<br/><br/>+suspend()<br/>+reactivate()"]
+    N3["entity<br/>UserProfile<br/><br/>+suspend_profile(profile_id)<br/>+reactivate_profile(profile_id)"]
     N0 -->|"suspend or reactivate profile"| N1
     N1 -->|"selected operation(profile_id)"| N2
     N2 -->|"suspend_profile / reactivate_profile with last admin validation"| N3
@@ -116,7 +125,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -132,16 +141,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 5: Search User Profiles
+---
 
-### BCE
+# User Story 5: Search User Profiles
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchUserProfileBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchUserProfileController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+search_profiles(keyword)"]
+    N1["boundary<br/>SearchUserProfileBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchUserProfileController<br/><br/>+search()"]
+    N3["entity<br/>UserProfile<br/><br/>+search_profiles(keyword)"]
     N0 -->|"submit(keyword)"| N1
     N1 -->|"search(keyword)"| N2
     N2 -->|"search_profiles(keyword)"| N3
@@ -149,7 +160,7 @@ flowchart LR
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -165,27 +176,29 @@ sequenceDiagram
     P1-->>P0: display results
 ```
 
-## User Story 6: Create User Account
+---
 
-### BCE
+# User Story 6: Create User Account
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CreateUserAccountBoundary<br/><br/>+submit()<br/>+profiles()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CreateUserAccountController<br/><br/>+create()<br/>+profiles()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+search_profiles("")"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+create_account(username, password, profile_id, display_name, email)"]
+    N1["boundary<br/>CreateUserAccountBoundary<br/><br/>+submit()<br/>+profiles()"]
+    N2["control<br/>CreateUserAccountController<br/><br/>+create()<br/>+profiles()"]
+    N3["entity<br/>UserProfile<br/><br/>+search_profiles(keyword)"]
+    N4["entity<br/>UserAccount<br/><br/>+create_account(username, password, profile_id, display_name, email)"]
     N0 -->|"request available profiles"| N1
     N1 -->|"profiles()"| N2
-    N2 -->|"search_profiles(&quot;&quot;)"| N3
+    N2 -->|"search_profiles(keyword)"| N3
     N3 -->|"profiles with role and status"| N2
     N2 -->|"create_account(...)"| N4
     N4 -->|"account_id or duplicate username error"| N2
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -206,16 +219,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 7: View User Account
+---
 
-### BCE
+# User Story 7: View User Account
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewUserAccountBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewUserAccountController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+get_account(account_id)"]
+    N1["boundary<br/>ViewUserAccountBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewUserAccountController<br/><br/>+view()"]
+    N3["entity<br/>UserAccount<br/><br/>+get_account(account_id)"]
     N0 -->|"request(account_id)"| N1
     N1 -->|"view(account_id)"| N2
     N2 -->|"get_account(account_id)"| N3
@@ -223,7 +238,7 @@ flowchart LR
     N2 -->|"account details"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -239,16 +254,18 @@ sequenceDiagram
     P1->>P0: display account
 ```
 
-## User Story 8: Update User Account
+---
 
-### BCE
+# User Story 8: Update User Account
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdateUserAccountBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdateUserAccountController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+update_account(account_id, display_name, email, profile_id)"]
+    N1["boundary<br/>UpdateUserAccountBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdateUserAccountController<br/><br/>+update()"]
+    N3["entity<br/>UserAccount<br/><br/>+update_account(account_id, display_name, email, profile_id)"]
     N0 -->|"submit updated account"| N1
     N1 -->|"update(...)"| N2
     N2 -->|"update_account(...) including profile and last admin validation"| N3
@@ -256,7 +273,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -272,16 +289,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 9: Manage User Account Status
+---
 
-### BCE
+# User Story 9: Manage User Account Status
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SuspendUserAccountBoundary<br/><br/>+submit()<br/>+reactivate()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SuspendUserAccountController<br/><br/>+suspend()<br/>+reactivate()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+suspend_account(account_id)<br/>+reactivate_account(account_id)"]
+    N1["boundary<br/>SuspendUserAccountBoundary<br/><br/>+submit()<br/>+reactivate()"]
+    N2["control<br/>SuspendUserAccountController<br/><br/>+suspend()<br/>+reactivate()"]
+    N3["entity<br/>UserAccount<br/><br/>+suspend_account(account_id)<br/>+reactivate_account(account_id)"]
     N0 -->|"suspend or reactivate account"| N1
     N1 -->|"selected operation(account_id)"| N2
     N2 -->|"suspend_account / reactivate_account with last admin validation"| N3
@@ -289,7 +308,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -305,16 +324,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 10: Search User Accounts
+---
 
-### BCE
+# User Story 10: Search User Accounts
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchUserAccountBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchUserAccountController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+search_accounts(keyword)"]
+    N1["boundary<br/>SearchUserAccountBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchUserAccountController<br/><br/>+search()"]
+    N3["entity<br/>UserAccount<br/><br/>+search_accounts(keyword)"]
     N0 -->|"submit(keyword)"| N1
     N1 -->|"search(keyword)"| N2
     N2 -->|"search_accounts(keyword)"| N3
@@ -322,7 +343,7 @@ flowchart LR
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -338,19 +359,21 @@ sequenceDiagram
     P1-->>P0: display results
 ```
 
-## User Story 11: User Admin Login
+---
 
-### BCE
+# User Story 11: User Admin Login
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>LoginBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>AuthenticationController<br/><br/>+login()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
-    N5["&lt;&lt;control&gt;&gt;<br/>UserAdminLoginController<br/><br/>+complete_login(account, profile)"]
-    N6["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+create_session(account_id, role)"]
+    N1["boundary<br/>LoginBoundary<br/><br/>+submit()"]
+    N2["control<br/>AuthenticationController<br/><br/>+login()"]
+    N3["entity<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
+    N4["entity<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
+    N5["control<br/>UserAdminLoginController<br/><br/>+complete_login(account, profile)"]
+    N6["entity<br/>Session<br/><br/>+create_session(account_id, role)"]
     N0 -->|"submit username and password"| N1
     N1 -->|"login(username, password)"| N2
     N2 -->|"find_by_username(username)"| N3
@@ -364,7 +387,7 @@ flowchart LR
     N2 -->|"login result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -391,16 +414,18 @@ sequenceDiagram
     P1->>P0: redirect to dashboard or show error
 ```
 
-## User Story 12: User Admin Logout
+---
 
-### BCE
+# User Story 12: User Admin Logout
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UserAdminLogoutBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UserAdminLogoutController<br/><br/>+logout()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+invalidate_session(session_id)"]
+    N1["boundary<br/>UserAdminLogoutBoundary<br/><br/>+submit()"]
+    N2["control<br/>UserAdminLogoutController<br/><br/>+logout()"]
+    N3["entity<br/>Session<br/><br/>+invalidate_session(session_id)"]
     N0 -->|"submit(session_context)"| N1
     N1 -->|"logout(session_context)"| N2
     N2 -->|"invalidate_session(session_id)"| N3
@@ -408,7 +433,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -424,16 +449,18 @@ sequenceDiagram
     P1->>P0: return to login page
 ```
 
-## User Story 13: Create Company Information
+---
 
-### BCE
+# User Story 13: Create Company Information
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CreateCompanyInformationBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CreateCompanyInformationController<br/><br/>+create()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Company<br/><br/>+create_company(designer_id, data)"]
+    N1["boundary<br/>CreateCompanyInformationBoundary<br/><br/>+submit()"]
+    N2["control<br/>CreateCompanyInformationController<br/><br/>+create()"]
+    N3["entity<br/>Company<br/><br/>+create_company(designer_id, data)"]
     N0 -->|"submit(session, form)"| N1
     N1 -->|"create(session, data)"| N2
     N2 -->|"create_company(designer_id, data)"| N3
@@ -441,7 +468,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -458,16 +485,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 14: View Company Information
+---
 
-### BCE
+# User Story 14: View Company Information
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewCompanyInformationBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewCompanyInformationController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Company<br/><br/>+get_company(designer_id)"]
+    N1["boundary<br/>ViewCompanyInformationBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewCompanyInformationController<br/><br/>+view()"]
+    N3["entity<br/>Company<br/><br/>+get_company(designer_id)"]
     N0 -->|"request(session)"| N1
     N1 -->|"view(session)"| N2
     N2 -->|"get_company(designer_id)"| N3
@@ -475,7 +504,7 @@ flowchart LR
     N2 -->|"company details"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -492,16 +521,18 @@ sequenceDiagram
     P1->>P0: display company
 ```
 
-## User Story 15: Update Company Information
+---
 
-### BCE
+# User Story 15: Update Company Information
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdateCompanyInformationBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdateCompanyInformationController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Company<br/><br/>+update_company(designer_id, data)"]
+    N1["boundary<br/>UpdateCompanyInformationBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdateCompanyInformationController<br/><br/>+update()"]
+    N3["entity<br/>Company<br/><br/>+update_company(designer_id, data)"]
     N0 -->|"submit(session, form)"| N1
     N1 -->|"update(session, data)"| N2
     N2 -->|"update_company(designer_id, data)"| N3
@@ -509,7 +540,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -526,16 +557,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 16: Delete Company Information
+---
 
-### BCE
+# User Story 16: Delete Company Information
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>DeleteCompanyInformationBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>DeleteCompanyInformationController<br/><br/>+delete()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Company<br/><br/>+delete_company(designer_id)"]
+    N1["boundary<br/>DeleteCompanyInformationBoundary<br/><br/>+submit()"]
+    N2["control<br/>DeleteCompanyInformationController<br/><br/>+delete()"]
+    N3["entity<br/>Company<br/><br/>+delete_company(designer_id)"]
     N0 -->|"submit(session)"| N1
     N1 -->|"delete(session)"| N2
     N2 -->|"delete_company(designer_id)"| N3
@@ -543,7 +576,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -560,16 +593,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 17: Search Company Information
+---
 
-### BCE
+# User Story 17: Search Company Information
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchCompanyInformationBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchCompanyInformationController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Company<br/><br/>+search_company(designer_id, keyword)"]
+    N1["boundary<br/>SearchCompanyInformationBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchCompanyInformationController<br/><br/>+search()"]
+    N3["entity<br/>Company<br/><br/>+search_company(designer_id, keyword)"]
     N0 -->|"submit(session, keyword)"| N1
     N1 -->|"search(session, keyword)"| N2
     N2 -->|"search_company(designer_id, keyword)"| N3
@@ -577,7 +612,7 @@ flowchart LR
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -594,19 +629,21 @@ sequenceDiagram
     P1-->>P0: display results
 ```
 
-## User Story 18: Interior Designer Login
+---
 
-### BCE
+# User Story 18: Interior Designer Login
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>LoginBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>AuthenticationController<br/><br/>+login()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
-    N5["&lt;&lt;control&gt;&gt;<br/>InteriorDesignerLoginController<br/><br/>+complete_login(account, profile)"]
-    N6["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+create_session(account_id, role)"]
+    N1["boundary<br/>LoginBoundary<br/><br/>+submit()"]
+    N2["control<br/>AuthenticationController<br/><br/>+login()"]
+    N3["entity<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
+    N4["entity<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
+    N5["control<br/>InteriorDesignerLoginController<br/><br/>+complete_login(account, profile)"]
+    N6["entity<br/>Session<br/><br/>+create_session(account_id, role)"]
     N0 -->|"submit username and password"| N1
     N1 -->|"login(username, password)"| N2
     N2 -->|"find_by_username(username)"| N3
@@ -620,7 +657,7 @@ flowchart LR
     N2 -->|"login result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -647,16 +684,18 @@ sequenceDiagram
     P1->>P0: redirect to dashboard or show error
 ```
 
-## User Story 19: Interior Designer Logout
+---
 
-### BCE
+# User Story 19: Interior Designer Logout
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>InteriorDesignerLogoutBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>InteriorDesignerLogoutController<br/><br/>+logout()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+invalidate_session(session_id)"]
+    N1["boundary<br/>InteriorDesignerLogoutBoundary<br/><br/>+submit()"]
+    N2["control<br/>InteriorDesignerLogoutController<br/><br/>+logout()"]
+    N3["entity<br/>Session<br/><br/>+invalidate_session(session_id)"]
     N0 -->|"submit(session_context)"| N1
     N1 -->|"logout(session_context)"| N2
     N2 -->|"invalidate_session(session_id)"| N3
@@ -664,7 +703,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -681,27 +720,29 @@ sequenceDiagram
     P1->>P0: clear local session and show login
 ```
 
-## User Story 20: Create Current IDP
+---
 
-### BCE
+# User Story 20: Create Current IDP
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CreateCurrentIDPBoundary<br/><br/>+submit()<br/>+categories()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CreateCurrentIDPController<br/><br/>+create()<br/>+categories()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+create_project(designer_id, data, "Current")"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+get_categories(active_only=True)"]
+    N1["boundary<br/>CreateCurrentIDPBoundary<br/><br/>+submit()<br/>+categories()"]
+    N2["control<br/>CreateCurrentIDPController<br/><br/>+create()<br/>+categories()"]
+    N3["entity<br/>IDP<br/><br/>+create_project(designer_id, data, statusCurrent)"]
+    N4["entity<br/>IDPCategory<br/><br/>+get_categories(active_only=True)"]
     N0 -->|"open project form"| N1
     N1 -->|"categories()"| N2
     N2 -->|"get_categories(active_only=True)"| N4
     N4 -->|"active categories"| N2
-    N2 -->|"create_project(designer_id, data, &quot;Current&quot;)"| N3
+    N2 -->|"create_project(designer_id, data, statusCurrent)"| N3
     N3 -->|"project_id"| N2
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -723,24 +764,26 @@ sequenceDiagram
     P1->>P0: display success
 ```
 
-## User Story 21: View Current IDPs
+---
 
-### BCE
+# User Story 21: View Current IDPs
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewCurrentIDPBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewCurrentIDPController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+get_owned_projects(designer_id, "Current")"]
+    N1["boundary<br/>ViewCurrentIDPBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewCurrentIDPController<br/><br/>+view()"]
+    N3["entity<br/>IDP<br/><br/>+get_owned_projects(designer_id, statusCurrent)"]
     N0 -->|"request(session)"| N1
     N1 -->|"view(session)"| N2
-    N2 -->|"get_owned_projects(designer_id, &quot;Current&quot;)"| N3
+    N2 -->|"get_owned_projects(designer_id, statusCurrent)"| N3
     N3 -->|"owned projects"| N2
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -757,24 +800,26 @@ sequenceDiagram
     P1->>P0: display projects
 ```
 
-## User Story 22: Update Current IDP
+---
 
-### BCE
+# User Story 22: Update Current IDP
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdateCurrentIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdateCurrentIDPController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+update_owned_project(project_id, designer_id, data, "Current")"]
+    N1["boundary<br/>UpdateCurrentIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdateCurrentIDPController<br/><br/>+update()"]
+    N3["entity<br/>IDP<br/><br/>+update_owned_project(project_id, designer_id, data, statusCurrent)"]
     N0 -->|"submit(session, project_id, form)"| N1
     N1 -->|"update(session, project_id, data)"| N2
-    N2 -->|"update_owned_project(project_id, designer_id, data, &quot;Current&quot;)"| N3
+    N2 -->|"update_owned_project(project_id, designer_id, data, statusCurrent)"| N3
     N3 -->|"updated or rejected"| N2
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -791,24 +836,26 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 23: Delete Current IDP
+---
 
-### BCE
+# User Story 23: Delete Current IDP
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>DeleteCurrentIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>DeleteCurrentIDPController<br/><br/>+delete()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+delete_owned_project(project_id, designer_id, "Current")"]
+    N1["boundary<br/>DeleteCurrentIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>DeleteCurrentIDPController<br/><br/>+delete()"]
+    N3["entity<br/>IDP<br/><br/>+delete_owned_project(project_id, designer_id, statusCurrent)"]
     N0 -->|"confirm delete"| N1
     N1 -->|"delete(session, project_id)"| N2
-    N2 -->|"delete_owned_project(project_id, designer_id, &quot;Current&quot;)"| N3
+    N2 -->|"delete_owned_project(project_id, designer_id, statusCurrent)"| N3
     N3 -->|"deleted or rejected"| N2
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -825,24 +872,26 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 24: Search Current IDPs
+---
 
-### BCE
+# User Story 24: Search Current IDPs
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchCurrentIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchCurrentIDPController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+search_owned_projects(designer_id, "Current", keyword)"]
+    N1["boundary<br/>SearchCurrentIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchCurrentIDPController<br/><br/>+search()"]
+    N3["entity<br/>IDP<br/><br/>+search_owned_projects(designer_id, statusCurrent, keyword)"]
     N0 -->|"submit(session, keyword)"| N1
     N1 -->|"search(session, keyword)"| N2
-    N2 -->|"search_owned_projects(designer_id, &quot;Current&quot;, keyword)"| N3
+    N2 -->|"search_owned_projects(designer_id, statusCurrent, keyword)"| N3
     N3 -->|"matching projects"| N2
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -859,27 +908,29 @@ sequenceDiagram
     P1-->>P0: display results
 ```
 
-## User Story 25: Create Past IDP
+---
 
-### BCE
+# User Story 25: Create Past IDP
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CreatePastIDPBoundary<br/><br/>+submit()<br/>+categories()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CreatePastIDPController<br/><br/>+create()<br/>+categories()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+create_project(designer_id, data, "Past")"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+get_categories(active_only=True)"]
+    N1["boundary<br/>CreatePastIDPBoundary<br/><br/>+submit()<br/>+categories()"]
+    N2["control<br/>CreatePastIDPController<br/><br/>+create()<br/>+categories()"]
+    N3["entity<br/>IDP<br/><br/>+create_project(designer_id, data, statusPast)"]
+    N4["entity<br/>IDPCategory<br/><br/>+get_categories(active_only=True)"]
     N0 -->|"open project form"| N1
     N1 -->|"categories()"| N2
     N2 -->|"get_categories(active_only=True)"| N4
     N4 -->|"active categories"| N2
-    N2 -->|"create_project(designer_id, data, &quot;Past&quot;)"| N3
+    N2 -->|"create_project(designer_id, data, statusPast)"| N3
     N3 -->|"project_id"| N2
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -901,24 +952,26 @@ sequenceDiagram
     P1->>P0: display success
 ```
 
-## User Story 26: View Past IDPs
+---
 
-### BCE
+# User Story 26: View Past IDPs
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewPastIDPBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewPastIDPController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+get_owned_projects(designer_id, "Past")"]
+    N1["boundary<br/>ViewPastIDPBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewPastIDPController<br/><br/>+view()"]
+    N3["entity<br/>IDP<br/><br/>+get_owned_projects(designer_id, statusPast)"]
     N0 -->|"request(session)"| N1
     N1 -->|"view(session)"| N2
-    N2 -->|"get_owned_projects(designer_id, &quot;Past&quot;)"| N3
+    N2 -->|"get_owned_projects(designer_id, statusPast)"| N3
     N3 -->|"owned projects"| N2
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -935,24 +988,26 @@ sequenceDiagram
     P1->>P0: display projects
 ```
 
-## User Story 27: Update Past IDP
+---
 
-### BCE
+# User Story 27: Update Past IDP
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdatePastIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdatePastIDPController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+update_owned_project(project_id, designer_id, data, "Past")"]
+    N1["boundary<br/>UpdatePastIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdatePastIDPController<br/><br/>+update()"]
+    N3["entity<br/>IDP<br/><br/>+update_owned_project(project_id, designer_id, data, statusPast)"]
     N0 -->|"submit(session, project_id, form)"| N1
     N1 -->|"update(session, project_id, data)"| N2
-    N2 -->|"update_owned_project(project_id, designer_id, data, &quot;Past&quot;)"| N3
+    N2 -->|"update_owned_project(project_id, designer_id, data, statusPast)"| N3
     N3 -->|"updated or rejected"| N2
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -969,24 +1024,26 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 28: Delete Past IDP
+---
 
-### BCE
+# User Story 28: Delete Past IDP
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>DeletePastIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>DeletePastIDPController<br/><br/>+delete()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+delete_owned_project(project_id, designer_id, "Past")"]
+    N1["boundary<br/>DeletePastIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>DeletePastIDPController<br/><br/>+delete()"]
+    N3["entity<br/>IDP<br/><br/>+delete_owned_project(project_id, designer_id, statusPast)"]
     N0 -->|"confirm delete"| N1
     N1 -->|"delete(session, project_id)"| N2
-    N2 -->|"delete_owned_project(project_id, designer_id, &quot;Past&quot;)"| N3
+    N2 -->|"delete_owned_project(project_id, designer_id, statusPast)"| N3
     N3 -->|"deleted or rejected"| N2
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1003,24 +1060,26 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 29: Search Past IDPs
+---
 
-### BCE
+# User Story 29: Search Past IDPs
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchPastIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchPastIDPController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+search_owned_projects(designer_id, "Past", keyword)"]
+    N1["boundary<br/>SearchPastIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchPastIDPController<br/><br/>+search()"]
+    N3["entity<br/>IDP<br/><br/>+search_owned_projects(designer_id, statusPast, keyword)"]
     N0 -->|"submit(session, keyword)"| N1
     N1 -->|"search(session, keyword)"| N2
-    N2 -->|"search_owned_projects(designer_id, &quot;Past&quot;, keyword)"| N3
+    N2 -->|"search_owned_projects(designer_id, statusPast, keyword)"| N3
     N3 -->|"matching projects"| N2
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1037,16 +1096,18 @@ sequenceDiagram
     P1-->>P0: display results
 ```
 
-## User Story 30: Search Available IDPs
+---
 
-### BCE
+# User Story 30: Search Available IDPs
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchAvailableIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchAvailableIDPController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+search_available_projects(keyword)"]
+    N1["boundary<br/>SearchAvailableIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchAvailableIDPController<br/><br/>+search()"]
+    N3["entity<br/>IDP<br/><br/>+search_available_projects(keyword)"]
     N0 -->|"submit(keyword)"| N1
     N1 -->|"search(keyword)"| N2
     N2 -->|"search_available_projects(keyword)"| N3
@@ -1054,7 +1115,7 @@ flowchart LR
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1070,16 +1131,18 @@ sequenceDiagram
     P1-->>P0: display results
 ```
 
-## User Story 31: View Available IDP
+---
 
-### BCE
+# User Story 31: View Available IDP
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewAvailableIDPBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewAvailableIDPController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+get_available_project(project_id)<br/>+record_view(project_id, customer_id)"]
+    N1["boundary<br/>ViewAvailableIDPBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewAvailableIDPController<br/><br/>+view()"]
+    N3["entity<br/>IDP<br/><br/>+get_available_project(project_id)<br/>+record_view(project_id, customer_id)"]
     N0 -->|"request(session, project_id)"| N1
     N1 -->|"view(session, project_id)"| N2
     N2 -->|"get_available_project(project_id)"| N3
@@ -1087,7 +1150,7 @@ flowchart LR
     N2 -->|"project details"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1105,17 +1168,19 @@ sequenceDiagram
     P1->>P0: display project
 ```
 
-## User Story 32: Save or Unsave IDP
+---
 
-### BCE
+# User Story 32: Save or Unsave IDP
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SaveIDPBoundary<br/><br/>+submit()<br/>+unsave()<br/>+check_saved()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SaveIDPController<br/><br/>+save()<br/>+unsave()<br/>+check_saved()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Favourite<br/><br/>+save_project(customer_id, project_id)<br/>+remove_project(customer_id, project_id)<br/>+is_saved(customer_id, project_id)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+get_available_project(project_id)"]
+    N1["boundary<br/>SaveIDPBoundary<br/><br/>+submit()<br/>+unsave()<br/>+check_saved()"]
+    N2["control<br/>SaveIDPController<br/><br/>+save()<br/>+unsave()<br/>+check_saved()"]
+    N3["entity<br/>Favourite<br/><br/>+save_project(customer_id, project_id)<br/>+remove_project(customer_id, project_id)<br/>+is_saved(customer_id, project_id)"]
+    N4["entity<br/>IDP<br/><br/>+get_available_project(project_id)"]
     N0 -->|"save, unsave, or check project"| N1
     N1 -->|"save / unsave / check_saved(session, project_id)"| N2
     N2 -->|"save_project / remove_project / is_saved"| N3
@@ -1125,7 +1190,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1145,16 +1210,18 @@ sequenceDiagram
     P1->>P0: display Save or Saved state
 ```
 
-## User Story 33: Search Saved IDPs
+---
 
-### BCE
+# User Story 33: Search Saved IDPs
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchSavedIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchSavedIDPController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Favourite<br/><br/>+search_saved_projects(customer_id, keyword)"]
+    N1["boundary<br/>SearchSavedIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchSavedIDPController<br/><br/>+search()"]
+    N3["entity<br/>Favourite<br/><br/>+search_saved_projects(customer_id, keyword)"]
     N0 -->|"submit(session, keyword)"| N1
     N1 -->|"search(session, keyword)"| N2
     N2 -->|"search_saved_projects(customer_id, keyword)"| N3
@@ -1162,7 +1229,7 @@ flowchart LR
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1179,16 +1246,18 @@ sequenceDiagram
     P1-->>P0: display results
 ```
 
-## User Story 34: View Saved IDPs
+---
 
-### BCE
+# User Story 34: View Saved IDPs
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewSavedIDPBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewSavedIDPController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Favourite<br/><br/>+view_saved_projects(customer_id)"]
+    N1["boundary<br/>ViewSavedIDPBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewSavedIDPController<br/><br/>+view()"]
+    N3["entity<br/>Favourite<br/><br/>+view_saved_projects(customer_id)"]
     N0 -->|"request(session)"| N1
     N1 -->|"view(session)"| N2
     N2 -->|"view_saved_projects(customer_id)"| N3
@@ -1196,7 +1265,7 @@ flowchart LR
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1213,19 +1282,21 @@ sequenceDiagram
     P1->>P0: display favourites
 ```
 
-## User Story 35: Customer Login
+---
 
-### BCE
+# User Story 35: Customer Login
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>LoginBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>AuthenticationController<br/><br/>+login()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
-    N5["&lt;&lt;control&gt;&gt;<br/>CustomerLoginController<br/><br/>+complete_login(account, profile)"]
-    N6["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+create_session(account_id, role)"]
+    N1["boundary<br/>LoginBoundary<br/><br/>+submit()"]
+    N2["control<br/>AuthenticationController<br/><br/>+login()"]
+    N3["entity<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
+    N4["entity<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
+    N5["control<br/>CustomerLoginController<br/><br/>+complete_login(account, profile)"]
+    N6["entity<br/>Session<br/><br/>+create_session(account_id, role)"]
     N0 -->|"submit username and password"| N1
     N1 -->|"login(username, password)"| N2
     N2 -->|"find_by_username(username)"| N3
@@ -1239,7 +1310,7 @@ flowchart LR
     N2 -->|"login result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1266,16 +1337,18 @@ sequenceDiagram
     P1->>P0: redirect to dashboard or show error
 ```
 
-## User Story 36: Customer Logout
+---
 
-### BCE
+# User Story 36: Customer Logout
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Customer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CustomerLogoutBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CustomerLogoutController<br/><br/>+logout()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+invalidate_session(session_id)"]
+    N1["boundary<br/>CustomerLogoutBoundary<br/><br/>+submit()"]
+    N2["control<br/>CustomerLogoutController<br/><br/>+logout()"]
+    N3["entity<br/>Session<br/><br/>+invalidate_session(session_id)"]
     N0 -->|"submit(session_context)"| N1
     N1 -->|"logout(session_context)"| N2
     N2 -->|"invalidate_session(session_id)"| N3
@@ -1283,7 +1356,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1300,17 +1373,19 @@ sequenceDiagram
     P1->>P0: clear local session and show login
 ```
 
-## User Story 37: View IDP View Count
+---
 
-### BCE
+# User Story 37: View IDP View Count
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewIDPViewsBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewIDPViewsController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>ViewMetric<br/><br/>+for_designer(designer_id)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+get_designer_projects_with_metrics(designer_id)"]
+    N1["boundary<br/>ViewIDPViewsBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewIDPViewsController<br/><br/>+view()"]
+    N3["entity<br/>ViewMetric<br/><br/>+for_designer(designer_id)"]
+    N4["entity<br/>IDP<br/><br/>+get_designer_projects_with_metrics(designer_id)"]
     N0 -->|"request(session)"| N1
     N1 -->|"view(session)"| N2
     N2 -->|"for_designer(designer_id)"| N3
@@ -1320,7 +1395,7 @@ flowchart LR
     N2 -->|"metrics"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1340,17 +1415,19 @@ sequenceDiagram
     P1->>P0: display view counts
 ```
 
-## User Story 38: View IDP Shortlist Count
+---
 
-### BCE
+# User Story 38: View IDP Shortlist Count
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewIDPShortlistsBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewIDPShortlistsController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>ShortlistMetric<br/><br/>+for_designer(designer_id)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+get_designer_projects_with_metrics(designer_id)"]
+    N1["boundary<br/>ViewIDPShortlistsBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewIDPShortlistsController<br/><br/>+view()"]
+    N3["entity<br/>ShortlistMetric<br/><br/>+for_designer(designer_id)"]
+    N4["entity<br/>IDP<br/><br/>+get_designer_projects_with_metrics(designer_id)"]
     N0 -->|"request(session)"| N1
     N1 -->|"view(session)"| N2
     N2 -->|"for_designer(designer_id)"| N3
@@ -1360,7 +1437,7 @@ flowchart LR
     N2 -->|"metrics"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1380,16 +1457,18 @@ sequenceDiagram
     P1->>P0: display shortlist counts
 ```
 
-## User Story 39: Create IDP Category
+---
 
-### BCE
+# User Story 39: Create IDP Category
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>CreateIDPCategoryBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>CreateIDPCategoryController<br/><br/>+create()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+create_category(name, description)"]
+    N1["boundary<br/>CreateIDPCategoryBoundary<br/><br/>+submit()"]
+    N2["control<br/>CreateIDPCategoryController<br/><br/>+create()"]
+    N3["entity<br/>IDPCategory<br/><br/>+create_category(name, description)"]
     N0 -->|"submit(name, description)"| N1
     N1 -->|"create(name, description)"| N2
     N2 -->|"create_category(name, description)"| N3
@@ -1397,7 +1476,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1413,16 +1492,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 40: View IDP Category
+---
 
-### BCE
+# User Story 40: View IDP Category
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewIDPCategoryBoundary<br/><br/>+request()<br/>+request_all()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewIDPCategoryController<br/><br/>+view()<br/>+view_all()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+get_category(category_id)<br/>+get_categories()"]
+    N1["boundary<br/>ViewIDPCategoryBoundary<br/><br/>+request()<br/>+request_all()"]
+    N2["control<br/>ViewIDPCategoryController<br/><br/>+view()<br/>+view_all()"]
+    N3["entity<br/>IDPCategory<br/><br/>+get_category(category_id)<br/>+get_categories()"]
     N0 -->|"request(category_id) or request_all()"| N1
     N1 -->|"view(category_id) or view_all()"| N2
     N2 -->|"get_category(category_id) or get_categories()"| N3
@@ -1430,7 +1511,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1446,16 +1527,18 @@ sequenceDiagram
     P1->>P0: display category or list
 ```
 
-## User Story 41: Update IDP Category
+---
 
-### BCE
+# User Story 41: Update IDP Category
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdateIDPCategoryBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdateIDPCategoryController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+update_category(category_id, name, description)"]
+    N1["boundary<br/>UpdateIDPCategoryBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdateIDPCategoryController<br/><br/>+update()"]
+    N3["entity<br/>IDPCategory<br/><br/>+update_category(category_id, name, description)"]
     N0 -->|"submit(category_id, form)"| N1
     N1 -->|"update(category_id, name, description)"| N2
     N2 -->|"update_category(category_id, name, description)"| N3
@@ -1463,7 +1546,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1479,16 +1562,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 42: Manage IDP Category Status
+---
 
-### BCE
+# User Story 42: Manage IDP Category Status
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SuspendIDPCategoryBoundary<br/><br/>+submit()<br/>+reactivate()<br/>+delete()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SuspendIDPCategoryController<br/><br/>+suspend()<br/>+reactivate()<br/>+delete()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+suspend_category(category_id)<br/>+reactivate_category(category_id)<br/>+delete_category(category_id)"]
+    N1["boundary<br/>SuspendIDPCategoryBoundary<br/><br/>+submit()<br/>+reactivate()<br/>+delete()"]
+    N2["control<br/>SuspendIDPCategoryController<br/><br/>+suspend()<br/>+reactivate()<br/>+delete()"]
+    N3["entity<br/>IDPCategory<br/><br/>+suspend_category(category_id)<br/>+reactivate_category(category_id)<br/>+delete_category(category_id)"]
     N0 -->|"suspend, reactivate, or delete category"| N1
     N1 -->|"selected operation(category_id)"| N2
     N2 -->|"suspend_category / reactivate_category / delete_category"| N3
@@ -1496,7 +1581,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1513,16 +1598,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 43: Search IDP Categories
+---
 
-### BCE
+# User Story 43: Search IDP Categories
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchIDPCategoryBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchIDPCategoryController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+search_categories(keyword)"]
+    N1["boundary<br/>SearchIDPCategoryBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchIDPCategoryController<br/><br/>+search()"]
+    N3["entity<br/>IDPCategory<br/><br/>+search_categories(keyword)"]
     N0 -->|"submit(keyword)"| N1
     N1 -->|"search(keyword)"| N2
     N2 -->|"search_categories(keyword)"| N3
@@ -1530,7 +1617,7 @@ flowchart LR
     N2 -->|"results"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1546,17 +1633,19 @@ sequenceDiagram
     P1-->>P0: display results
 ```
 
-## User Story 44: Generate Daily Report
+---
 
-### BCE
+# User Story 44: Generate Daily Report
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>GenerateDailyReportBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>GenerateDailyReportController<br/><br/>+generate()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>DailyReport<br/><br/>+generate(date_value)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
+    N1["boundary<br/>GenerateDailyReportBoundary<br/><br/>+submit()"]
+    N2["control<br/>GenerateDailyReportController<br/><br/>+generate()"]
+    N3["entity<br/>DailyReport<br/><br/>+generate(date_value)"]
+    N4["entity<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
     N0 -->|"submit(date_value)"| N1
     N1 -->|"generate(date_value)"| N2
     N2 -->|"generate(date_value)"| N3
@@ -1566,7 +1655,7 @@ flowchart LR
     N2 -->|"report"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1585,17 +1674,19 @@ sequenceDiagram
     P1-->>P0: display report
 ```
 
-## User Story 45: Generate Weekly Report
+---
 
-### BCE
+# User Story 45: Generate Weekly Report
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>GenerateWeeklyReportBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>GenerateWeeklyReportController<br/><br/>+generate()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>WeeklyReport<br/><br/>+generate(date_value)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
+    N1["boundary<br/>GenerateWeeklyReportBoundary<br/><br/>+submit()"]
+    N2["control<br/>GenerateWeeklyReportController<br/><br/>+generate()"]
+    N3["entity<br/>WeeklyReport<br/><br/>+generate(date_value)"]
+    N4["entity<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
     N0 -->|"submit(date_value)"| N1
     N1 -->|"generate(date_value)"| N2
     N2 -->|"generate(date_value)"| N3
@@ -1605,7 +1696,7 @@ flowchart LR
     N2 -->|"report"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1624,17 +1715,19 @@ sequenceDiagram
     P1-->>P0: display report
 ```
 
-## User Story 46: Generate Monthly Report
+---
 
-### BCE
+# User Story 46: Generate Monthly Report
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>GenerateMonthlyReportBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>GenerateMonthlyReportController<br/><br/>+generate()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>MonthlyReport<br/><br/>+generate(date_value)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
+    N1["boundary<br/>GenerateMonthlyReportBoundary<br/><br/>+submit()"]
+    N2["control<br/>GenerateMonthlyReportController<br/><br/>+generate()"]
+    N3["entity<br/>MonthlyReport<br/><br/>+generate(date_value)"]
+    N4["entity<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
     N0 -->|"submit(date_value)"| N1
     N1 -->|"generate(date_value)"| N2
     N2 -->|"generate(date_value)"| N3
@@ -1644,7 +1737,7 @@ flowchart LR
     N2 -->|"report"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1663,19 +1756,21 @@ sequenceDiagram
     P1-->>P0: display report
 ```
 
-## User Story 47: Platform Manager Login
+---
 
-### BCE
+# User Story 47: Platform Manager Login
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>LoginBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>AuthenticationController<br/><br/>+login()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
-    N4["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
-    N5["&lt;&lt;control&gt;&gt;<br/>PlatformManagerLoginController<br/><br/>+complete_login(account, profile)"]
-    N6["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+create_session(account_id, role)"]
+    N1["boundary<br/>LoginBoundary<br/><br/>+submit()"]
+    N2["control<br/>AuthenticationController<br/><br/>+login()"]
+    N3["entity<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
+    N4["entity<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
+    N5["control<br/>PlatformManagerLoginController<br/><br/>+complete_login(account, profile)"]
+    N6["entity<br/>Session<br/><br/>+create_session(account_id, role)"]
     N0 -->|"submit username and password"| N1
     N1 -->|"login(username, password)"| N2
     N2 -->|"find_by_username(username)"| N3
@@ -1689,7 +1784,7 @@ flowchart LR
     N2 -->|"login result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1716,16 +1811,18 @@ sequenceDiagram
     P1->>P0: redirect to dashboard or show error
 ```
 
-## User Story 48: Platform Manager Logout
+---
 
-### BCE
+# User Story 48: Platform Manager Logout
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>PlatformManagerLogoutBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>PlatformManagerLogoutController<br/><br/>+logout()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+invalidate_session(session_id)"]
+    N1["boundary<br/>PlatformManagerLogoutBoundary<br/><br/>+submit()"]
+    N2["control<br/>PlatformManagerLogoutController<br/><br/>+logout()"]
+    N3["entity<br/>Session<br/><br/>+invalidate_session(session_id)"]
     N0 -->|"submit(session_context)"| N1
     N1 -->|"logout(session_context)"| N2
     N2 -->|"invalidate_session(session_id)"| N3
@@ -1733,7 +1830,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1750,16 +1847,18 @@ sequenceDiagram
     P1->>P0: clear local session and show login
 ```
 
-## User Story 49: Delete User Profile
+---
 
-### BCE
+# User Story 49: Delete User Profile
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>DeleteUserProfileBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>DeleteUserProfileController<br/><br/>+delete()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+delete_profile(profile_id)"]
+    N1["boundary<br/>DeleteUserProfileBoundary<br/><br/>+submit()"]
+    N2["control<br/>DeleteUserProfileController<br/><br/>+delete()"]
+    N3["entity<br/>UserProfile<br/><br/>+delete_profile(profile_id)"]
     N0 -->|"submit(profile_id)"| N1
     N1 -->|"delete(profile_id)"| N2
     N2 -->|"delete_profile(profile_id)"| N3
@@ -1767,7 +1866,7 @@ flowchart LR
     N2 -->|"result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -1783,16 +1882,18 @@ sequenceDiagram
     P1-->>P0: display result
 ```
 
-## User Story 50: Browse IDPs as Authenticated Non Customer
+---
 
-### BCE
+# User Story 50: Browse IDPs as Authenticated Non Customer
+
+## BCE Diagram
 
 ```mermaid
 flowchart LR
     N0["Actor<br/>Authenticated Non Customer User"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>BrowseIDPBoundary<br/><br/>+submit()<br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>BrowseIDPController<br/><br/>+search()<br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+search_available_projects(keyword)<br/>+get_available_project(project_id)"]
+    N1["boundary<br/>BrowseIDPBoundary<br/><br/>+submit()<br/>+request()"]
+    N2["control<br/>BrowseIDPController<br/><br/>+search()<br/>+view()"]
+    N3["entity<br/>IDP<br/><br/>+search_available_projects(keyword)<br/>+get_available_project(project_id)"]
     N0 -->|"search(keyword) or request(project_id)"| N1
     N1 -->|"search(keyword) or view(project_id)"| N2
     N2 -->|"search_available_projects(keyword) or get_available_project(project_id)"| N3
@@ -1800,7 +1901,7 @@ flowchart LR
     N2 -->|"read only result"| N1
 ```
 
-### Sequence
+## Sequence Diagram
 
 ```mermaid
 sequenceDiagram

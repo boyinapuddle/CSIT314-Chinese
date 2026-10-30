@@ -5,9 +5,9 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdateIDPCategoryBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdateIDPCategoryController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+update_category(category_id, name, description)"]
+    N1["boundary<br/>UpdateIDPCategoryBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdateIDPCategoryController<br/><br/>+update()"]
+    N3["entity<br/>IDPCategory<br/><br/>+update_category(category_id, name, description)"]
     N0 -->|"submit(category_id, form)"| N1
     N1 -->|"update(category_id, name, description)"| N2
     N2 -->|"update_category(category_id, name, description)"| N3

@@ -1,8 +1,8 @@
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewUserAccountBoundary<br/><br/>+request()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>ViewUserAccountController<br/><br/>+view()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserAccount<br/><br/>+get_account(account_id)"]
+    N1["boundary<br/>ViewUserAccountBoundary<br/><br/>+request()"]
+    N2["control<br/>ViewUserAccountController<br/><br/>+view()"]
+    N3["entity<br/>UserAccount<br/><br/>+get_account(account_id)"]
     N0 -->|"request(account_id)"| N1
     N1 -->|"view(account_id)"| N2
     N2 -->|"get_account(account_id)"| N3

@@ -1,8 +1,8 @@
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdateCompanyInformationBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdateCompanyInformationController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>Company<br/><br/>+update_company(designer_id, data)"]
+    N1["boundary<br/>UpdateCompanyInformationBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdateCompanyInformationController<br/><br/>+update()"]
+    N3["entity<br/>Company<br/><br/>+update_company(designer_id, data)"]
     N0 -->|"submit(session, form)"| N1
     N1 -->|"update(session, data)"| N2
     N2 -->|"update_company(designer_id, data)"| N3

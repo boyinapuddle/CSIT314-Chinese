@@ -5,12 +5,12 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Interior Designer"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>DeleteCurrentIDPBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>DeleteCurrentIDPController<br/><br/>+delete()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+delete_owned_project(project_id, designer_id, "Current")"]
+    N1["boundary<br/>DeleteCurrentIDPBoundary<br/><br/>+submit()"]
+    N2["control<br/>DeleteCurrentIDPController<br/><br/>+delete()"]
+    N3["entity<br/>IDP<br/><br/>+delete_owned_project(project_id, designer_id, statusCurrent)"]
     N0 -->|"confirm delete"| N1
     N1 -->|"delete(session, project_id)"| N2
-    N2 -->|"delete_owned_project(project_id, designer_id, &quot;Current&quot;)"| N3
+    N2 -->|"delete_owned_project(project_id, designer_id, statusCurrent)"| N3
     N3 -->|"deleted or rejected"| N2
     N2 -->|"result"| N1
 ```

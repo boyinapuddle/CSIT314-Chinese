@@ -1,8 +1,8 @@
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>UpdateUserProfileBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>UpdateUserProfileController<br/><br/>+update()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+update_profile(profile_id, name, description, role)"]
+    N1["boundary<br/>UpdateUserProfileBoundary<br/><br/>+submit()"]
+    N2["control<br/>UpdateUserProfileController<br/><br/>+update()"]
+    N3["entity<br/>UserProfile<br/><br/>+update_profile(profile_id, name, description, role)"]
     N0 -->|"submit(profile_id, name, description, role)"| N1
     N1 -->|"update(...)"| N2
     N2 -->|"update_profile(...) including last active admin validation"| N3

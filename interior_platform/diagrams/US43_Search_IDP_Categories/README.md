@@ -5,9 +5,9 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>Platform Manager"]
-    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchIDPCategoryBoundary<br/><br/>+submit()"]
-    N2["&lt;&lt;control&gt;&gt;<br/>SearchIDPCategoryController<br/><br/>+search()"]
-    N3["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+search_categories(keyword)"]
+    N1["boundary<br/>SearchIDPCategoryBoundary<br/><br/>+submit()"]
+    N2["control<br/>SearchIDPCategoryController<br/><br/>+search()"]
+    N3["entity<br/>IDPCategory<br/><br/>+search_categories(keyword)"]
     N0 -->|"submit(keyword)"| N1
     N1 -->|"search(keyword)"| N2
     N2 -->|"search_categories(keyword)"| N3
