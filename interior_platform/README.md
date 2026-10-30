@@ -86,3 +86,7 @@ Use a clean branch or disposable copy and run:
 ```
 
 See `docs/tdd_evidence/README.md` for the five features and screenshot procedure.
+
+## 100 additional automated test cases
+
+A report-friendly register is available at `docs/testing/100_test_cases.md`. Run them with `run_100_tests.ps1`.

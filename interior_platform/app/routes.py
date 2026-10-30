@@ -48,6 +48,7 @@ REPORT_BOUNDARIES = {
 @bp.route("/")
 def home():
     projects = []
+    saved_ids = set()
     account_id = session.get("account_id")
     session_id = session.get("session_id")
     if account_id and session_id and Session.is_active(session_id):
@@ -55,11 +56,13 @@ def home():
         if access and access["account_status"] == "Active" and access["profile_status"] == "Active" and access["role"] == session.get("role"):
             if access["role"] == "Customer":
                 projects = SearchAvailableIDPBoundary().submit("")[:6]
+                saved_items = ViewSavedIDPBoundary().request(dict(session))
+                saved_ids = {item["project_id"] for item in saved_items}
             else:
                 projects = BrowseIDPBoundary().submit(dict(session), "")[:6]
         else:
             session.clear()
-    return render_template("home.html", projects=projects)
+    return render_template("home.html", projects=projects, saved_ids=saved_ids)
 
 
 @bp.route("/login", methods=["GET", "POST"])
