@@ -10,12 +10,16 @@ from .controllers import (
     DeleteCompanyInformationController,
     DeleteCurrentIDPController,
     DeletePastIDPController,
+    DeleteUserProfileController,
+    DeleteIDPCategoryController,
     GenerateDailyReportController,
     GenerateMonthlyReportController,
     GenerateWeeklyReportController,
     InteriorDesignerLogoutController,
     PlatformManagerLogoutController,
     SaveIDPController,
+    UnsaveIDPController,
+    CheckSavedIDPController,
     SearchAvailableIDPController,
     SearchCompanyInformationController,
     SearchCurrentIDPController,
@@ -25,8 +29,11 @@ from .controllers import (
     SearchUserAccountController,
     SearchUserProfileController,
     SuspendIDPCategoryController,
+    ReactivateIDPCategoryController,
     SuspendUserAccountController,
+    ReactivateUserAccountController,
     SuspendUserProfileController,
+    ReactivateUserProfileController,
     UpdateCompanyInformationController,
     UpdateCurrentIDPController,
     UpdateIDPCategoryController,
@@ -58,7 +65,11 @@ class LoginBoundary:
 
 class CreateUserProfileBoundary:
     def submit(self, form):
-        return CreateUserProfileController().create(form["name"], form.get("description", ""))
+        return CreateUserProfileController().create(
+            form["name"],
+            form.get("description", ""),
+            form["role"],
+        )
 
 
 class ViewUserProfileBoundary:
@@ -68,12 +79,27 @@ class ViewUserProfileBoundary:
 
 class UpdateUserProfileBoundary:
     def submit(self, profile_id, form):
-        return UpdateUserProfileController().update(profile_id, form["name"], form.get("description", ""))
+        return UpdateUserProfileController().update(
+            profile_id,
+            form["name"],
+            form.get("description", ""),
+            form["role"],
+        )
 
 
 class SuspendUserProfileBoundary:
     def submit(self, profile_id):
         return SuspendUserProfileController().suspend(profile_id)
+
+
+class ReactivateUserProfileBoundary:
+    def submit(self, profile_id):
+        return ReactivateUserProfileController().reactivate(profile_id)
+
+
+class DeleteUserProfileBoundary:
+    def submit(self, profile_id):
+        return DeleteUserProfileController().delete(profile_id)
 
 
 class SearchUserProfileBoundary:
@@ -113,6 +139,11 @@ class UpdateUserAccountBoundary:
 class SuspendUserAccountBoundary:
     def submit(self, account_id):
         return SuspendUserAccountController().suspend(account_id)
+
+
+class ReactivateUserAccountBoundary:
+    def submit(self, account_id):
+        return ReactivateUserAccountController().reactivate(account_id)
 
 
 class SearchUserAccountBoundary:
@@ -226,6 +257,16 @@ class SaveIDPBoundary:
         return SaveIDPController().save(_context(session_context), project_id)
 
 
+class UnsaveIDPBoundary:
+    def submit(self, session_context, project_id):
+        return UnsaveIDPController().unsave(_context(session_context), project_id)
+
+
+class CheckSavedIDPBoundary:
+    def request(self, session_context, project_id):
+        return CheckSavedIDPController().check(_context(session_context), project_id)
+
+
 class SearchSavedIDPBoundary:
     def submit(self, session_context, keyword=""):
         return SearchSavedIDPController().search(_context(session_context), keyword)
@@ -272,6 +313,16 @@ class UpdateIDPCategoryBoundary:
 class SuspendIDPCategoryBoundary:
     def submit(self, category_id):
         return SuspendIDPCategoryController().suspend(category_id)
+
+
+class ReactivateIDPCategoryBoundary:
+    def submit(self, category_id):
+        return ReactivateIDPCategoryController().reactivate(category_id)
+
+
+class DeleteIDPCategoryBoundary:
+    def submit(self, category_id):
+        return DeleteIDPCategoryController().delete(category_id)
 
 
 class SearchIDPCategoryBoundary:

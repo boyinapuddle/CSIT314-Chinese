@@ -8,8 +8,8 @@ with app.app_context():
     db=get_db()
     for table in ['activity_events','project_views','favourites','projects','companies','user_sessions','user_accounts','idp_categories','user_profiles']:
         db.execute(f'DELETE FROM {table}')
-    roles=[('User Admin','Manage user profiles and accounts'),('Interior Designer','Manage company and project portfolio'),('Customer','Explore and save IDPs'),('Platform Manager','Manage categories and reports')]
-    db.executemany('INSERT INTO user_profiles(name,description) VALUES(?,?)',roles)
+    roles=[('User Admin','Manage user profiles and accounts','User Admin'),('Interior Designer','Manage company and project portfolio','Interior Designer'),('Customer','Explore and save IDPs','Customer'),('Platform Manager','Manage categories and reports','Platform Manager')]
+    db.executemany('INSERT INTO user_profiles(name,description,role) VALUES(?,?,?)',roles)
     ids={r['name']:r['profile_id'] for r in db.execute('SELECT * FROM user_profiles')}
     accounts=[
       ('admin',generate_password_hash('Admin123!'),ids['User Admin'],'Avery Admin','admin@example.com'),

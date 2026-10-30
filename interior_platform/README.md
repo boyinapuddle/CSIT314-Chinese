@@ -1,6 +1,6 @@
 # Havenlyst Interior Design Project Platform
 
-This project implements the 48 supplied user stories with HTML, CSS and JavaScript on the frontend, Flask on the backend and SQLite for persistence.
+Havenlyst is an interior design project platform built with HTML, CSS and JavaScript on the frontend, Flask on the backend and SQLite for persistence.
 
 ## Run locally
 

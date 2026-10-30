@@ -1,6 +1,6 @@
 # Architecture and class inventory
 
-The application follows the Boundary Control Entity structure used in the supplied user stories and diagrams.
+The application follows a Boundary Control Entity structure for the documented use cases and sequence flows.
 
 ## Program flow
 
@@ -37,7 +37,7 @@ The main domain layer contains these Entity classes
 13. WeeklyReport
 14. MonthlyReport
 
-The persistence layer contains BaseRepository plus repositories for profiles, accounts, sessions, companies, categories, projects, favourites and activity events.
+The persistence layer contains BaseRepository plus repositories for profiles, accounts, sessions, companies, categories, projects, favourites and activity events. Additional control classes support profile reactivation, profile deletion, category reactivation, category deletion and removing saved projects without changing the original user story mappings.
 
 ## User story traceability
 
@@ -94,7 +94,7 @@ The persistence layer contains BaseRepository plus repositories for profiles, ac
 
 ## Login flow
 
-The login page submits only username and password to LoginBoundary. LoginBoundary calls AuthenticationController. AuthenticationController asks UserAccount for the account, verifies that the account is active, asks UserAccount to verify the password, and asks UserProfile for the linked profile. The active profile name determines the role on the server. AuthenticationController then delegates the verified account and profile to the matching role specific login Controller. That Controller asks UserSession to create the authenticated session. The route stores the returned account identifier, role, display name and session identifier in the Flask session and redirects to the dashboard.
+The login page submits only username and password to LoginBoundary. LoginBoundary calls AuthenticationController. AuthenticationController asks UserAccount for the account, verifies that the account is active, asks UserAccount to verify the password, and asks UserProfile for the linked profile. The active profile role determines the role on the server. AuthenticationController then delegates the verified account and profile to the matching role specific login Controller. That Controller asks UserSession to create the authenticated session. The route stores the returned account identifier, role, display name and session identifier in the Flask session and redirects to the dashboard.
 
 The browser does not submit a role. The role is trusted only after it is read from the linked UserProfile in the database.
 

@@ -17,7 +17,16 @@
             <h3>Create profile</h3>
             <label>
                 Profile name
-                <input name="name" required placeholder="e.g. Customer">
+                <input name="name" required placeholder="e.g. Customer Standard">
+            </label>
+            <label>
+                Role
+                <select name="role" required>
+                    <option value="User Admin">User Admin</option>
+                    <option value="Interior Designer">Interior Designer</option>
+                    <option value="Customer" selected>Customer</option>
+                    <option value="Platform Manager">Platform Manager</option>
+                </select>
             </label>
             <label>
                 Description
@@ -31,6 +40,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Role</th>
                         <th>Description</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -40,6 +50,7 @@
                     {% for x in items %}
                     <tr>
                         <td>{{ x.name }}</td>
+                        <td>{{ x.role }}</td>
                         <td>{{ x.description }}</td>
                         <td><span class="status {{ x.status|lower }}">{{ x.status }}</span></td>
                         <td>
@@ -48,13 +59,26 @@
                             <form class="inline" method="post" action="{{ url_for('main.suspend_profile', profile_id=x.profile_id) }}">
                                 <button class="link danger">Suspend</button>
                             </form>
+                            {% else %}
+                            <form class="inline" method="post" action="{{ url_for('main.reactivate_profile', profile_id=x.profile_id) }}">
+                                <button class="link">Reactivate</button>
+                            </form>
                             {% endif %}
+                            <form class="inline" method="post" action="{{ url_for('main.delete_profile', profile_id=x.profile_id) }}" onsubmit="return confirm('Delete this profile? This is only allowed when no accounts use it.')">
+                                <button class="link danger">Delete</button>
+                            </form>
                         </td>
                     </tr>
                     <tr id="profile-{{ x.profile_id }}" class="edit-row hidden">
-                        <td colspan="4">
+                        <td colspan="5">
                             <form class="inline-edit" method="post" action="{{ url_for('main.edit_profile', profile_id=x.profile_id) }}">
-                                <input name="name" value="{{ x.name }}">
+                                <input name="name" value="{{ x.name }}" required>
+                                <select name="role" required>
+                                    <option value="User Admin" {% if x.role == 'User Admin' %}selected{% endif %}>User Admin</option>
+                                    <option value="Interior Designer" {% if x.role == 'Interior Designer' %}selected{% endif %}>Interior Designer</option>
+                                    <option value="Customer" {% if x.role == 'Customer' %}selected{% endif %}>Customer</option>
+                                    <option value="Platform Manager" {% if x.role == 'Platform Manager' %}selected{% endif %}>Platform Manager</option>
+                                </select>
                                 <input name="description" value="{{ x.description }}">
                                 <button class="btn small">Save</button>
                             </form>

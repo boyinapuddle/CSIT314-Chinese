@@ -1,3 +1,4 @@
+import sqlite3
 from datetime import datetime
 from .database import get_db
 
@@ -30,16 +31,30 @@ class ProfileRepository(BaseRepository):
     def get(self, profile_id):
         return self.one("SELECT * FROM user_profiles WHERE profile_id=?", (profile_id,))
 
-    def create(self, name, description):
-        return self.execute(
-            "INSERT INTO user_profiles(name,description) VALUES (?,?)",
-            (name, description),
-        ).lastrowid
+    def find_by_name(self, name, exclude_profile_id=None):
+        if exclude_profile_id is None:
+            return self.one(
+                "SELECT * FROM user_profiles WHERE lower(name)=lower(?)",
+                (name,),
+            )
+        return self.one(
+            "SELECT * FROM user_profiles WHERE lower(name)=lower(?) AND profile_id<>?",
+            (name, exclude_profile_id),
+        )
 
-    def update(self, profile_id, name, description):
+    def create(self, name, description, role):
+        try:
+            return self.execute(
+                "INSERT INTO user_profiles(name,description,role) VALUES (?,?,?)",
+                (name, description, role),
+            ).lastrowid
+        except sqlite3.IntegrityError as error:
+            raise ValueError("A profile with this name already exists.") from error
+
+    def update(self, profile_id, name, description, role):
         return self.execute(
-            "UPDATE user_profiles SET name=?,description=? WHERE profile_id=?",
-            (name, description, profile_id),
+            "UPDATE user_profiles SET name=?,description=?,role=? WHERE profile_id=?",
+            (name, description, role, profile_id),
         ).rowcount
 
     def suspend(self, profile_id):
@@ -48,32 +63,60 @@ class ProfileRepository(BaseRepository):
             (profile_id,),
         ).rowcount
 
+    def reactivate(self, profile_id):
+        return self.execute(
+            "UPDATE user_profiles SET status='Active' WHERE profile_id=? AND status='Suspended'",
+            (profile_id,),
+        ).rowcount
+
+    def account_count(self, profile_id):
+        row = self.one(
+            "SELECT COUNT(*) count FROM user_accounts WHERE profile_id=?",
+            (profile_id,),
+        )
+        return row["count"]
+
+    def delete(self, profile_id):
+        return self.execute(
+            "DELETE FROM user_profiles WHERE profile_id=?",
+            (profile_id,),
+        ).rowcount
+
 
 class AccountRepository(BaseRepository):
     def search(self, keyword=""):
         value = f"%{keyword}%"
         return self.all(
-            "SELECT a.*,p.name role FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.username LIKE ? OR a.display_name LIKE ? OR a.email LIKE ? ORDER BY a.account_id DESC",
+            "SELECT a.*,p.name profile_name,p.role role FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.username LIKE ? OR a.display_name LIKE ? OR a.email LIKE ? ORDER BY a.account_id DESC",
             (value, value, value),
         )
 
     def get(self, account_id):
         return self.one(
-            "SELECT a.*,p.name role,p.status profile_status FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.account_id=?",
+            "SELECT a.*,p.name profile_name,p.role role,p.status profile_status FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.account_id=?",
             (account_id,),
         )
 
     def by_username(self, username):
         return self.one(
-            "SELECT a.*,p.name role,p.status profile_status FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.username=?",
+            "SELECT a.*,p.name profile_name,p.role role,p.status profile_status FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.username=?",
             (username,),
         )
 
+    def access_state(self, account_id):
+        return self.one(
+            "SELECT a.status account_status,p.status profile_status,p.role role FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.account_id=?",
+            (account_id,),
+        )
+
     def create(self, username, password_hash, profile_id, display_name, email):
-        return self.execute(
-            "INSERT INTO user_accounts(username,password_hash,profile_id,display_name,email) VALUES(?,?,?,?,?)",
-            (username, password_hash, profile_id, display_name, email),
-        ).lastrowid
+        try:
+            return self.execute(
+                "INSERT INTO user_accounts(username,password_hash,profile_id,display_name,email) VALUES(?,?,?,?,?)",
+                (username, password_hash, profile_id, display_name, email),
+            ).lastrowid
+        except sqlite3.IntegrityError as error:
+            raise ValueError("This username is already in use.") from error
 
     def update(self, account_id, display_name, email, profile_id):
         return self.execute(
@@ -86,6 +129,23 @@ class AccountRepository(BaseRepository):
             "UPDATE user_accounts SET status='Suspended' WHERE account_id=? AND status='Active'",
             (account_id,),
         ).rowcount
+
+    def reactivate(self, account_id):
+        return self.execute(
+            "UPDATE user_accounts SET status='Active' WHERE account_id=? AND status='Suspended'",
+            (account_id,),
+        ).rowcount
+
+    def active_admin_count(self, exclude_account_id=None, exclude_profile_id=None):
+        sql = "SELECT COUNT(*) count FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.status='Active' AND p.status='Active' AND p.role='User Admin'"
+        args = []
+        if exclude_account_id is not None:
+            sql += " AND a.account_id<>?"
+            args.append(exclude_account_id)
+        if exclude_profile_id is not None:
+            sql += " AND a.profile_id<>?"
+            args.append(exclude_profile_id)
+        return self.one(sql, tuple(args))["count"]
 
 
 class SessionRepository(BaseRepository):
@@ -165,6 +225,25 @@ class CategoryRepository(BaseRepository):
             (category_id,),
         ).rowcount
 
+    def reactivate(self, category_id):
+        return self.execute(
+            "UPDATE idp_categories SET status='Active' WHERE category_id=? AND status='Suspended'",
+            (category_id,),
+        ).rowcount
+
+    def project_count(self, category_id):
+        row = self.one(
+            "SELECT COUNT(*) count FROM projects WHERE category_id=?",
+            (category_id,),
+        )
+        return row["count"]
+
+    def delete(self, category_id):
+        return self.execute(
+            "DELETE FROM idp_categories WHERE category_id=?",
+            (category_id,),
+        ).rowcount
+
 
 class ProjectRepository(BaseRepository):
     BASE = "SELECT p.*,c.name category_name,c.status category_status,a.display_name designer_name,co.name company_name,CASE WHEN p.visible=1 AND c.status='Active' THEN 1 ELSE 0 END available,(SELECT COUNT(*) FROM project_views v WHERE v.project_id=p.project_id) views,(SELECT COUNT(*) FROM favourites f WHERE f.project_id=p.project_id) shortlists FROM projects p JOIN idp_categories c ON c.category_id=p.category_id JOIN user_accounts a ON a.account_id=p.designer_id LEFT JOIN companies co ON co.designer_id=p.designer_id"
@@ -238,10 +317,22 @@ class ProjectRepository(BaseRepository):
 
 
 class FavouriteRepository(BaseRepository):
+    def exists(self, customer_id, project_id):
+        return self.one(
+            "SELECT favourite_id FROM favourites WHERE customer_id=? AND project_id=?",
+            (customer_id, project_id),
+        ) is not None
+
     def add_available(self, customer_id, project_id):
         return self.execute(
             "INSERT OR IGNORE INTO favourites(customer_id,project_id,saved_at) SELECT ?,p.project_id,? FROM projects p JOIN idp_categories c ON c.category_id=p.category_id WHERE p.project_id=? AND p.visible=1 AND c.status='Active'",
             (customer_id, datetime.utcnow().isoformat(), project_id),
+        ).rowcount
+
+    def remove(self, customer_id, project_id):
+        return self.execute(
+            "DELETE FROM favourites WHERE customer_id=? AND project_id=?",
+            (customer_id, project_id),
         ).rowcount
 
     def search(self, customer_id, keyword=""):

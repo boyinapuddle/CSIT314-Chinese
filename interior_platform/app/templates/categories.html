@@ -34,12 +34,19 @@
                     <form class="inline" method="post" action="{{ url_for('main.suspend_category', category_id=c.category_id) }}">
                         <button class="link danger">Suspend</button>
                     </form>
+                    {% else %}
+                    <form class="inline" method="post" action="{{ url_for('main.reactivate_category', category_id=c.category_id) }}">
+                        <button class="link">Reactivate</button>
+                    </form>
                     {% endif %}
+                    <form class="inline" method="post" action="{{ url_for('main.delete_category', category_id=c.category_id) }}" onsubmit="return confirm('Delete this category? This is only allowed when no projects use it.')">
+                        <button class="link danger">Delete</button>
+                    </form>
                 </div>
             </article>
             <form id="cat-{{ c.category_id }}" class="inline-edit panel hidden" method="post" action="{{ url_for('main.edit_category', category_id=c.category_id) }}">
-                <input name="name" value="{{ c.name }}">
-                <input name="description" value="{{ c.description }}">
+                <input name="name" value="{{ c.name }}" required>
+                <input name="description" value="{{ c.description }}" required>
                 <button class="btn small">Save</button>
             </form>
             {% endfor %}

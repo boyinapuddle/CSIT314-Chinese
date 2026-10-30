@@ -9,6 +9,7 @@ class UserProfile:
     profile_id: Optional[int]
     name: str
     description: str
+    role: str
     status: str = "Active"
 
     @classmethod
@@ -22,19 +23,65 @@ class UserProfile:
         return ProfileRepository().search(keyword)
 
     @classmethod
-    def create_profile(cls, name, description=""):
+    def create_profile(cls, name, description="", role="Customer"):
         from .repositories import ProfileRepository
-        return ProfileRepository().create(name.strip(), description.strip())
+        repository = ProfileRepository()
+        name = name.strip()
+        allowed_roles = {"User Admin", "Interior Designer", "Customer", "Platform Manager"}
+        if not name:
+            raise ValueError("Profile name is required.")
+        if role not in allowed_roles:
+            raise ValueError("Invalid profile role.")
+        if repository.find_by_name(name):
+            raise ValueError("A profile with this name already exists.")
+        return repository.create(name, description.strip(), role)
 
     @classmethod
-    def update_profile(cls, profile_id, name, description=""):
-        from .repositories import ProfileRepository
-        return ProfileRepository().update(profile_id, name.strip(), description.strip())
+    def update_profile(cls, profile_id, name, description="", role="Customer"):
+        from .repositories import AccountRepository, ProfileRepository
+        repository = ProfileRepository()
+        current = repository.get(profile_id)
+        name = name.strip()
+        allowed_roles = {"User Admin", "Interior Designer", "Customer", "Platform Manager"}
+        if not current:
+            raise ValueError("Profile not found.")
+        if not name:
+            raise ValueError("Profile name is required.")
+        if role not in allowed_roles:
+            raise ValueError("Invalid profile role.")
+        if repository.find_by_name(name, profile_id):
+            raise ValueError("A profile with this name already exists.")
+        if current["role"] == "User Admin" and role != "User Admin" and current["status"] == "Active":
+            if AccountRepository().active_admin_count(exclude_profile_id=profile_id) == 0:
+                raise ValueError("This role cannot be changed because it would leave no active User Admin account.")
+        return repository.update(profile_id, name, description.strip(), role)
 
     @classmethod
     def suspend_profile(cls, profile_id):
-        from .repositories import ProfileRepository
+        from .repositories import AccountRepository, ProfileRepository
+        profile = ProfileRepository().get(profile_id)
+        if not profile:
+            raise ValueError("Profile not found.")
+        if profile["role"] == "User Admin" and profile["status"] == "Active":
+            if AccountRepository().active_admin_count(exclude_profile_id=profile_id) == 0:
+                raise ValueError("This profile cannot be suspended because it would leave no active User Admin account.")
         return ProfileRepository().suspend(profile_id)
+
+    @classmethod
+    def reactivate_profile(cls, profile_id):
+        from .repositories import ProfileRepository
+        return ProfileRepository().reactivate(profile_id)
+
+    @classmethod
+    def delete_profile(cls, profile_id):
+        from .repositories import ProfileRepository
+        repository = ProfileRepository()
+        profile = repository.get(profile_id)
+        if not profile:
+            raise ValueError("Profile not found.")
+        if repository.account_count(profile_id) > 0:
+            raise ValueError("This profile is assigned to one or more user accounts. Reassign those accounts before deleting it.")
+        return repository.delete(profile_id)
 
 
 @dataclass
@@ -71,8 +118,18 @@ class UserAccount:
 
     @classmethod
     def update_account(cls, account_id, display_name, email, profile_id):
-        from .repositories import AccountRepository
-        return AccountRepository().update(
+        from .repositories import AccountRepository, ProfileRepository
+        repository = AccountRepository()
+        account = repository.get(account_id)
+        target_profile = ProfileRepository().get(profile_id)
+        if not account:
+            raise ValueError("Account not found.")
+        if not target_profile:
+            raise ValueError("Profile not found.")
+        if account["role"] == "User Admin" and target_profile["role"] != "User Admin" and account["status"] == "Active":
+            if repository.active_admin_count(exclude_account_id=account_id) == 0:
+                raise ValueError("This account cannot be moved to a non admin profile because it is the last active User Admin account.")
+        return repository.update(
             account_id,
             display_name.strip(),
             email.strip(),
@@ -82,12 +139,33 @@ class UserAccount:
     @classmethod
     def suspend_account(cls, account_id):
         from .repositories import AccountRepository
-        return AccountRepository().suspend(account_id)
+        repository = AccountRepository()
+        account = repository.get(account_id)
+        if not account:
+            raise ValueError("Account not found.")
+        if account["role"] == "User Admin" and account["status"] == "Active":
+            if repository.active_admin_count(exclude_account_id=account_id) == 0:
+                raise ValueError("This account cannot be suspended because it is the last active User Admin account.")
+        return repository.suspend(account_id)
+
+    @classmethod
+    def reactivate_account(cls, account_id):
+        from .repositories import AccountRepository
+        repository = AccountRepository()
+        account = repository.get(account_id)
+        if not account:
+            raise ValueError("Account not found.")
+        return repository.reactivate(account_id)
 
     @classmethod
     def find_by_username(cls, username):
         from .repositories import AccountRepository
         return AccountRepository().by_username(username)
+
+    @classmethod
+    def access_state(cls, account_id):
+        from .repositories import AccountRepository
+        return AccountRepository().access_state(account_id)
 
     @classmethod
     def verify_password(cls, account, password):
@@ -283,6 +361,19 @@ class Favourite:
         from .repositories import FavouriteRepository
         return FavouriteRepository().search(customer_id, "")
 
+    @classmethod
+    def remove_project(cls, customer_id, project_id):
+        from .repositories import FavouriteRepository, ActivityRepository
+        removed = FavouriteRepository().remove(customer_id, project_id)
+        if removed:
+            ActivityRepository().log("project_unshortlisted", customer_id, project_id)
+        return bool(removed)
+
+    @classmethod
+    def is_saved(cls, customer_id, project_id):
+        from .repositories import FavouriteRepository
+        return FavouriteRepository().exists(customer_id, project_id)
+
 
 @dataclass
 class IDPCategory:
@@ -315,6 +406,22 @@ class IDPCategory:
     def suspend_category(cls, category_id):
         from .repositories import CategoryRepository
         return CategoryRepository().suspend(category_id)
+
+    @classmethod
+    def reactivate_category(cls, category_id):
+        from .repositories import CategoryRepository
+        return CategoryRepository().reactivate(category_id)
+
+    @classmethod
+    def delete_category(cls, category_id):
+        from .repositories import CategoryRepository
+        repository = CategoryRepository()
+        category = repository.get(category_id)
+        if not category:
+            raise ValueError("Category not found.")
+        if repository.project_count(category_id) > 0:
+            raise ValueError("This category is used by one or more projects. Suspend it instead of deleting it.")
+        return repository.delete(category_id)
 
     @classmethod
     def search_categories(cls, keyword=""):

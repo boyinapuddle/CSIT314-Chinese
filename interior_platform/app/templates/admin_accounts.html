@@ -21,9 +21,9 @@
             <label>Email<input type="email" name="email" required></label>
             <label>
                 Profile
-                <select name="profile_id">
+                <select name="profile_id" required>
                     {% for p in profiles if p.status == 'Active' %}
-                    <option value="{{ p.profile_id }}">{{ p.name }}</option>
+                    <option value="{{ p.profile_id }}">{{ p.name }}{% if p.name != p.role %} · {{ p.role }}{% endif %}</option>
                     {% endfor %}
                 </select>
             </label>
@@ -36,6 +36,7 @@
                     <tr>
                         <th>User</th>
                         <th>Profile</th>
+                        <th>Role</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -43,10 +44,8 @@
                 <tbody>
                     {% for x in items %}
                     <tr>
-                        <td>
-                            <b>{{ x.display_name }}</b><br>
-                            <small>{{ x.username }} · {{ x.email }}</small>
-                        </td>
+                        <td><b>{{ x.display_name }}</b><br><small>{{ x.username }} · {{ x.email }}</small></td>
+                        <td>{{ x.profile_name }}</td>
                         <td>{{ x.role }}</td>
                         <td><span class="status {{ x.status|lower }}">{{ x.status }}</span></td>
                         <td>
@@ -55,17 +54,21 @@
                             <form class="inline" method="post" action="{{ url_for('main.suspend_account', account_id=x.account_id) }}">
                                 <button class="link danger">Suspend</button>
                             </form>
+                            {% else %}
+                            <form class="inline" method="post" action="{{ url_for('main.reactivate_account', account_id=x.account_id) }}">
+                                <button class="link">Reactivate</button>
+                            </form>
                             {% endif %}
                         </td>
                     </tr>
                     <tr id="account-{{ x.account_id }}" class="edit-row hidden">
-                        <td colspan="4">
+                        <td colspan="5">
                             <form class="inline-edit" method="post" action="{{ url_for('main.edit_account', account_id=x.account_id) }}">
-                                <input name="display_name" value="{{ x.display_name }}">
-                                <input name="email" value="{{ x.email }}">
-                                <select name="profile_id">
-                                    {% for p in profiles %}
-                                    <option value="{{ p.profile_id }}" {% if p.profile_id == x.profile_id %}selected{% endif %}>{{ p.name }}</option>
+                                <input name="display_name" value="{{ x.display_name }}" required>
+                                <input name="email" value="{{ x.email }}" required>
+                                <select name="profile_id" required>
+                                    {% for p in profiles if p.status == 'Active' or p.profile_id == x.profile_id %}
+                                    <option value="{{ p.profile_id }}" {% if p.profile_id == x.profile_id %}selected{% endif %}>{{ p.name }}{% if p.name != p.role %} · {{ p.role }}{% endif %}</option>
                                     {% endfor %}
                                 </select>
                                 <button class="btn small">Save</button>

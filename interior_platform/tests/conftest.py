@@ -14,12 +14,12 @@ def app():
     with app.app_context():
         db = get_db()
         db.executemany(
-            "INSERT INTO user_profiles(name,description) VALUES(?,?)",
+            "INSERT INTO user_profiles(name,description,role) VALUES(?,?,?)",
             [
-                ("User Admin", ""),
-                ("Customer", ""),
-                ("Interior Designer", ""),
-                ("Platform Manager", ""),
+                ("User Admin", "", "User Admin"),
+                ("Customer", "", "Customer"),
+                ("Interior Designer", "", "Interior Designer"),
+                ("Platform Manager", "", "Platform Manager"),
             ],
         )
         profile_id = db.execute(

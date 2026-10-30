@@ -7,6 +7,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS user_profiles (
  profile_id INTEGER PRIMARY KEY AUTOINCREMENT,
  name TEXT UNIQUE NOT NULL, description TEXT NOT NULL DEFAULT '',
+ role TEXT NOT NULL DEFAULT 'Customer' CHECK(role IN ('User Admin','Interior Designer','Customer','Platform Manager')),
  status TEXT NOT NULL DEFAULT 'Active' CHECK(status IN ('Active','Suspended'))
 );
 CREATE TABLE IF NOT EXISTS user_accounts (
@@ -74,6 +75,10 @@ def close_db(_e=None):
 def init_db():
     db = get_db()
     db.executescript(SCHEMA)
+    columns = {row["name"] for row in db.execute("PRAGMA table_info(user_profiles)")}
+    if "role" not in columns:
+        db.execute("ALTER TABLE user_profiles ADD COLUMN role TEXT NOT NULL DEFAULT 'Customer'")
+        db.execute("UPDATE user_profiles SET role=name WHERE name IN ('User Admin','Interior Designer','Customer','Platform Manager')")
     db.commit()
 
 def init_app(app):

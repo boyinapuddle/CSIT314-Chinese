@@ -1,3 +1,82 @@
-{% extends 'base.html' %}{% block content %}<section class="hero"><div><p class="eyebrow">INTERIOR DESIGN, SIMPLIFIED</p><h1>Discover spaces worth coming home to.</h1><p>Explore interior design projects, follow their progress, and shortlist ideas from participating designers.</p><div class="hero-actions">{% if session.get('role')=='Customer' %}<a class="btn light" href="{{url_for('main.projects')}}">Explore IDPs</a>{% else %}<a class="btn light" href="{{url_for('main.login')}}">Get started</a>{% endif %}</div></div><div class="hero-art"><div class="arch"></div><div class="room-card"><span>Curated inspiration</span><strong>Modern · Warm · Practical</strong></div></div></section>
-<section class="section"><div class="section-head"><div><p class="eyebrow dark">PROJECT DISCOVERY</p><h2>Featured interior design projects</h2></div>{% if session.get('role')=='Customer' %}<a href="{{url_for('main.projects')}}">View all →</a>{% endif %}</div><div class="cards">{% for p in projects %}<article class="project-card"><div class="project-image" style="background-image:url('{{p.image_url}}')"><span>{{p.project_status}}</span></div><div class="card-body"><div class="meta">{{p.category_name}} · {{p.progress}}% complete</div><h3>{{p.title}}</h3><p>{{p.description}}</p><small>{{p.company_name or p.designer_name}}</small></div></article>{% else %}<div class="empty">Customer project discovery is available after login.</div>{% endfor %}</div></section>
-<section class="benefits"><div><strong>01</strong><h3>Browse projects</h3><p>Search current and completed projects by title, description and category.</p></div><div><strong>02</strong><h3>Save inspiration</h3><p>Customers can shortlist projects into their own favourite list.</p></div><div><strong>03</strong><h3>Track interest</h3><p>Designers can monitor project views and shortlist counts.</p></div></section>{% endblock %}
+{% extends 'base.html' %} {% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">INTERIOR DESIGN, SIMPLIFIED</p>
+    <h1>Discover spaces worth coming home to.</h1>
+    <p>
+      Explore interior design projects, follow their progress, and find ideas
+      from participating designers.
+    </p>
+    <div class="hero-actions">
+      {% if session.get('account_id') %}
+      <a class="btn light" href="{{ url_for('main.projects') }}"
+        >Explore IDPs</a
+      >
+      {% else %}
+      <a class="btn light" href="{{ url_for('main.login') }}">Get started</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero-art">
+    <div class="arch"></div>
+    <div class="room-card">
+      <span>Curated inspiration</span><strong>Modern · Warm · Practical</strong>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow dark">PROJECT DISCOVERY</p>
+      <h2>Featured interior design projects</h2>
+    </div>
+    {% if session.get('account_id') %}<a href="{{ url_for('main.projects') }}"
+      >View all →</a
+    >{% endif %}
+  </div>
+  <div class="cards">
+    {% for p in projects %}
+    <article class="project-card">
+      <a href="{{ url_for('main.project_detail', project_id=p.project_id) }}">
+        <div class="project-image" data-bg="{{ p.image_url }}">
+          <span>{{ p.project_status }}</span>
+        </div>
+      </a>
+      <div class="card-body">
+        <div class="meta">
+          {{ p.category_name }} · {{ p.progress }}% complete
+        </div>
+        <h3>{{ p.title }}</h3>
+        <p>{{ p.description }}</p>
+        <small>{{ p.company_name or p.designer_name }}</small>
+      </div>
+    </article>
+    {% else %}
+    <div class="empty">
+      {% if session.get('account_id') %}No projects are currently available.{%
+      else %}Log in to explore available projects.{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+<section class="benefits">
+  <div>
+    <strong>01</strong>
+    <h3>Browse projects</h3>
+    <p>
+      Authenticated users can search current and completed projects by title,
+      description and category.
+    </p>
+  </div>
+  <div>
+    <strong>02</strong>
+    <h3>Save inspiration</h3>
+    <p>Customers can shortlist projects into their own favourite list.</p>
+  </div>
+  <div>
+    <strong>03</strong>
+    <h3>Track interest</h3>
+    <p>Designers can monitor customer project views and shortlist counts.</p>
+  </div>
+</section>
+{% endblock %}

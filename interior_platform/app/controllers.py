@@ -36,7 +36,7 @@ class AuthenticationController:
         profile = UserProfile.get_profile(account["profile_id"])
         if not profile or profile["status"] != "Active":
             return None
-        controller_class = ROLE_LOGIN_CONTROLLERS.get(profile["name"])
+        controller_class = ROLE_LOGIN_CONTROLLERS.get(profile["role"])
         if not controller_class:
             return None
         return controller_class().complete_login(account, profile)
@@ -46,15 +46,15 @@ class RoleLoginControllerBase:
     role = ""
 
     def complete_login(self, account, profile):
-        if profile["name"] != self.role:
+        if profile["role"] != self.role:
             return None
         session_id = UserSession.create_session(account["account_id"], self.role)
         return account, session_id
 
 
 class CreateUserProfileController:
-    def create(self, name, description=""):
-        return UserProfile.create_profile(name, description)
+    def create(self, name, description="", role="Customer"):
+        return UserProfile.create_profile(name, description, role)
 
 
 class ViewUserProfileController:
@@ -63,13 +63,23 @@ class ViewUserProfileController:
 
 
 class UpdateUserProfileController:
-    def update(self, profile_id, name, description=""):
-        return UserProfile.update_profile(profile_id, name, description)
+    def update(self, profile_id, name, description="", role="Customer"):
+        return UserProfile.update_profile(profile_id, name, description, role)
 
 
 class SuspendUserProfileController:
     def suspend(self, profile_id):
         return UserProfile.suspend_profile(profile_id)
+
+
+class ReactivateUserProfileController:
+    def reactivate(self, profile_id):
+        return UserProfile.reactivate_profile(profile_id)
+
+
+class DeleteUserProfileController:
+    def delete(self, profile_id):
+        return UserProfile.delete_profile(profile_id)
 
 
 class SearchUserProfileController:
@@ -98,6 +108,11 @@ class UpdateUserAccountController:
 class SuspendUserAccountController:
     def suspend(self, account_id):
         return UserAccount.suspend_account(account_id)
+
+
+class ReactivateUserAccountController:
+    def reactivate(self, account_id):
+        return UserAccount.reactivate_account(account_id)
 
 
 class SearchUserAccountController:
@@ -232,10 +247,11 @@ class SearchAvailableIDPController:
 
 class ViewAvailableIDPController:
     def view(self, session_context, project_id):
-        customer_id = _account_id(session_context)
+        account_id = _account_id(session_context)
+        role = session_context.get("role")
         project = IDP.get_available_project(project_id)
-        if project:
-            IDP.record_view(project_id, customer_id)
+        if project and role == "Customer":
+            IDP.record_view(project_id, account_id)
             project = IDP.get_available_project(project_id)
         return project
 
@@ -244,6 +260,18 @@ class SaveIDPController:
     def save(self, session_context, project_id):
         customer_id = _account_id(session_context)
         return Favourite.save_project(customer_id, project_id)
+
+
+class UnsaveIDPController:
+    def unsave(self, session_context, project_id):
+        customer_id = _account_id(session_context)
+        return Favourite.remove_project(customer_id, project_id)
+
+
+class CheckSavedIDPController:
+    def check(self, session_context, project_id):
+        customer_id = _account_id(session_context)
+        return Favourite.is_saved(customer_id, project_id)
 
 
 class SearchSavedIDPController:
@@ -303,6 +331,16 @@ class UpdateIDPCategoryController:
 class SuspendIDPCategoryController:
     def suspend(self, category_id):
         return IDPCategory.suspend_category(category_id)
+
+
+class ReactivateIDPCategoryController:
+    def reactivate(self, category_id):
+        return IDPCategory.reactivate_category(category_id)
+
+
+class DeleteIDPCategoryController:
+    def delete(self, category_id):
+        return IDPCategory.delete_category(category_id)
 
 
 class SearchIDPCategoryController:
