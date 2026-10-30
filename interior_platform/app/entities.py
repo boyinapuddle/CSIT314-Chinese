@@ -4,6 +4,10 @@ from typing import Optional
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
+def _clean_spaces(value):
+    return " ".join(value.split())
+
+
 @dataclass
 class UserProfile:
     profile_id: Optional[int]
@@ -26,7 +30,7 @@ class UserProfile:
     def create_profile(cls, name, description="", role="Customer"):
         from .repositories import ProfileRepository
         repository = ProfileRepository()
-        name = name.strip()
+        name = _clean_spaces(name)
         allowed_roles = {"User Admin", "Interior Designer", "Customer", "Platform Manager"}
         if not name:
             raise ValueError("Profile name is required.")
@@ -41,7 +45,7 @@ class UserProfile:
         from .repositories import AccountRepository, ProfileRepository
         repository = ProfileRepository()
         current = repository.get(profile_id)
-        name = name.strip()
+        name = _clean_spaces(name)
         allowed_roles = {"User Admin", "Interior Designer", "Customer", "Platform Manager"}
         if not current:
             raise ValueError("Profile not found.")
@@ -106,7 +110,10 @@ class UserAccount:
 
     @classmethod
     def create_account(cls, username, password, profile_id, display_name, email):
-        from .repositories import AccountRepository
+        from .repositories import AccountRepository, ProfileRepository
+        profile = ProfileRepository().get(profile_id)
+        if not profile or profile["status"] != "Active":
+            raise ValueError("An active profile is required to create an account.")
         password_hash = generate_password_hash(password)
         return AccountRepository().create(
             username.strip(),
@@ -385,7 +392,11 @@ class IDPCategory:
     @classmethod
     def create_category(cls, name, description=""):
         from .repositories import CategoryRepository
-        return CategoryRepository().create(name.strip(), description.strip())
+        repository = CategoryRepository()
+        name = _clean_spaces(name)
+        if repository.find_by_name(name):
+            raise ValueError("A category with this name already exists.")
+        return repository.create(name, description.strip())
 
     @classmethod
     def get_category(cls, category_id):
@@ -400,7 +411,7 @@ class IDPCategory:
     @classmethod
     def update_category(cls, category_id, name, description=""):
         from .repositories import CategoryRepository
-        return CategoryRepository().update(category_id, name.strip(), description.strip())
+        return CategoryRepository().update(category_id, _clean_spaces(name), description.strip())
 
     @classmethod
     def suspend_category(cls, category_id):

@@ -244,11 +244,11 @@ class ViewAvailableIDPBoundary:
 
 
 class BrowseIDPBoundary:
-    def submit(self, keyword=""):
-        return BrowseIDPController().search(keyword)
+    def submit(self, session_context, keyword=""):
+        return BrowseIDPController().search(_context(session_context), keyword)
 
-    def request(self, project_id):
-        return BrowseIDPController().view(project_id)
+    def request(self, session_context, project_id):
+        return BrowseIDPController().view(_context(session_context), project_id)
 
 
 class SaveIDPBoundary:

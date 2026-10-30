@@ -207,6 +207,12 @@ class CategoryRepository(BaseRepository):
     def get(self, category_id):
         return self.one("SELECT * FROM idp_categories WHERE category_id=?", (category_id,))
 
+    def find_by_name(self, name):
+        return self.one(
+            "SELECT * FROM idp_categories WHERE lower(name)=lower(?)",
+            (name,),
+        )
+
     def create(self, name, description):
         return self.execute(
             "INSERT INTO idp_categories(name,description) VALUES(?,?)",

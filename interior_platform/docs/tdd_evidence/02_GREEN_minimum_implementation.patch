@@ -1,0 +1,141 @@
+diff -ruN /tmp/tdd_red/app/boundaries.py /tmp/tdd_green/app/boundaries.py
+--- /tmp/tdd_red/app/boundaries.py	2026-10-30 09:18:41.000000000 +0000
++++ /tmp/tdd_green/app/boundaries.py	2026-10-30 09:51:31.797580843 +0000
+@@ -244,11 +244,11 @@
+ 
+ 
+ class BrowseIDPBoundary:
+-    def submit(self, keyword=""):
+-        return BrowseIDPController().search(keyword)
++    def submit(self, session_context, keyword=""):
++        return BrowseIDPController().search(_context(session_context), keyword)
+ 
+-    def request(self, project_id):
+-        return BrowseIDPController().view(project_id)
++    def request(self, session_context, project_id):
++        return BrowseIDPController().view(_context(session_context), project_id)
+ 
+ 
+ class SaveIDPBoundary:
+diff -ruN /tmp/tdd_red/app/controllers.py /tmp/tdd_green/app/controllers.py
+--- /tmp/tdd_red/app/controllers.py	2026-10-30 09:18:41.000000000 +0000
++++ /tmp/tdd_green/app/controllers.py	2026-10-30 09:51:31.797529585 +0000
+@@ -252,23 +252,33 @@
+ 
+ 
+ class BrowseIDPController:
+-    def search(self, keyword=""):
++    def search(self, session_context, keyword=""):
++        if session_context.get("role") == "Customer":
++            raise PermissionError("This browse flow is for non customer users only.")
+         return IDP.search_available_projects(keyword)
+ 
+-    def view(self, project_id):
++    def view(self, session_context, project_id):
++        if session_context.get("role") == "Customer":
++            raise PermissionError("This browse flow is for non customer users only.")
+         return IDP.get_available_project(project_id)
+ 
+ 
+ class SaveIDPController:
+     def save(self, session_context, project_id):
++        if session_context.get("role") != "Customer":
++            raise PermissionError("Customer access is required.")
+         customer_id = _account_id(session_context)
+         return Favourite.save_project(customer_id, project_id)
+ 
+     def unsave(self, session_context, project_id):
++        if session_context.get("role") != "Customer":
++            raise PermissionError("Customer access is required.")
+         customer_id = _account_id(session_context)
+         return Favourite.remove_project(customer_id, project_id)
+ 
+     def check_saved(self, session_context, project_id):
++        if session_context.get("role") != "Customer":
++            raise PermissionError("Customer access is required.")
+         customer_id = _account_id(session_context)
+         return Favourite.is_saved(customer_id, project_id)
+ 
+diff -ruN /tmp/tdd_red/app/entities.py /tmp/tdd_green/app/entities.py
+--- /tmp/tdd_red/app/entities.py	2026-10-30 09:00:54.000000000 +0000
++++ /tmp/tdd_green/app/entities.py	2026-10-30 09:51:31.797306038 +0000
+@@ -26,7 +26,7 @@
+     def create_profile(cls, name, description="", role="Customer"):
+         from .repositories import ProfileRepository
+         repository = ProfileRepository()
+-        name = name.strip()
++        name = " ".join(name.split())
+         allowed_roles = {"User Admin", "Interior Designer", "Customer", "Platform Manager"}
+         if not name:
+             raise ValueError("Profile name is required.")
+@@ -106,7 +106,10 @@
+ 
+     @classmethod
+     def create_account(cls, username, password, profile_id, display_name, email):
+-        from .repositories import AccountRepository
++        from .repositories import AccountRepository, ProfileRepository
++        profile = ProfileRepository().get(profile_id)
++        if not profile or profile["status"] != "Active":
++            raise ValueError("An active profile is required to create an account.")
+         password_hash = generate_password_hash(password)
+         return AccountRepository().create(
+             username.strip(),
+@@ -385,7 +388,11 @@
+     @classmethod
+     def create_category(cls, name, description=""):
+         from .repositories import CategoryRepository
+-        return CategoryRepository().create(name.strip(), description.strip())
++        repository = CategoryRepository()
++        name = " ".join(name.split())
++        if repository.find_by_name(name):
++            raise ValueError("A category with this name already exists.")
++        return repository.create(name, description.strip())
+ 
+     @classmethod
+     def get_category(cls, category_id):
+diff -ruN /tmp/tdd_red/app/repositories.py /tmp/tdd_green/app/repositories.py
+--- /tmp/tdd_red/app/repositories.py	2026-10-30 09:00:54.000000000 +0000
++++ /tmp/tdd_green/app/repositories.py	2026-10-30 09:51:31.797459670 +0000
+@@ -207,6 +207,12 @@
+     def get(self, category_id):
+         return self.one("SELECT * FROM idp_categories WHERE category_id=?", (category_id,))
+ 
++    def find_by_name(self, name):
++        return self.one(
++            "SELECT * FROM idp_categories WHERE lower(name)=lower(?)",
++            (name,),
++        )
++
+     def create(self, name, description):
+         return self.execute(
+             "INSERT INTO idp_categories(name,description) VALUES(?,?)",
+diff -ruN /tmp/tdd_red/app/routes.py /tmp/tdd_green/app/routes.py
+--- /tmp/tdd_red/app/routes.py	2026-10-30 09:20:12.000000000 +0000
++++ /tmp/tdd_green/app/routes.py	2026-10-30 09:51:31.797644329 +0000
+@@ -56,7 +56,7 @@
+             if access["role"] == "Customer":
+                 projects = SearchAvailableIDPBoundary().submit("")[:6]
+             else:
+-                projects = BrowseIDPBoundary().submit("")[:6]
++                projects = BrowseIDPBoundary().submit(dict(session), "")[:6]
+         else:
+             session.clear()
+     return render_template("home.html", projects=projects)
+@@ -329,7 +329,7 @@
+         saved_items = ViewSavedIDPBoundary().request(dict(session))
+         saved_ids = {item["project_id"] for item in saved_items}
+     else:
+-        items = BrowseIDPBoundary().submit(keyword)
++        items = BrowseIDPBoundary().submit(dict(session), keyword)
+         saved_ids = set()
+     return render_template("projects.html", items=items, saved_ids=saved_ids)
+ 
+@@ -342,7 +342,7 @@
+         project = ViewAvailableIDPBoundary().request(session_context, project_id)
+         saved = SaveIDPBoundary().check_saved(session_context, project_id) if project else False
+     else:
+-        project = BrowseIDPBoundary().request(project_id)
++        project = BrowseIDPBoundary().request(dict(session), project_id)
+         saved = False
+     if not project:
+         abort(404)
