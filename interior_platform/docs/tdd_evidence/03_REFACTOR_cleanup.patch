@@ -1,0 +1,110 @@
+diff -ruN /tmp/tdd_green/app/controllers.py /tmp/tdd_refactor/app/controllers.py
+--- /tmp/tdd_green/app/controllers.py	2026-10-30 09:51:31.797529585 +0000
++++ /tmp/tdd_refactor/app/controllers.py	2026-10-30 09:51:50.834159518 +0000
+@@ -23,6 +23,17 @@
+     return session_context.get("session_id")
+ 
+ 
++def _require_role(session_context, role):
++    if session_context.get("role") != role:
++        raise PermissionError(f"{role} access is required.")
++    return _account_id(session_context)
++
++
++def _require_non_customer(session_context):
++    if session_context.get("role") == "Customer":
++        raise PermissionError("This browse flow is for non customer users only.")
++
++
+ ROLE_LOGIN_CONTROLLERS = {}
+ 
+ 
+@@ -253,33 +264,25 @@
+ 
+ class BrowseIDPController:
+     def search(self, session_context, keyword=""):
+-        if session_context.get("role") == "Customer":
+-            raise PermissionError("This browse flow is for non customer users only.")
++        _require_non_customer(session_context)
+         return IDP.search_available_projects(keyword)
+ 
+     def view(self, session_context, project_id):
+-        if session_context.get("role") == "Customer":
+-            raise PermissionError("This browse flow is for non customer users only.")
++        _require_non_customer(session_context)
+         return IDP.get_available_project(project_id)
+ 
+ 
+ class SaveIDPController:
+     def save(self, session_context, project_id):
+-        if session_context.get("role") != "Customer":
+-            raise PermissionError("Customer access is required.")
+-        customer_id = _account_id(session_context)
++        customer_id = _require_role(session_context, "Customer")
+         return Favourite.save_project(customer_id, project_id)
+ 
+     def unsave(self, session_context, project_id):
+-        if session_context.get("role") != "Customer":
+-            raise PermissionError("Customer access is required.")
+-        customer_id = _account_id(session_context)
++        customer_id = _require_role(session_context, "Customer")
+         return Favourite.remove_project(customer_id, project_id)
+ 
+     def check_saved(self, session_context, project_id):
+-        if session_context.get("role") != "Customer":
+-            raise PermissionError("Customer access is required.")
+-        customer_id = _account_id(session_context)
++        customer_id = _require_role(session_context, "Customer")
+         return Favourite.is_saved(customer_id, project_id)
+ 
+ 
+diff -ruN /tmp/tdd_green/app/entities.py /tmp/tdd_refactor/app/entities.py
+--- /tmp/tdd_green/app/entities.py	2026-10-30 09:51:31.797306038 +0000
++++ /tmp/tdd_refactor/app/entities.py	2026-10-30 09:52:27.995422494 +0000
+@@ -4,6 +4,10 @@
+ from werkzeug.security import check_password_hash, generate_password_hash
+ 
+ 
++def _clean_spaces(value):
++    return " ".join(value.split())
++
++
+ @dataclass
+ class UserProfile:
+     profile_id: Optional[int]
+@@ -26,7 +30,7 @@
+     def create_profile(cls, name, description="", role="Customer"):
+         from .repositories import ProfileRepository
+         repository = ProfileRepository()
+-        name = " ".join(name.split())
++        name = _clean_spaces(name)
+         allowed_roles = {"User Admin", "Interior Designer", "Customer", "Platform Manager"}
+         if not name:
+             raise ValueError("Profile name is required.")
+@@ -41,7 +45,7 @@
+         from .repositories import AccountRepository, ProfileRepository
+         repository = ProfileRepository()
+         current = repository.get(profile_id)
+-        name = name.strip()
++        name = _clean_spaces(name)
+         allowed_roles = {"User Admin", "Interior Designer", "Customer", "Platform Manager"}
+         if not current:
+             raise ValueError("Profile not found.")
+@@ -389,7 +393,7 @@
+     def create_category(cls, name, description=""):
+         from .repositories import CategoryRepository
+         repository = CategoryRepository()
+-        name = " ".join(name.split())
++        name = _clean_spaces(name)
+         if repository.find_by_name(name):
+             raise ValueError("A category with this name already exists.")
+         return repository.create(name, description.strip())
+@@ -407,7 +411,7 @@
+     @classmethod
+     def update_category(cls, category_id, name, description=""):
+         from .repositories import CategoryRepository
+-        return CategoryRepository().update(category_id, name.strip(), description.strip())
++        return CategoryRepository().update(category_id, _clean_spaces(name), description.strip())
+ 
+     @classmethod
+     def suspend_category(cls, category_id):

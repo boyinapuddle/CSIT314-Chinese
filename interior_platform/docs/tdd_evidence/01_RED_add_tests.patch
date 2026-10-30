@@ -1,0 +1,63 @@
+diff -ruN /tmp/tdd_v8_base/tests/test_tdd_five_features.py /tmp/tdd_red/tests/test_tdd_five_features.py
+--- /tmp/tdd_v8_base/tests/test_tdd_five_features.py	1970-01-01 00:00:00.000000000 +0000
++++ /tmp/tdd_red/tests/test_tdd_five_features.py	2026-10-30 09:51:17.912680195 +0000
+@@ -0,0 +1,59 @@
++import pytest
++
++from app.boundaries import BrowseIDPBoundary
++from app.controllers import SaveIDPController
++from app.database import get_db
++from app.entities import IDPCategory, UserAccount, UserProfile
++
++
++def test_profile_duplicate_ignores_extra_whitespace(app):
++    with app.app_context():
++        UserProfile.create_profile("Home Owner", "", "Customer")
++        with pytest.raises(ValueError, match="already exists"):
++            UserProfile.create_profile("  home   owner  ", "", "Customer")
++
++
++def test_account_cannot_be_created_with_suspended_profile(app):
++    with app.app_context():
++        db = get_db()
++        profile_id = db.execute(
++            "SELECT profile_id FROM user_profiles WHERE role='Customer' LIMIT 1"
++        ).fetchone()[0]
++        db.execute(
++            "UPDATE user_profiles SET status='Suspended' WHERE profile_id=?",
++            (profile_id,),
++        )
++        db.commit()
++
++        with pytest.raises(ValueError, match="active profile"):
++            UserAccount.create_account(
++                "blockedcustomer",
++                "pass",
++                profile_id,
++                "Blocked Customer",
++                "blocked@test",
++            )
++
++
++def test_save_controller_rejects_non_customer_session(app):
++    with app.app_context():
++        with pytest.raises(PermissionError, match="Customer"):
++            SaveIDPController().save(
++                {"account_id": 1, "role": "User Admin"},
++                1,
++            )
++
++
++def test_category_duplicate_is_case_and_whitespace_insensitive(app):
++    with app.app_context():
++        with pytest.raises(ValueError, match="already exists"):
++            IDPCategory.create_category("  modern  ", "Duplicate")
++
++
++def test_browse_controller_rejects_customer_session(app):
++    with app.app_context():
++        with pytest.raises(PermissionError, match="non customer"):
++            BrowseIDPBoundary().submit(
++                {"account_id": 1, "role": "Customer"},
++                "",
++            )

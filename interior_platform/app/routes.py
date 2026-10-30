@@ -56,7 +56,7 @@ def home():
             if access["role"] == "Customer":
                 projects = SearchAvailableIDPBoundary().submit("")[:6]
             else:
-                projects = BrowseIDPBoundary().submit("")[:6]
+                projects = BrowseIDPBoundary().submit(dict(session), "")[:6]
         else:
             session.clear()
     return render_template("home.html", projects=projects)
@@ -329,7 +329,7 @@ def projects():
         saved_items = ViewSavedIDPBoundary().request(dict(session))
         saved_ids = {item["project_id"] for item in saved_items}
     else:
-        items = BrowseIDPBoundary().submit(keyword)
+        items = BrowseIDPBoundary().submit(dict(session), keyword)
         saved_ids = set()
     return render_template("projects.html", items=items, saved_ids=saved_ids)
 
@@ -342,7 +342,7 @@ def project_detail(project_id):
         project = ViewAvailableIDPBoundary().request(session_context, project_id)
         saved = SaveIDPBoundary().check_saved(session_context, project_id) if project else False
     else:
-        project = BrowseIDPBoundary().request(project_id)
+        project = BrowseIDPBoundary().request(dict(session), project_id)
         saved = False
     if not project:
         abort(404)

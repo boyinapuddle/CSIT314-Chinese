@@ -67,3 +67,22 @@ Run
 ## Additional user stories
 
 User Story 49 covers safe deletion of an unused user profile. User Story 50 covers read only browsing of available IDPs by authenticated non customer roles. The complete wording is in `docs/additional_user_stories.md`.
+
+## TDD evidence stages
+
+Five test first hardening scenarios are included under `tdd/` and `docs/tdd_evidence/`.
+
+Use a clean branch or disposable copy and run:
+
+```powershell
+.\.venv\Scripts\python.exe tdd\apply_stage.py RED
+.\.venv\Scripts\python.exe -m pytest tests\test_tdd_five_features.py -v
+
+.\.venv\Scripts\python.exe tdd\apply_stage.py GREEN
+.\.venv\Scripts\python.exe -m pytest tests\test_tdd_five_features.py -v
+
+.\.venv\Scripts\python.exe tdd\apply_stage.py REFACTOR
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+See `docs/tdd_evidence/README.md` for the five features and screenshot procedure.

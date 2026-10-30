@@ -1,10 +1,11 @@
 flowchart LR
     N0["Actor<br/>Authenticated Non Customer User"]
-    N1["boundary<br/>BrowseIDPBoundary<br/><br/>+submit()<br/>+request()"]
-    N2["control<br/>BrowseIDPController<br/><br/>+search()<br/>+view()"]
+    N1["boundary<br/>BrowseIDPBoundary<br/><br/>+submit(session_context, keyword)<br/>+request(session_context, project_id)"]
+    N2["control<br/>BrowseIDPController<br/><br/>+search(session_context, keyword)<br/>+view(session_context, project_id)"]
     N3["entity<br/>IDP<br/><br/>+search_available_projects(keyword)<br/>+get_available_project(project_id)"]
-    N0 -->|"search(keyword) or request(project_id)"| N1
-    N1 -->|"search(keyword) or view(project_id)"| N2
-    N2 -->|"search_available_projects(keyword) or get_available_project(project_id)"| N3
+    N0 -->|"search keyword or request project"| N1
+    N1 -->|"session context and request"| N2
+    N2 -->|"validate non customer role"| N2
+    N2 -->|"search available projects or get project"| N3
     N3 -->|"available projects or project details"| N2
     N2 -->|"read only result"| N1

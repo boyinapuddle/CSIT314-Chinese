@@ -23,6 +23,17 @@ def _session_id(session_context):
     return session_context.get("session_id")
 
 
+def _require_role(session_context, role):
+    if session_context.get("role") != role:
+        raise PermissionError(f"{role} access is required.")
+    return _account_id(session_context)
+
+
+def _require_non_customer(session_context):
+    if session_context.get("role") == "Customer":
+        raise PermissionError("This browse flow is for non customer users only.")
+
+
 ROLE_LOGIN_CONTROLLERS = {}
 
 
@@ -252,24 +263,26 @@ class ViewAvailableIDPController:
 
 
 class BrowseIDPController:
-    def search(self, keyword=""):
+    def search(self, session_context, keyword=""):
+        _require_non_customer(session_context)
         return IDP.search_available_projects(keyword)
 
-    def view(self, project_id):
+    def view(self, session_context, project_id):
+        _require_non_customer(session_context)
         return IDP.get_available_project(project_id)
 
 
 class SaveIDPController:
     def save(self, session_context, project_id):
-        customer_id = _account_id(session_context)
+        customer_id = _require_role(session_context, "Customer")
         return Favourite.save_project(customer_id, project_id)
 
     def unsave(self, session_context, project_id):
-        customer_id = _account_id(session_context)
+        customer_id = _require_role(session_context, "Customer")
         return Favourite.remove_project(customer_id, project_id)
 
     def check_saved(self, session_context, project_id):
-        customer_id = _account_id(session_context)
+        customer_id = _require_role(session_context, "Customer")
         return Favourite.is_saved(customer_id, project_id)
 
 
