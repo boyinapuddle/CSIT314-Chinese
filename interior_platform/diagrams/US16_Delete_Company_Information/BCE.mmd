@@ -1,0 +1,10 @@
+flowchart LR
+    N0["Actor<br/>Interior Designer"]
+    N1["&lt;&lt;boundary&gt;&gt;<br/>DeleteCompanyInformationBoundary<br/><br/>+submit()"]
+    N2["&lt;&lt;control&gt;&gt;<br/>DeleteCompanyInformationController<br/><br/>+delete()"]
+    N3["&lt;&lt;entity&gt;&gt;<br/>Company<br/><br/>+delete_company(designer_id)"]
+    N0 -->|"submit(session)"| N1
+    N1 -->|"delete(session)"| N2
+    N2 -->|"delete_company(designer_id)"| N3
+    N3 -->|"delete result"| N2
+    N2 -->|"result"| N1

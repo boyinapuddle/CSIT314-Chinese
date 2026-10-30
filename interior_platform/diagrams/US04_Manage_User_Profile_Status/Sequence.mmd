@@ -1,0 +1,11 @@
+sequenceDiagram
+    actor P0 as User Admin
+    participant P1 as SuspendUserProfileBoundary
+    participant P2 as SuspendUserProfileController
+    participant P3 as UserProfile
+    P0->>P1: suspend or reactivate profile
+    P1-->>P2: selected operation(profile_id)
+    P2->>P3: suspend_profile / reactivate_profile with last admin validation
+    P3-->>P2: status result or rejection
+    P2-->>P1: result
+    P1-->>P0: display result

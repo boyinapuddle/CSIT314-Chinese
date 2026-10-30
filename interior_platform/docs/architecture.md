@@ -18,13 +18,13 @@ For ownership sensitive stories the Boundary passes the trusted session context 
 
 ## Class count
 
-The application keeps one Controller mapping for each of the 48 user stories. Login stories 11, 18, 35 and 47 share one LoginBoundary because they use the same login page and credential submission flow. Their role specific Controllers remain separate for user story traceability.
+The application keeps one Controller mapping for each of the 50 user stories. Login stories 11, 18, 35 and 47 share one LoginBoundary because they use the same login page and credential submission flow. Their role specific Controllers remain separate for user story traceability.
 
 The main domain layer contains these Entity classes
 
 1. UserProfile
 2. UserAccount
-3. UserSession
+3. Session
 4. Company
 5. IDP
 6. Favourite
@@ -37,7 +37,7 @@ The main domain layer contains these Entity classes
 13. WeeklyReport
 14. MonthlyReport
 
-The persistence layer contains BaseRepository plus repositories for profiles, accounts, sessions, companies, categories, projects, favourites and activity events. Additional control classes support profile reactivation, profile deletion, category reactivation, category deletion and removing saved projects without changing the original user story mappings.
+The persistence layer contains BaseRepository plus repositories for profiles, accounts, sessions, companies, categories, projects, favourites and activity events. Reversible actions stay inside the Controller for the original user story. Story 4 handles profile suspension and reactivation. Story 9 handles account suspension and reactivation. Story 32 handles save, unsave and saved state. Story 42 handles category suspension, reactivation and safe deletion. Profile deletion is Story 49 with its own Boundary and Controller. Read only browsing for authenticated non customer roles is Story 50 with its own Boundary and Controller.
 
 ## User story traceability
 
@@ -91,16 +91,18 @@ The persistence layer contains BaseRepository plus repositories for profiles, ac
 | 46 | GenerateMonthlyReportBoundary | GenerateMonthlyReportController |
 | 47 | LoginBoundary | PlatformManagerLoginController |
 | 48 | PlatformManagerLogoutBoundary | PlatformManagerLogoutController |
+| 49 | DeleteUserProfileBoundary | DeleteUserProfileController |
+| 50 | BrowseIDPBoundary | BrowseIDPController |
 
 ## Login flow
 
-The login page submits only username and password to LoginBoundary. LoginBoundary calls AuthenticationController. AuthenticationController asks UserAccount for the account, verifies that the account is active, asks UserAccount to verify the password, and asks UserProfile for the linked profile. The active profile role determines the role on the server. AuthenticationController then delegates the verified account and profile to the matching role specific login Controller. That Controller asks UserSession to create the authenticated session. The route stores the returned account identifier, role, display name and session identifier in the Flask session and redirects to the dashboard.
+The login page submits only username and password to LoginBoundary. LoginBoundary calls AuthenticationController. AuthenticationController asks UserAccount for the account, verifies that the account is active, asks UserAccount to verify the password, and asks UserProfile for the linked profile. The active profile role determines the role on the server. AuthenticationController then delegates the verified account and profile to the matching role specific login Controller. That Controller asks Session to create the authenticated session. The route stores the returned account identifier, role, display name and session identifier in the Flask session and redirects to the dashboard.
 
 The browser does not submit a role. The role is trusted only after it is read from the linked UserProfile in the database.
 
 ## Logout flow
 
-The logout Boundary passes the trusted session context to the matching logout Controller. The Controller obtains the current session identifier and asks UserSession to invalidate it. The Flask route then clears the local Flask session.
+The logout Boundary passes the trusted session context to the matching logout Controller. The Controller obtains the current session identifier and asks Session to invalidate it. The Flask route then clears the local Flask session.
 
 ## Designer and customer ownership
 
@@ -108,4 +110,8 @@ Company, portfolio, favourite and metric Controllers read the authenticated acco
 
 ## Structural tests
 
-`tests/test_story_controllers.py` verifies that all 48 stories have Controller mappings, all 48 story Controllers remain unique, the four login stories share LoginBoundary, and all non login story Boundaries remain unique.
+`tests/test_story_controllers.py` verifies that all 50 stories have Controller mappings, all 50 story Controllers remain unique, the four login stories share LoginBoundary, and all non login story Boundaries remain unique.
+
+## Diagram source
+
+The `diagrams` folder contains one BCE diagram and one sequence diagram for each of the 50 user stories. Diagram class and method names are kept in sync with the implementation. Each story folder contains `BCE.mmd`, `Sequence.mmd` and a rendered Markdown preview in `README.md`.

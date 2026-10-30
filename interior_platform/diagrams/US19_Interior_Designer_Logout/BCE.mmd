@@ -1,0 +1,10 @@
+flowchart LR
+    N0["Actor<br/>Interior Designer"]
+    N1["&lt;&lt;boundary&gt;&gt;<br/>InteriorDesignerLogoutBoundary<br/><br/>+submit()"]
+    N2["&lt;&lt;control&gt;&gt;<br/>InteriorDesignerLogoutController<br/><br/>+logout()"]
+    N3["&lt;&lt;entity&gt;&gt;<br/>Session<br/><br/>+invalidate_session(session_id)"]
+    N0 -->|"submit(session_context)"| N1
+    N1 -->|"logout(session_context)"| N2
+    N2 -->|"invalidate_session(session_id)"| N3
+    N3 -->|"invalidated"| N2
+    N2 -->|"result"| N1

@@ -1,0 +1,10 @@
+flowchart LR
+    N0["Actor<br/>User Admin"]
+    N1["&lt;&lt;boundary&gt;&gt;<br/>DeleteUserProfileBoundary<br/><br/>+submit()"]
+    N2["&lt;&lt;control&gt;&gt;<br/>DeleteUserProfileController<br/><br/>+delete()"]
+    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+delete_profile(profile_id)"]
+    N0 -->|"submit(profile_id)"| N1
+    N1 -->|"delete(profile_id)"| N2
+    N2 -->|"delete_profile(profile_id)"| N3
+    N3 -->|"deleted or profile in use error"| N2
+    N2 -->|"result"| N1

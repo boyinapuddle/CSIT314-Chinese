@@ -9,7 +9,7 @@ flowchart LR
     Control --> Account[UserAccount]
     Control --> Profile[UserProfile]
     Control --> RoleControl[Role specific LoginController]
-    RoleControl --> Session[UserSession]
+    RoleControl --> Session[Session]
 ```
 
 The role specific Controller is one of UserAdminLoginController, InteriorDesignerLoginController, CustomerLoginController or PlatformManagerLoginController. AuthenticationController chooses it only after UserProfile returns the stored profile name.
@@ -24,7 +24,7 @@ sequenceDiagram
     participant UA as UserAccount
     participant UP as UserProfile
     participant RC as Role specific LoginController
-    participant S as UserSession
+    participant S as Session
 
     User->>B: submit username and password
     B->>A: login username and password
@@ -46,4 +46,4 @@ sequenceDiagram
 
 ## Failure flow
 
-Invalid credentials, a suspended account, a suspended profile, or an unsupported profile name returns a failed result. No UserSession is created.
+Invalid credentials, a suspended account, a suspended profile, or an unsupported profile name returns a failed result. No Session is created.

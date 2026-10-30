@@ -1,0 +1,10 @@
+flowchart LR
+    N0["Actor<br/>Customer"]
+    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchSavedIDPBoundary<br/><br/>+submit()"]
+    N2["&lt;&lt;control&gt;&gt;<br/>SearchSavedIDPController<br/><br/>+search()"]
+    N3["&lt;&lt;entity&gt;&gt;<br/>Favourite<br/><br/>+search_saved_projects(customer_id, keyword)"]
+    N0 -->|"submit(session, keyword)"| N1
+    N1 -->|"search(session, keyword)"| N2
+    N2 -->|"search_saved_projects(customer_id, keyword)"| N3
+    N3 -->|"matching saved projects"| N2
+    N2 -->|"results"| N1

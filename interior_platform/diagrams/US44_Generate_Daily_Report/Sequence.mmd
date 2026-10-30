@@ -1,0 +1,14 @@
+sequenceDiagram
+    actor P0 as Platform Manager
+    participant P1 as GenerateDailyReportBoundary
+    participant P2 as GenerateDailyReportController
+    participant P3 as DailyReport
+    participant P4 as ActivityEvent
+    P0->>P1: submit(date_value)
+    P1->>P2: generate(date_value)
+    P2->>P3: generate(date_value)
+    P3-->>P4: report_between(start, end)
+    P4->>P3: activity totals
+    P3-->>P2: report summary
+    P2-->>P1: report
+    P1-->>P0: display report

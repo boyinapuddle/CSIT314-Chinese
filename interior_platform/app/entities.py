@@ -175,7 +175,7 @@ class UserAccount:
 
 
 @dataclass
-class UserSession:
+class Session:
     session_id: Optional[int]
     account_id: int
     role: str

@@ -1,0 +1,11 @@
+sequenceDiagram
+    actor P0 as Customer
+    participant P1 as SearchAvailableIDPBoundary
+    participant P2 as SearchAvailableIDPController
+    participant P3 as IDP
+    P0->>P1: submit(keyword)
+    P1->>P2: search(keyword)
+    P2->>P3: search_available_projects(keyword)
+    P3-->>P2: matching available projects
+    P2-->>P1: results
+    P1-->>P0: display results

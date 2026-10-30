@@ -1,0 +1,17 @@
+sequenceDiagram
+    actor P0 as Interior Designer
+    participant P1 as CreatePastIDPBoundary
+    participant P2 as CreatePastIDPController
+    participant P3 as IDP
+    participant P4 as IDPCategory
+    P0->>P1: open project form
+    P1->>P2: categories()
+    P2->>P4: get_categories(active_only=True)
+    P4->>P2: active categories
+    P0->>P1: submit(session, form)
+    P1->>P2: create(session, data)
+    P2->>P2: read designer_id from trusted session
+    P2->>P3: create_project(designer_id, data, "Past")
+    P3-->>P2: project_id
+    P2-->>P1: result
+    P1->>P0: display success

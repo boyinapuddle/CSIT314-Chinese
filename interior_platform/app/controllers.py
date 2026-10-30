@@ -9,7 +9,7 @@ from .entities import (
     ShortlistMetric,
     UserAccount,
     UserProfile,
-    UserSession,
+    Session,
     ViewMetric,
     WeeklyReport,
 )
@@ -48,7 +48,7 @@ class RoleLoginControllerBase:
     def complete_login(self, account, profile):
         if profile["role"] != self.role:
             return None
-        session_id = UserSession.create_session(account["account_id"], self.role)
+        session_id = Session.create_session(account["account_id"], self.role)
         return account, session_id
 
 
@@ -71,8 +71,6 @@ class SuspendUserProfileController:
     def suspend(self, profile_id):
         return UserProfile.suspend_profile(profile_id)
 
-
-class ReactivateUserProfileController:
     def reactivate(self, profile_id):
         return UserProfile.reactivate_profile(profile_id)
 
@@ -109,8 +107,6 @@ class SuspendUserAccountController:
     def suspend(self, account_id):
         return UserAccount.suspend_account(account_id)
 
-
-class ReactivateUserAccountController:
     def reactivate(self, account_id):
         return UserAccount.reactivate_account(account_id)
 
@@ -128,7 +124,7 @@ class UserAdminLogoutController:
     def logout(self, session_context):
         session_id = _session_id(session_context)
         if session_id:
-            return UserSession.invalidate_session(session_id)
+            return Session.invalidate_session(session_id)
         return 0
 
 
@@ -170,7 +166,7 @@ class InteriorDesignerLogoutController:
     def logout(self, session_context):
         session_id = _session_id(session_context)
         if session_id:
-            return UserSession.invalidate_session(session_id)
+            return Session.invalidate_session(session_id)
         return 0
 
 
@@ -248,12 +244,19 @@ class SearchAvailableIDPController:
 class ViewAvailableIDPController:
     def view(self, session_context, project_id):
         account_id = _account_id(session_context)
-        role = session_context.get("role")
         project = IDP.get_available_project(project_id)
-        if project and role == "Customer":
+        if project:
             IDP.record_view(project_id, account_id)
             project = IDP.get_available_project(project_id)
         return project
+
+
+class BrowseIDPController:
+    def search(self, keyword=""):
+        return IDP.search_available_projects(keyword)
+
+    def view(self, project_id):
+        return IDP.get_available_project(project_id)
 
 
 class SaveIDPController:
@@ -261,15 +264,11 @@ class SaveIDPController:
         customer_id = _account_id(session_context)
         return Favourite.save_project(customer_id, project_id)
 
-
-class UnsaveIDPController:
     def unsave(self, session_context, project_id):
         customer_id = _account_id(session_context)
         return Favourite.remove_project(customer_id, project_id)
 
-
-class CheckSavedIDPController:
-    def check(self, session_context, project_id):
+    def check_saved(self, session_context, project_id):
         customer_id = _account_id(session_context)
         return Favourite.is_saved(customer_id, project_id)
 
@@ -294,7 +293,7 @@ class CustomerLogoutController:
     def logout(self, session_context):
         session_id = _session_id(session_context)
         if session_id:
-            return UserSession.invalidate_session(session_id)
+            return Session.invalidate_session(session_id)
         return 0
 
 
@@ -332,13 +331,9 @@ class SuspendIDPCategoryController:
     def suspend(self, category_id):
         return IDPCategory.suspend_category(category_id)
 
-
-class ReactivateIDPCategoryController:
     def reactivate(self, category_id):
         return IDPCategory.reactivate_category(category_id)
 
-
-class DeleteIDPCategoryController:
     def delete(self, category_id):
         return IDPCategory.delete_category(category_id)
 
@@ -371,7 +366,7 @@ class PlatformManagerLogoutController:
     def logout(self, session_context):
         session_id = _session_id(session_context)
         if session_id:
-            return UserSession.invalidate_session(session_id)
+            return Session.invalidate_session(session_id)
         return 0
 
 
@@ -432,4 +427,6 @@ STORY_CONTROLLERS = {
     46: GenerateMonthlyReportController,
     47: PlatformManagerLoginController,
     48: PlatformManagerLogoutController,
+    49: DeleteUserProfileController,
+    50: BrowseIDPController,
 }

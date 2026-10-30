@@ -34,7 +34,11 @@ The response returns through the same use case layers.
 
 Ownership sensitive Controllers obtain designer and customer identifiers from the trusted session context rather than editable form values.
 
-The full mapping for all 48 stories is in `docs/architecture.md`.
+The full mapping for all 50 stories is in `docs/architecture.md`.
+
+## Diagrams
+
+The `diagrams` folder contains BCE and sequence diagrams for all 50 user stories. `diagrams/ALL_DIAGRAMS.md` provides a combined view and each story has its own folder with Mermaid source files.
 
 ## Tests
 
@@ -44,7 +48,7 @@ Run
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-The project includes structural traceability tests, authentication tests and access control tests. Additional unit tests can be added per Boundary, Controller and Entity for TDD evidence.
+The project includes structural traceability tests for all 50 user stories, authentication tests and access control tests. Additional unit tests can be added per Boundary, Controller and Entity for TDD evidence.
 
 ## Large test data
 
@@ -59,3 +63,7 @@ Run
 ## CI
 
 `.github/workflows/ci.yml` runs the test suite in GitHub Actions.
+
+## Additional user stories
+
+User Story 49 covers safe deletion of an unused user profile. User Story 50 covers read only browsing of available IDPs by authenticated non customer roles. The complete wording is in `docs/additional_user_stories.md`.

@@ -1,0 +1,15 @@
+sequenceDiagram
+    actor P0 as Interior Designer
+    participant P1 as ViewIDPShortlistsBoundary
+    participant P2 as ViewIDPShortlistsController
+    participant P3 as ShortlistMetric
+    participant P4 as IDP
+    P0->>P1: request(session)
+    P1->>P2: view(session)
+    P2->>P2: read designer_id from trusted session
+    P2->>P3: for_designer(designer_id)
+    P3-->>P4: get_designer_projects_with_metrics(designer_id)
+    P4->>P3: projects with shortlist totals from favourites
+    P3-->>P2: metrics
+    P2-->>P1: metrics
+    P1->>P0: display shortlist counts

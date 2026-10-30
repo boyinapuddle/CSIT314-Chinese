@@ -1,0 +1,34 @@
+# User Story 31: View Available IDP
+
+## BCE Diagram
+
+```mermaid
+flowchart LR
+    N0["Actor<br/>Customer"]
+    N1["&lt;&lt;boundary&gt;&gt;<br/>ViewAvailableIDPBoundary<br/><br/>+request()"]
+    N2["&lt;&lt;control&gt;&gt;<br/>ViewAvailableIDPController<br/><br/>+view()"]
+    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+get_available_project(project_id)<br/>+record_view(project_id, customer_id)"]
+    N0 -->|"request(session, project_id)"| N1
+    N1 -->|"view(session, project_id)"| N2
+    N2 -->|"get_available_project(project_id)"| N3
+    N3 -->|"project details"| N2
+    N2 -->|"project details"| N1
+```
+
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    actor P0 as Customer
+    participant P1 as ViewAvailableIDPBoundary
+    participant P2 as ViewAvailableIDPController
+    participant P3 as IDP
+    P0-->>P1: request(session, project_id)
+    P1-->>P2: view(session, project_id)
+    P2-->>P3: get_available_project(project_id)
+    P3-->>P2: project details
+    P2->>P2: if role is Customer, read customer_id from session
+    P2-->>P3: record_view(project_id, customer_id)
+    P2-->>P1: project details
+    P1->>P0: display project
+```

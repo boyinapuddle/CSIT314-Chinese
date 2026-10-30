@@ -1,0 +1,12 @@
+sequenceDiagram
+    actor P0 as Interior Designer
+    participant P1 as DeleteCurrentIDPBoundary
+    participant P2 as DeleteCurrentIDPController
+    participant P3 as IDP
+    P0->>P1: confirm delete
+    P1-->>P2: delete(session, project_id)
+    P2->>P2: read designer_id from trusted session
+    P2-->>P3: delete_owned_project(project_id, designer_id, "Current")
+    P3->>P2: deleted or rejected
+    P2-->>P1: result
+    P1-->>P0: display result

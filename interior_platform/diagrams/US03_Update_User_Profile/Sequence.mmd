@@ -1,0 +1,11 @@
+sequenceDiagram
+    actor P0 as User Admin
+    participant P1 as UpdateUserProfileBoundary
+    participant P2 as UpdateUserProfileController
+    participant P3 as UserProfile
+    P0-->>P1: submit(profile_id, name, description, role)
+    P1->>P2: update(...)
+    P2->>P3: update_profile(...) including last active admin validation
+    P3->>P2: updated or validation error
+    P2-->>P1: result
+    P1-->>P0: display result

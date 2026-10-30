@@ -1,60 +1,45 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% block content %}
 <section class="section">
-  <div class="section-head">
-    <div>
-      <p class="eyebrow dark">PROJECT DISCOVERY</p>
-      <h1>Explore Interior Design Projects</h1>
+    <div class="section-head">
+        <div>
+            <p class="eyebrow dark">PROJECT DISCOVERY</p>
+            <h1>Explore Interior Design Projects</h1>
+        </div>
+        <form class="search">
+            <input name="q" value="{{ request.args.get('q', '') }}" placeholder="Search title, description, category">
+            <button>Search</button>
+        </form>
     </div>
-    <form class="search">
-      <input
-        name="q"
-        value="{{ request.args.get('q', '') }}"
-        placeholder="Search title, description, category"
-      />
-      <button>Search</button>
-    </form>
-  </div>
-  <div class="cards">
-    {% for p in items %}
-    <article class="project-card">
-      <a href="{{ url_for('main.project_detail', project_id=p.project_id) }}">
-        <div class="project-image" data-bg="{{ p.image_url }}">
-          <span>{{ p.project_status }}</span>
-        </div>
-      </a>
-      <div class="card-body">
-        <div class="meta">{{ p.category_name }} · {{ p.progress }}%</div>
-        <h3>
-          <a
-            href="{{ url_for('main.project_detail', project_id=p.project_id) }}"
-            >{{ p.title }}</a
-          >
-        </h3>
-        <p>{{ p.description }}</p>
-        <div class="card-actions">
-          <small>{{ p.company_name or p.designer_name }}</small>
-          {% if session.get('role') == 'Customer' %} {% if p.project_id in
-          saved_ids %}
-          <form
-            method="post"
-            action="{{ url_for('main.unsave_project', project_id=p.project_id) }}"
-          >
-            <button class="save-btn saved">♥ Saved</button>
-          </form>
-          {% else %}
-          <form
-            method="post"
-            action="{{ url_for('main.save_project', project_id=p.project_id) }}"
-          >
-            <button class="save-btn">♡ Save</button>
-          </form>
-          {% endif %} {% endif %}
-        </div>
-      </div>
-    </article>
-    {% else %}
-    <div class="empty">No projects match your search.</div>
-    {% endfor %}
-  </div>
+    <div class="cards">
+        {% for p in items %}
+        <article class="project-card">
+            <a href="{{ url_for('main.project_detail', project_id=p.project_id) }}">
+                <div class="project-image" data-bg="{{ p.image_url }}"><span>{{ p.project_status }}</span></div>
+            </a>
+            <div class="card-body">
+                <div class="meta">{{ p.category_name }} · {{ p.progress }}%</div>
+                <h3><a href="{{ url_for('main.project_detail', project_id=p.project_id) }}">{{ p.title }}</a></h3>
+                <p>{{ p.description }}</p>
+                <div class="card-actions">
+                    <small>{{ p.company_name or p.designer_name }}</small>
+                    {% if session.get('role') == 'Customer' %}
+                        {% if p.project_id in saved_ids %}
+                        <form method="post" action="{{ url_for('main.unsave_project', project_id=p.project_id) }}">
+                            <button class="save-btn saved">♥ Saved</button>
+                        </form>
+                        {% else %}
+                        <form method="post" action="{{ url_for('main.save_project', project_id=p.project_id) }}">
+                            <button class="save-btn">♡ Save</button>
+                        </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% else %}
+        <div class="empty">No projects match your search.</div>
+        {% endfor %}
+    </div>
 </section>
 {% endblock %}

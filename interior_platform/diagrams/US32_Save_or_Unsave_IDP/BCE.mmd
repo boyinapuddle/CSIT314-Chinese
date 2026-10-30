@@ -1,0 +1,13 @@
+flowchart LR
+    N0["Actor<br/>Customer"]
+    N1["&lt;&lt;boundary&gt;&gt;<br/>SaveIDPBoundary<br/><br/>+submit()<br/>+unsave()<br/>+check_saved()"]
+    N2["&lt;&lt;control&gt;&gt;<br/>SaveIDPController<br/><br/>+save()<br/>+unsave()<br/>+check_saved()"]
+    N3["&lt;&lt;entity&gt;&gt;<br/>Favourite<br/><br/>+save_project(customer_id, project_id)<br/>+remove_project(customer_id, project_id)<br/>+is_saved(customer_id, project_id)"]
+    N4["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+get_available_project(project_id)"]
+    N0 -->|"save, unsave, or check project"| N1
+    N1 -->|"save / unsave / check_saved(session, project_id)"| N2
+    N2 -->|"save_project / remove_project / is_saved"| N3
+    N3 -->|"get_available_project(project_id) when saving"| N4
+    N4 -->|"available or unavailable"| N3
+    N3 -->|"saved state result"| N2
+    N2 -->|"result"| N1

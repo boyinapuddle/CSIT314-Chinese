@@ -1,0 +1,12 @@
+sequenceDiagram
+    actor P0 as Interior Designer
+    participant P1 as SearchPastIDPBoundary
+    participant P2 as SearchPastIDPController
+    participant P3 as IDP
+    P0->>P1: submit(session, keyword)
+    P1->>P2: search(session, keyword)
+    P2->>P2: read designer_id from trusted session
+    P2->>P3: search_owned_projects(designer_id, "Past", keyword)
+    P3-->>P2: matching projects
+    P2-->>P1: results
+    P1-->>P0: display results

@@ -1,0 +1,11 @@
+sequenceDiagram
+    actor P0 as User Admin
+    participant P1 as ViewUserProfileBoundary
+    participant P2 as ViewUserProfileController
+    participant P3 as UserProfile
+    P0-->>P1: request(profile_id)
+    P1-->>P2: view(profile_id)
+    P2-->>P3: get_profile(profile_id)
+    P3-->>P2: profile details
+    P2-->>P1: profile details
+    P1->>P0: display profile

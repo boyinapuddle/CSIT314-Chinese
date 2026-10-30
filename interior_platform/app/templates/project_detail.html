@@ -1,30 +1,25 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+{% block content %}
 <section class="project-detail">
-  <div class="detail-image" data-bg="{{ p.image_url }}"></div>
-  <div class="detail-copy">
-    <p class="eyebrow dark">{{ p.category_name }} · {{ p.project_status }}</p>
-    <h1>{{ p.title }}</h1>
-    <p class="lede">{{ p.description }}</p>
-    <div class="progress">
-      <div class="progress-fill" data-progress="{{ p.progress }}"></div>
+    <div class="detail-image" data-bg="{{ p.image_url }}"></div>
+    <div class="detail-copy">
+        <p class="eyebrow dark">{{ p.category_name }} · {{ p.project_status }}</p>
+        <h1>{{ p.title }}</h1>
+        <p class="lede">{{ p.description }}</p>
+        <div class="progress"><div class="progress-fill" data-progress="{{ p.progress }}"></div></div>
+        <p>{{ p.progress }}% progress · Last updated {{ p.updated_at[:10] }}</p>
+        <h3>{{ p.company_name or p.designer_name }}</h3>
+        {% if session.get('role') == 'Customer' %}
+            {% if saved %}
+            <form method="post" action="{{ url_for('main.unsave_project', project_id=p.project_id) }}">
+                <button class="btn">Remove from favourites</button>
+            </form>
+            {% else %}
+            <form method="post" action="{{ url_for('main.save_project', project_id=p.project_id) }}">
+                <button class="btn">Save to favourites</button>
+            </form>
+            {% endif %}
+        {% endif %}
     </div>
-    <p>{{ p.progress }}% progress · Last updated {{ p.updated_at[:10] }}</p>
-    <h3>{{ p.company_name or p.designer_name }}</h3>
-    {% if session.get('role') == 'Customer' %} {% if saved %}
-    <form
-      method="post"
-      action="{{ url_for('main.unsave_project', project_id=p.project_id) }}"
-    >
-      <button class="btn">Remove from favourites</button>
-    </form>
-    {% else %}
-    <form
-      method="post"
-      action="{{ url_for('main.save_project', project_id=p.project_id) }}"
-    >
-      <button class="btn">Save to favourites</button>
-    </form>
-    {% endif %} {% endif %}
-  </div>
 </section>
 {% endblock %}

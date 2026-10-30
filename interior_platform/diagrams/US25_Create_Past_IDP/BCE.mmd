@@ -1,0 +1,13 @@
+flowchart LR
+    N0["Actor<br/>Interior Designer"]
+    N1["&lt;&lt;boundary&gt;&gt;<br/>CreatePastIDPBoundary<br/><br/>+submit()<br/>+categories()"]
+    N2["&lt;&lt;control&gt;&gt;<br/>CreatePastIDPController<br/><br/>+create()<br/>+categories()"]
+    N3["&lt;&lt;entity&gt;&gt;<br/>IDP<br/><br/>+create_project(designer_id, data, "Past")"]
+    N4["&lt;&lt;entity&gt;&gt;<br/>IDPCategory<br/><br/>+get_categories(active_only=True)"]
+    N0 -->|"open project form"| N1
+    N1 -->|"categories()"| N2
+    N2 -->|"get_categories(active_only=True)"| N4
+    N4 -->|"active categories"| N2
+    N2 -->|"create_project(designer_id, data, &quot;Past&quot;)"| N3
+    N3 -->|"project_id"| N2
+    N2 -->|"result"| N1

@@ -1,0 +1,11 @@
+sequenceDiagram
+    actor P0 as User Admin
+    participant P1 as CreateUserProfileBoundary
+    participant P2 as CreateUserProfileController
+    participant P3 as UserProfile
+    P0->>P1: submit(name, description, role)
+    P1->>P2: create(name, description, role)
+    P2->>P3: create_profile(name, description, role)
+    P3-->>P2: profile_id or validation error
+    P2-->>P1: result
+    P1->>P0: success or validation message

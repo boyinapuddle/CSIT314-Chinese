@@ -1,0 +1,10 @@
+flowchart LR
+    N0["Actor<br/>User Admin"]
+    N1["&lt;&lt;boundary&gt;&gt;<br/>SearchUserProfileBoundary<br/><br/>+submit()"]
+    N2["&lt;&lt;control&gt;&gt;<br/>SearchUserProfileController<br/><br/>+search()"]
+    N3["&lt;&lt;entity&gt;&gt;<br/>UserProfile<br/><br/>+search_profiles(keyword)"]
+    N0 -->|"submit(keyword)"| N1
+    N1 -->|"search(keyword)"| N2
+    N2 -->|"search_profiles(keyword)"| N3
+    N3 -->|"matching profiles"| N2
+    N2 -->|"results"| N1

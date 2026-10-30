@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, session, url_for
 from .boundaries import *
-from .entities import UserAccount, UserSession
+from .entities import UserAccount, Session
 
 
 bp = Blueprint("main", __name__)
@@ -13,7 +13,7 @@ def role_required(*roles):
         def wrapper(*args, **kwargs):
             account_id = session.get("account_id")
             session_id = session.get("session_id")
-            if not account_id or not session_id or not UserSession.is_active(session_id):
+            if not account_id or not session_id or not Session.is_active(session_id):
                 session.clear()
                 return redirect(url_for("main.login"))
             access = UserAccount.access_state(account_id)
@@ -50,10 +50,13 @@ def home():
     projects = []
     account_id = session.get("account_id")
     session_id = session.get("session_id")
-    if account_id and session_id and UserSession.is_active(session_id):
+    if account_id and session_id and Session.is_active(session_id):
         access = UserAccount.access_state(account_id)
         if access and access["account_status"] == "Active" and access["profile_status"] == "Active" and access["role"] == session.get("role"):
-            projects = SearchAvailableIDPBoundary().submit("")[:6]
+            if access["role"] == "Customer":
+                projects = SearchAvailableIDPBoundary().submit("")[:6]
+            else:
+                projects = BrowseIDPBoundary().submit("")[:6]
         else:
             session.clear()
     return render_template("home.html", projects=projects)
@@ -64,7 +67,7 @@ def login():
     if request.method == "GET":
         account_id = session.get("account_id")
         session_id = session.get("session_id")
-        if account_id and session_id and UserSession.is_active(session_id):
+        if account_id and session_id and Session.is_active(session_id):
             access = UserAccount.access_state(account_id)
             if access and access["account_status"] == "Active" and access["profile_status"] == "Active" and access["role"] == session.get("role"):
                 return redirect(url_for("main.dashboard"))
@@ -149,7 +152,7 @@ def suspend_profile(profile_id):
 @bp.route("/admin/profiles/<int:profile_id>/reactivate", methods=["POST"])
 @role_required("User Admin")
 def reactivate_profile(profile_id):
-    ReactivateUserProfileBoundary().submit(profile_id)
+    SuspendUserProfileBoundary().reactivate(profile_id)
     flash("Profile reactivated.", "success")
     return redirect(url_for("main.admin_profiles"))
 
@@ -219,7 +222,7 @@ def suspend_account(account_id):
 @role_required("User Admin")
 def reactivate_account(account_id):
     try:
-        ReactivateUserAccountBoundary().submit(account_id)
+        SuspendUserAccountBoundary().reactivate(account_id)
         flash("Account reactivated.", "success")
     except ValueError as error:
         flash(str(error), "error")
@@ -320,11 +323,14 @@ def delete_project(status, project_id):
 @role_required()
 def projects():
     keyword = request.args.get("q", "")
-    items = SearchAvailableIDPBoundary().submit(keyword)
-    saved_ids = set()
-    if session.get("role") == "Customer":
+    role = session.get("role")
+    if role == "Customer":
+        items = SearchAvailableIDPBoundary().submit(keyword)
         saved_items = ViewSavedIDPBoundary().request(dict(session))
         saved_ids = {item["project_id"] for item in saved_items}
+    else:
+        items = BrowseIDPBoundary().submit(keyword)
+        saved_ids = set()
     return render_template("projects.html", items=items, saved_ids=saved_ids)
 
 
@@ -332,12 +338,14 @@ def projects():
 @role_required()
 def project_detail(project_id):
     session_context = dict(session)
-    project = ViewAvailableIDPBoundary().request(session_context, project_id)
+    if session.get("role") == "Customer":
+        project = ViewAvailableIDPBoundary().request(session_context, project_id)
+        saved = SaveIDPBoundary().check_saved(session_context, project_id) if project else False
+    else:
+        project = BrowseIDPBoundary().request(project_id)
+        saved = False
     if not project:
         abort(404)
-    saved = False
-    if session.get("role") == "Customer":
-        saved = CheckSavedIDPBoundary().request(session_context, project_id)
     return render_template("project_detail.html", p=project, saved=saved)
 
 
@@ -355,7 +363,7 @@ def save_project(project_id):
 @bp.route("/projects/<int:project_id>/unsave", methods=["POST"])
 @role_required("Customer")
 def unsave_project(project_id):
-    removed = UnsaveIDPBoundary().submit(dict(session), project_id)
+    removed = SaveIDPBoundary().unsave(dict(session), project_id)
     if removed:
         flash("Project removed from favourites.", "success")
     else:
@@ -431,7 +439,7 @@ def suspend_category(category_id):
 @bp.route("/manager/categories/<int:category_id>/reactivate", methods=["POST"])
 @role_required("Platform Manager")
 def reactivate_category(category_id):
-    ReactivateIDPCategoryBoundary().submit(category_id)
+    SuspendIDPCategoryBoundary().reactivate(category_id)
     flash("Category reactivated.", "success")
     return redirect(url_for("main.categories"))
 
@@ -440,7 +448,7 @@ def reactivate_category(category_id):
 @role_required("Platform Manager")
 def delete_category(category_id):
     try:
-        DeleteIDPCategoryBoundary().submit(category_id)
+        SuspendIDPCategoryBoundary().delete(category_id)
         flash("Category deleted.", "success")
     except ValueError as error:
         flash(str(error), "error")

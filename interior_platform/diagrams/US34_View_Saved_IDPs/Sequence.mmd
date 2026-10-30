@@ -1,0 +1,12 @@
+sequenceDiagram
+    actor P0 as Customer
+    participant P1 as ViewSavedIDPBoundary
+    participant P2 as ViewSavedIDPController
+    participant P3 as Favourite
+    P0->>P1: request(session)
+    P1->>P2: view(session)
+    P2->>P2: read customer_id from trusted session
+    P2->>P3: view_saved_projects(customer_id)
+    P3->>P2: saved projects with current data
+    P2-->>P1: results
+    P1->>P0: display favourites

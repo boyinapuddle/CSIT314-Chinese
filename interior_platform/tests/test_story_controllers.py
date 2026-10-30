@@ -2,22 +2,22 @@ from app.boundaries import LoginBoundary, STORY_BOUNDARIES
 from app.controllers import RoleLoginControllerBase, STORY_CONTROLLERS
 
 
-def test_all_48_user_stories_have_a_controller():
-    assert set(STORY_CONTROLLERS) == set(range(1, 49))
+def test_all_50_user_stories_have_a_controller():
+    assert set(STORY_CONTROLLERS) == set(range(1, 51))
 
 
 def test_each_user_story_uses_a_unique_controller_class():
     controllers = list(STORY_CONTROLLERS.values())
-    assert len(controllers) == 48
-    assert len(set(controllers)) == 48
+    assert len(controllers) == 50
+    assert len(set(controllers)) == 50
 
 
 def test_story_controllers_are_named_as_controllers():
     assert all(controller.__name__.endswith("Controller") for controller in STORY_CONTROLLERS.values())
 
 
-def test_all_48_user_stories_have_a_boundary_mapping():
-    assert set(STORY_BOUNDARIES) == set(range(1, 49))
+def test_all_50_user_stories_have_a_boundary_mapping():
+    assert set(STORY_BOUNDARIES) == set(range(1, 51))
 
 
 def test_login_stories_share_the_central_login_boundary():
@@ -48,3 +48,13 @@ def test_login_story_controllers_keep_unique_roles():
         "Customer",
         "Platform Manager",
     ]
+
+
+def test_story_49_has_dedicated_delete_profile_classes():
+    assert STORY_CONTROLLERS[49].__name__ == "DeleteUserProfileController"
+    assert STORY_BOUNDARIES[49].__name__ == "DeleteUserProfileBoundary"
+
+
+def test_story_50_has_dedicated_read_only_browse_classes():
+    assert STORY_CONTROLLERS[50].__name__ == "BrowseIDPController"
+    assert STORY_BOUNDARIES[50].__name__ == "BrowseIDPBoundary"

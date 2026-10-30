@@ -1,0 +1,12 @@
+sequenceDiagram
+    actor P0 as Platform Manager
+    participant P1 as PlatformManagerLogoutBoundary
+    participant P2 as PlatformManagerLogoutController
+    participant P3 as Session
+    P0->>P1: submit(session_context)
+    P1->>P2: logout(session_context)
+    P2-->>P2: read session_id from trusted session
+    P2-->>P3: invalidate_session(session_id)
+    P3->>P2: invalidated
+    P2-->>P1: result
+    P1->>P0: clear local session and show login
