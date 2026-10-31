@@ -110,7 +110,7 @@ Company, portfolio, favourite and metric Controllers read the authenticated acco
 
 ## Structural tests
 
-`tests/test_story_controllers.py` verifies that all 50 stories have Controller mappings, all 50 story Controllers remain unique, the four login stories share LoginBoundary, and all non login story Boundaries remain unique.
+`tests/test_100_cases.py` includes structural checks for the 50 user story mappings as part of the main automated test suite.
 
 ## Diagram source
 

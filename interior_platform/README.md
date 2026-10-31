@@ -48,7 +48,7 @@ Run
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-The project includes structural traceability tests for all 50 user stories, authentication tests and access control tests. Additional unit tests can be added per Boundary, Controller and Entity for TDD evidence.
+The active test suite contains 100 automated test cases plus 5 detailed TDD tests. The 100-case suite covers the main system functions, while the 5 TDD tests are used for the Red, Green and Refactor evidence.
 
 ## Large test data
 
@@ -87,6 +87,8 @@ Use a clean branch or disposable copy and run:
 
 See `docs/tdd_evidence/README.md` for the five features and screenshot procedure.
 
-## 100 additional automated test cases
+## 100 automated test cases
 
 A report-friendly register is available at `docs/testing/100_test_cases.md`. Run them with `run_100_tests.ps1`.
+
+The full active suite contains 105 tests in total: 100 automated test cases and 5 detailed TDD tests.

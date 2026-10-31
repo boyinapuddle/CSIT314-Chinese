@@ -14,9 +14,5 @@ stage_root = root / "tdd" / "stages" / stage
 for filename in ("entities.py", "repositories.py", "controllers.py", "boundaries.py", "routes.py"):
     shutil.copy2(stage_root / "app" / filename, root / "app" / filename)
 
-shutil.copy2(
-    stage_root / "tests" / "test_tdd_five_features.py",
-    root / "tests" / "test_tdd_five_features.py",
-)
 
 print(f"Applied TDD stage: {stage}")

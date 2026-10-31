@@ -89,7 +89,7 @@ Also include the three commits if you are using Git. This provides stronger evid
 
 ## Final regression test collection
 
-The project contains archived copies of the TDD stages under `tdd/stages/`. These are evidence snapshots and must not be collected as live tests. `pytest.ini` sets `testpaths = tests`, so the final command can be run safely with:
+The project keeps the RED, GREEN and REFACTOR application-code snapshots under `tdd/stages/`. The only active detailed TDD test file is `tests/test_tdd_five_features.py`. `pytest.ini` limits normal collection to the active `tests` folder, so the final command can be run safely with:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
