@@ -92,3 +92,19 @@ See `docs/tdd_evidence/README.md` for the five features and screenshot procedure
 A report-friendly register is available at `docs/testing/100_test_cases.md`. Run them with `run_100_tests.ps1`.
 
 The full active suite contains 105 tests in total: 100 automated test cases and 5 detailed TDD tests.
+
+## Automatic demo seeding
+
+When the application starts outside the test environment, it checks whether any user accounts exist. If the database is empty, the default demo data is inserted automatically. This is useful for free Render deployments where shell access is unavailable.
+
+Default accounts:
+
+| Role | Username | Password |
+|---|---|---|
+| User Admin | admin | Admin123! |
+| Interior Designer | designer | Designer123! |
+| Customer | customer | Customer123! |
+| Platform Manager | manager | Manager123! |
+
+Run `python seed.py` locally to reset the database back to the demo data. Set the environment variable `AUTO_SEED=0` to disable automatic startup seeding.
+
