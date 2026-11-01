@@ -16,7 +16,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: interior_platform
+        working-directory:
 
     steps:
       - name: Checkout repository
