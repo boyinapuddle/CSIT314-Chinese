@@ -87,25 +87,46 @@ class AccountRepository(BaseRepository):
     def search(self, keyword=""):
         value = f"%{keyword}%"
         return self.all(
-            "SELECT a.*,p.name profile_name,p.role role FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.username LIKE ? OR a.display_name LIKE ? OR a.email LIKE ? ORDER BY a.account_id DESC",
+            (
+                "SELECT a.*, p.name profile_name, p.role role "
+                "FROM user_accounts a "
+                "JOIN user_profiles p ON p.profile_id = a.profile_id "
+                "WHERE a.username LIKE ? OR a.display_name LIKE ? OR a.email LIKE ? "
+                "ORDER BY a.account_id DESC"
+            ),
             (value, value, value),
         )
 
     def get(self, account_id):
         return self.one(
-            "SELECT a.*,p.name profile_name,p.role role,p.status profile_status FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.account_id=?",
+            (
+                "SELECT a.*, p.name profile_name, p.role role, p.status profile_status "
+                "FROM user_accounts a "
+                "JOIN user_profiles p ON p.profile_id = a.profile_id "
+                "WHERE a.account_id = ?"
+            ),
             (account_id,),
         )
 
     def by_username(self, username):
         return self.one(
-            "SELECT a.*,p.name profile_name,p.role role,p.status profile_status FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.username=?",
+            (
+                "SELECT a.*, p.name profile_name, p.role role, p.status profile_status "
+                "FROM user_accounts a "
+                "JOIN user_profiles p ON p.profile_id = a.profile_id "
+                "WHERE a.username = ?"
+            ),
             (username,),
         )
 
     def access_state(self, account_id):
         return self.one(
-            "SELECT a.status account_status,p.status profile_status,p.role role FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.account_id=?",
+            (
+                "SELECT a.status account_status, p.status profile_status, p.role role "
+                "FROM user_accounts a "
+                "JOIN user_profiles p ON p.profile_id = a.profile_id "
+                "WHERE a.account_id = ?"
+            ),
             (account_id,),
         )
 
@@ -246,7 +267,17 @@ class CategoryRepository(BaseRepository):
 
 
 class ProjectRepository(BaseRepository):
-    BASE = "SELECT p.*,c.name category_name,c.status category_status,a.display_name designer_name,co.name company_name,CASE WHEN p.visible=1 AND c.status='Active' THEN 1 ELSE 0 END available,(SELECT COUNT(*) FROM project_views v WHERE v.project_id=p.project_id) views,(SELECT COUNT(*) FROM favourites f WHERE f.project_id=p.project_id) shortlists FROM projects p JOIN idp_categories c ON c.category_id=p.category_id JOIN user_accounts a ON a.account_id=p.designer_id LEFT JOIN companies co ON co.designer_id=p.designer_id"
+    BASE = (
+        "SELECT p.*, c.name category_name, c.status category_status, "
+        "a.display_name designer_name, co.name company_name, "
+        "CASE WHEN p.visible = 1 AND c.status = 'Active' THEN 1 ELSE 0 END available, "
+        "(SELECT COUNT(*) FROM project_views v WHERE v.project_id = p.project_id) views, "
+        "(SELECT COUNT(*) FROM favourites f WHERE f.project_id = p.project_id) shortlists "
+        "FROM projects p "
+        "JOIN idp_categories c ON c.category_id = p.category_id "
+        "JOIN user_accounts a ON a.account_id = p.designer_id "
+        "LEFT JOIN companies co ON co.designer_id = p.designer_id"
+    )
 
     def search_owned(self, designer_id, project_status, keyword=""):
         value = f"%{keyword}%"
@@ -288,7 +319,12 @@ class ProjectRepository(BaseRepository):
 
     def update_owned(self, project_id, designer_id, category_id, title, description, project_status, progress, image_url):
         return self.execute(
-            "UPDATE projects SET category_id=?,title=?,description=?,project_status=?,progress=?,image_url=?,updated_at=? WHERE project_id=? AND designer_id=? AND project_status=?",
+            (
+                "UPDATE projects "
+                "SET category_id = ?, title = ?, description = ?, project_status = ?, "
+                "progress = ?, image_url = ?, updated_at = ? "
+                "WHERE project_id = ? AND designer_id = ? AND project_status = ?"
+            ),
             (
                 category_id,
                 title,
@@ -325,7 +361,13 @@ class FavouriteRepository(BaseRepository):
 
     def add_available(self, customer_id, project_id):
         return self.execute(
-            "INSERT OR IGNORE INTO favourites(customer_id,project_id,saved_at) SELECT ?,p.project_id,? FROM projects p JOIN idp_categories c ON c.category_id=p.category_id WHERE p.project_id=? AND p.visible=1 AND c.status='Active'",
+            (
+                "INSERT OR IGNORE INTO favourites(customer_id, project_id, saved_at) "
+                "SELECT ?, p.project_id, ? "
+                "FROM projects p "
+                "JOIN idp_categories c ON c.category_id = p.category_id "
+                "WHERE p.project_id = ? AND p.visible = 1 AND c.status = 'Active'"
+            ),
             (customer_id, datetime.utcnow().isoformat(), project_id),
         ).rowcount
 
@@ -338,7 +380,13 @@ class FavouriteRepository(BaseRepository):
     def search(self, customer_id, keyword=""):
         value = f"%{keyword}%"
         return self.all(
-            ProjectRepository.BASE + " JOIN favourites fav ON fav.project_id=p.project_id WHERE fav.customer_id=? AND (p.title LIKE ? OR p.description LIKE ? OR c.name LIKE ?) ORDER BY fav.saved_at DESC",
+            (
+                ProjectRepository.BASE
+                + " JOIN favourites fav ON fav.project_id = p.project_id"
+                + " WHERE fav.customer_id = ?"
+                + " AND (p.title LIKE ? OR p.description LIKE ? OR c.name LIKE ?)"
+                + " ORDER BY fav.saved_at DESC"
+            ),
             (customer_id, value, value, value),
         )
 
@@ -352,6 +400,13 @@ class ActivityRepository(BaseRepository):
 
     def report(self, start, end):
         return self.one(
-            "SELECT (SELECT COUNT(*) FROM user_accounts WHERE account_id IN (SELECT account_id FROM activity_events WHERE created_at BETWEEN ? AND ?)) users,(SELECT COUNT(*) FROM projects WHERE updated_at BETWEEN ? AND ?) projects,(SELECT COUNT(*) FROM project_views WHERE viewed_at BETWEEN ? AND ?) views,(SELECT COUNT(*) FROM favourites WHERE saved_at BETWEEN ? AND ?) shortlists",
+            (
+                "SELECT "
+                "(SELECT COUNT(*) FROM user_accounts WHERE account_id IN "
+                "(SELECT account_id FROM activity_events WHERE created_at BETWEEN ? AND ?)) users, "
+                "(SELECT COUNT(*) FROM projects WHERE updated_at BETWEEN ? AND ?) projects, "
+                "(SELECT COUNT(*) FROM project_views WHERE viewed_at BETWEEN ? AND ?) views, "
+                "(SELECT COUNT(*) FROM favourites WHERE saved_at BETWEEN ? AND ?) shortlists"
+            ),
             (start, end, start, end, start, end, start, end),
         )

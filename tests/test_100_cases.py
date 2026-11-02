@@ -62,7 +62,15 @@ def _category_id(name="Modern"):
     ).fetchone()[0]
 
 
-def _create_project(designer_id, title="Project", status="Current", progress=50, visible=1, category_id=None, description="Design project"):
+def _create_project(
+    designer_id,
+    title="Project",
+    status="Current",
+    progress=50,
+    visible=1,
+    category_id=None,
+    description="Design project",
+):
     category_id = category_id or _category_id()
     cur = get_db().execute(
         "INSERT INTO projects(designer_id,category_id,title,description,project_status,progress,image_url,visible,updated_at) VALUES(?,?,?,?,?,?,?,?,datetime('now'))",
