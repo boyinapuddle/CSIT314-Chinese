@@ -6,7 +6,7 @@
 flowchart LR
     N0["Actor<br/>Platform Manager"]
     N1["boundary<br/>SuspendIDPCategoryBoundary<br/><br/>+submit()<br/>+reactivate()<br/>+delete()"]
-    N2["control<br/>SuspendIDPCategoryController<br/><br/>+suspend()<br/>+reactivate()<br/>+delete()"]
+    N2["control<br/>SuspendIDPCategoryController<br/><br/>+suspend_category()<br/>+reactivate_category()<br/>+delete_category()"]
     N3["entity<br/>IDPCategory<br/><br/>+suspend_category(category_id)<br/>+reactivate_category(category_id)<br/>+delete_category(category_id)"]
     N0 -->|"suspend, reactivate, or delete category"| N1
     N1 -->|"selected operation(category_id)"| N2

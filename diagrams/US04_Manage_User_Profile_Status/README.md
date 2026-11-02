@@ -6,7 +6,7 @@
 flowchart LR
     N0["Actor<br/>User Admin"]
     N1["boundary<br/>SuspendUserProfileBoundary<br/><br/>+submit()<br/>+reactivate()"]
-    N2["control<br/>SuspendUserProfileController<br/><br/>+suspend()<br/>+reactivate()"]
+    N2["control<br/>SuspendUserProfileController<br/><br/>+suspend_profile()<br/>+reactivate_profile()"]
     N3["entity<br/>UserProfile<br/><br/>+suspend_profile(profile_id)<br/>+reactivate_profile(profile_id)"]
     N0 -->|"suspend or reactivate profile"| N1
     N1 -->|"selected operation(profile_id)"| N2

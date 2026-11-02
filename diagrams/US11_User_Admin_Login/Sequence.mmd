@@ -12,7 +12,7 @@ sequenceDiagram
     P3->>P2: account
     P2->>P3: verify_password(account, password)
     P3-->>P2: valid or invalid
-    P2-->>P4: get_profile(profile_id)
+    P2-->>P4: view_profile(profile_id)
     P4->>P2: active profile with role
     P2->>P5: complete_login(account, profile)
     P5->>P6: create_session(account_id, role)

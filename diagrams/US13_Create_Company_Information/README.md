@@ -6,10 +6,10 @@
 flowchart LR
     N0["Actor<br/>Interior Designer"]
     N1["boundary<br/>CreateCompanyInformationBoundary<br/><br/>+submit()"]
-    N2["control<br/>CreateCompanyInformationController<br/><br/>+create()"]
+    N2["control<br/>CreateCompanyInformationController<br/><br/>+create_company()"]
     N3["entity<br/>Company<br/><br/>+create_company(designer_id, data)"]
     N0 -->|"submit(session, form)"| N1
-    N1 -->|"create(session, data)"| N2
+    N1 -->|"create_company(session, data)"| N2
     N2 -->|"create_company(designer_id, data)"| N3
     N3 -->|"result"| N2
     N2 -->|"result"| N1
@@ -24,7 +24,7 @@ sequenceDiagram
     participant P2 as CreateCompanyInformationController
     participant P3 as Company
     P0->>P1: submit(session, form)
-    P1->>P2: create(session, data)
+    P1->>P2: create_company(session, data)
     P2->>P2: read designer_id from trusted session
     P2->>P3: create_company(designer_id, data)
     P3-->>P2: result

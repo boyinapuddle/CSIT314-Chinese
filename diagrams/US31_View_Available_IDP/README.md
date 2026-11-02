@@ -6,11 +6,11 @@
 flowchart LR
     N0["Actor<br/>Customer"]
     N1["boundary<br/>ViewAvailableIDPBoundary<br/><br/>+request()"]
-    N2["control<br/>ViewAvailableIDPController<br/><br/>+view()"]
-    N3["entity<br/>IDP<br/><br/>+get_available_project(project_id)<br/>+record_view(project_id, customer_id)"]
+    N2["control<br/>ViewAvailableIDPController<br/><br/>+view_available_idp()"]
+    N3["entity<br/>IDP<br/><br/>+view_available_idp(project_id)<br/>+record_view(project_id, customer_id)"]
     N0 -->|"request(session, project_id)"| N1
-    N1 -->|"view(session, project_id)"| N2
-    N2 -->|"get_available_project(project_id)"| N3
+    N1 -->|"view_available_idp(session, project_id)"| N2
+    N2 -->|"view_available_idp(project_id)"| N3
     N3 -->|"project details"| N2
     N2 -->|"project details"| N1
 ```
@@ -24,8 +24,8 @@ sequenceDiagram
     participant P2 as ViewAvailableIDPController
     participant P3 as IDP
     P0-->>P1: request(session, project_id)
-    P1-->>P2: view(session, project_id)
-    P2-->>P3: get_available_project(project_id)
+    P1-->>P2: view_available_idp(session, project_id)
+    P2-->>P3: view_available_idp(project_id)
     P3-->>P2: project details
     P2->>P2: if role is Customer, read customer_id from session
     P2-->>P3: record_view(project_id, customer_id)

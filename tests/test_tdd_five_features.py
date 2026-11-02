@@ -38,7 +38,7 @@ def test_account_cannot_be_created_with_suspended_profile(app):
 def test_save_controller_rejects_non_customer_session(app):
     with app.app_context():
         with pytest.raises(PermissionError, match="Customer"):
-            SaveIDPController().save(
+            SaveIDPController().save_idp(
                 {"account_id": 1, "role": "User Admin"},
                 1,
             )

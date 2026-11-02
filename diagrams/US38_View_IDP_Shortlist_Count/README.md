@@ -6,12 +6,12 @@
 flowchart LR
     N0["Actor<br/>Interior Designer"]
     N1["boundary<br/>ViewIDPShortlistsBoundary<br/><br/>+request()"]
-    N2["control<br/>ViewIDPShortlistsController<br/><br/>+view()"]
-    N3["entity<br/>ShortlistMetric<br/><br/>+for_designer(designer_id)"]
+    N2["control<br/>ViewIDPShortlistsController<br/><br/>+shortlist_count()"]
+    N3["entity<br/>ShortlistMetric<br/><br/>+shortlist_count(designer_id)"]
     N4["entity<br/>IDP<br/><br/>+get_designer_projects_with_metrics(designer_id)"]
     N0 -->|"request(session)"| N1
-    N1 -->|"view(session)"| N2
-    N2 -->|"for_designer(designer_id)"| N3
+    N1 -->|"shortlist_count(session)"| N2
+    N2 -->|"shortlist_count(designer_id)"| N3
     N3 -->|"get_designer_projects_with_metrics(designer_id)"| N4
     N4 -->|"projects with shortlist totals from favourites"| N3
     N3 -->|"metrics"| N2
@@ -28,9 +28,9 @@ sequenceDiagram
     participant P3 as ShortlistMetric
     participant P4 as IDP
     P0->>P1: request(session)
-    P1->>P2: view(session)
+    P1->>P2: shortlist_count(session)
     P2->>P2: read designer_id from trusted session
-    P2->>P3: for_designer(designer_id)
+    P2->>P3: shortlist_count(designer_id)
     P3-->>P4: get_designer_projects_with_metrics(designer_id)
     P4->>P3: projects with shortlist totals from favourites
     P3-->>P2: metrics

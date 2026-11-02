@@ -1,10 +1,10 @@
 flowchart LR
     N0["Actor<br/>Interior Designer"]
     N1["boundary<br/>ViewCompanyInformationBoundary<br/><br/>+request()"]
-    N2["control<br/>ViewCompanyInformationController<br/><br/>+view()"]
-    N3["entity<br/>Company<br/><br/>+get_company(designer_id)"]
+    N2["control<br/>ViewCompanyInformationController<br/><br/>+view_company()"]
+    N3["entity<br/>Company<br/><br/>+view_company(designer_id)"]
     N0 -->|"request(session)"| N1
-    N1 -->|"view(session)"| N2
-    N2 -->|"get_company(designer_id)"| N3
+    N1 -->|"view_company(session)"| N2
+    N2 -->|"view_company(designer_id)"| N3
     N3 -->|"company details"| N2
     N2 -->|"company details"| N1

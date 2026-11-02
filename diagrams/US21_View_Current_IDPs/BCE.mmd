@@ -1,10 +1,10 @@
 flowchart LR
     N0["Actor<br/>Interior Designer"]
     N1["boundary<br/>ViewCurrentIDPBoundary<br/><br/>+request()"]
-    N2["control<br/>ViewCurrentIDPController<br/><br/>+view()"]
-    N3["entity<br/>IDP<br/><br/>+get_owned_projects(designer_id, statusCurrent)"]
+    N2["control<br/>ViewCurrentIDPController<br/><br/>+view_current_idps()"]
+    N3["entity<br/>IDP<br/><br/>+view_current_idps(designer_id)"]
     N0 -->|"request(session)"| N1
-    N1 -->|"view(session)"| N2
-    N2 -->|"get_owned_projects(designer_id, statusCurrent)"| N3
+    N1 -->|"view_current_idps(session)"| N2
+    N2 -->|"view_current_idps(designer_id)"| N3
     N3 -->|"owned projects"| N2
     N2 -->|"results"| N1

@@ -6,11 +6,11 @@
 flowchart LR
     N0["Actor<br/>Interior Designer"]
     N1["boundary<br/>DeletePastIDPBoundary<br/><br/>+submit()"]
-    N2["control<br/>DeletePastIDPController<br/><br/>+delete()"]
-    N3["entity<br/>IDP<br/><br/>+delete_owned_project(project_id, designer_id, statusPast)"]
+    N2["control<br/>DeletePastIDPController<br/><br/>+delete_past_idp()"]
+    N3["entity<br/>IDP<br/><br/>+delete_past_idp(project_id, designer_id)"]
     N0 -->|"confirm delete"| N1
-    N1 -->|"delete(session, project_id)"| N2
-    N2 -->|"delete_owned_project(project_id, designer_id, statusPast)"| N3
+    N1 -->|"delete_past_idp(session, project_id)"| N2
+    N2 -->|"delete_past_idp(project_id, designer_id)"| N3
     N3 -->|"deleted or rejected"| N2
     N2 -->|"result"| N1
 ```
@@ -24,9 +24,9 @@ sequenceDiagram
     participant P2 as DeletePastIDPController
     participant P3 as IDP
     P0->>P1: confirm delete
-    P1-->>P2: delete(session, project_id)
+    P1-->>P2: delete_past_idp(session, project_id)
     P2->>P2: read designer_id from trusted session
-    P2-->>P3: delete_owned_project(project_id, designer_id, "Past")
+    P2-->>P3: delete_past_idp(project_id, designer_id)
     P3->>P2: deleted or rejected
     P2-->>P1: result
     P1-->>P0: display result
