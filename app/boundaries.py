@@ -107,7 +107,7 @@ class DeleteUserProfileBoundary:
 # User Story 5 (Search User Profile)
 class SearchUserProfileBoundary:
     def submit(self, keyword=""):
-        return SearchUserProfileController().search_profiles(keyword)
+        return SearchUserProfileController().search_profile(keyword)
 
 
 # User Story 6 (Create User Account)
@@ -122,7 +122,7 @@ class CreateUserAccountBoundary:
         )
 
     def profiles(self):
-        return CreateUserAccountController().search_profiles()
+        return CreateUserAccountController().search_profile()
 
 
 # User Story 7 (View User Account)

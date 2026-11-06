@@ -22,7 +22,7 @@ class UserProfile:
         return ProfileRepository().get(profile_id)
 
     @classmethod
-    def search_profiles(cls, keyword=""):
+    def search_profile(cls, keyword=""):
         from .repositories import ProfileRepository
         return ProfileRepository().search(keyword)
 
