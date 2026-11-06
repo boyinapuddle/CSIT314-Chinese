@@ -103,8 +103,8 @@ class DeleteUserProfileController:
 
 # User Story 5 (Search User Profile)
 class SearchUserProfileController:
-    def search_profiles(self, keyword=""):
-        return UserProfile.search_profiles(keyword)
+    def search_profile(self, keyword=""):
+        return UserProfile.search_profile(keyword)
 
 
 # User Story 6 (Create User Account)
@@ -112,8 +112,8 @@ class CreateUserAccountController:
     def create_account(self, username, password, profile_id, display_name, email):
         return UserAccount.create_account(username, password, profile_id, display_name, email)
 
-    def search_profiles(self):
-        return UserProfile.search_profiles("")
+    def search_profile(self):
+        return UserProfile.search_profile("")
 
 
 # User Story 7 (View User Account)
