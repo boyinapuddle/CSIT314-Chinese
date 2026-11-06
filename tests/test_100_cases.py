@@ -84,7 +84,7 @@ def _create_project(
 
 def test_tc001_seed_contains_four_profiles(app):
     with app.app_context():
-        assert len(UserProfile.search_profiles("")) == 4
+        assert len(UserProfile.search_profile("")) == 4
 
 
 def test_tc002_create_user_profile(app):
@@ -137,19 +137,19 @@ def test_tc009_view_existing_profile(app):
 
 def test_tc010_search_profile_by_name(app):
     with app.app_context():
-        rows = UserProfile.search_profiles("Interior")
+        rows = UserProfile.search_profile("Interior")
         assert any(r["role"] == "Interior Designer" for r in rows)
 
 
 def test_tc011_search_profile_by_description(app):
     with app.app_context():
         pid = UserProfile.create_profile("Premium Client", "Gold membership", "Customer")
-        assert any(r["profile_id"] == pid for r in UserProfile.search_profiles("Gold"))
+        assert any(r["profile_id"] == pid for r in UserProfile.search_profile("Gold"))
 
 
 def test_tc012_blank_profile_search_returns_all(app):
     with app.app_context():
-        assert len(UserProfile.search_profiles("")) == 4
+        assert len(UserProfile.search_profile("")) == 4
 
 
 def test_tc013_update_profile_name(app):
