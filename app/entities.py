@@ -110,18 +110,20 @@ class UserAccount:
 
     @classmethod
     def create_account(cls, username, password, profile_id, display_name, email):
-        from .repositories import AccountRepository, ProfileRepository
+        from .repositories import ActivityRepository, AccountRepository, ProfileRepository
         profile = ProfileRepository().get(profile_id)
         if not profile or profile["status"] != "Active":
             raise ValueError("An active profile is required to create an account.")
         password_hash = generate_password_hash(password)
-        return AccountRepository().create(
+        account_id = AccountRepository().create(
             username.strip(),
             password_hash,
             profile_id,
             display_name.strip(),
             email.strip(),
         )
+        ActivityRepository().log("account_created", account_id)
+        return account_id
 
     @classmethod
     def update_account(cls, account_id, display_name, email, profile_id):
@@ -322,8 +324,8 @@ class IDP:
 
     @classmethod
     def _update_owned_idp(cls, project_id, designer_id, data, project_status):
-        from .repositories import ProjectRepository
-        return ProjectRepository().update_owned(
+        from .repositories import ActivityRepository, ProjectRepository
+        updated = ProjectRepository().update_owned(
             project_id,
             designer_id,
             int(data["category_id"]),
@@ -333,6 +335,9 @@ class IDP:
             int(data.get("progress", 0)),
             data.get("image_url", "").strip(),
         )
+        if updated:
+            ActivityRepository().log("project_updated", designer_id, project_id)
+        return updated
 
     @classmethod
     def update_current_idp(cls, project_id, designer_id, data):
@@ -489,6 +494,11 @@ class ActivityEvent:
     created_at: str
 
     @classmethod
+    def log_event(cls, event_type, account_id=None, project_id=None):
+        from .repositories import ActivityRepository
+        return ActivityRepository().log(event_type, account_id, project_id)
+
+    @classmethod
     def report_between(cls, start, end):
         from .repositories import ActivityRepository
         return ActivityRepository().report(start.isoformat(), end.isoformat())
@@ -532,18 +542,43 @@ class ReportSummary:
         except ValueError:
             return now
 
+    @staticmethod
+    def _change(current, previous):
+        if previous == 0:
+            return 0 if current == 0 else None
+        return round(((current - previous) / previous) * 100, 1)
+
     @classmethod
     def _build(cls, period, start, end, selected):
         now = datetime.utcnow()
         if end > now:
             end = now
-        row = ActivityEvent.report_between(start, end)
+
+        current = dict(ActivityEvent.report_between(start, end))
+        duration = end - start
+        previous_end = start - timedelta(microseconds=1)
+        previous_start = previous_end - duration
+        previous = dict(ActivityEvent.report_between(previous_start, previous_end))
+
+        comparison_keys = [
+            "active_users",
+            "new_accounts",
+            "successful_logins",
+            "views",
+            "shortlists",
+        ]
+        changes = {
+            key: cls._change(current.get(key, 0), previous.get(key, 0))
+            for key in comparison_keys
+        }
+
         return {
             "period": period,
             "from": start.date().isoformat(),
             "to": end.date().isoformat(),
             "selected": selected.date().isoformat(),
-            **dict(row),
+            "changes": changes,
+            **current,
         }
 
 

@@ -1,82 +1,197 @@
 {% extends 'base.html' %}
 {% block content %}
-    <section class="section">
-        <div class="section-head">
-            <div>
-                <p class="eyebrow dark">
-                    PLATFORM REPORT
-                </p>
-                <h1>
-                    {{report.period}}
-                    Report
-                </h1>
-                <p>
-                    {{report.from}}
-                    to
-                    {{report.to}}
-                </p>
+<section class="section report-page">
+    <div class="section-head report-heading">
+        <div>
+            <p class="eyebrow dark">PLATFORM ANALYTICS</p>
+            <h1>{{ report.period }} Report</h1>
+            <p>{{ report.from }} to {{ report.to }}</p>
+        </div>
+        <div class="report-controls">
+            <form class="search report-date">
+                <input type="date" name="date" value="{{ report.selected }}">
+                <button>Generate</button>
+            </form>
+            <div class="tabs report-tabs">
+                <a class="{{ 'active' if report.period == 'Daily' else '' }}"
+                   href="{{ url_for('main.reports', period='daily') }}">Daily</a>
+                <a class="{{ 'active' if report.period == 'Weekly' else '' }}"
+                   href="{{ url_for('main.reports', period='weekly') }}">Weekly</a>
+                <a class="{{ 'active' if report.period == 'Monthly' else '' }}"
+                   href="{{ url_for('main.reports', period='monthly') }}">Monthly</a>
             </div>
-            <div>
-                <form class="search report-date">
-                    <input type="date" name="date" value="{{report.selected}}">
-                    <button>
-                        Generate
-                    </button>
-                </form>
-                <div class="tabs">
-                    <a href="{{url_for('main.reports',period='daily')}}">
-                        Daily
-                    </a>
-                    <a href="{{url_for('main.reports',period='weekly')}}">
-                        Weekly
-                    </a>
-                    <a href="{{url_for('main.reports',period='monthly')}}">
-                        Monthly
-                    </a>
+        </div>
+    </div>
+
+    <div class="report-section-title">
+        <h2>Platform activity</h2>
+        <p>Usage and account activity recorded during the selected period.</p>
+    </div>
+
+    <div class="report-grid report-grid-five">
+        {% for key, label, value in [
+            ('active_users', 'Active users', report.active_users),
+            ('new_accounts', 'New accounts', report.new_accounts),
+            ('successful_logins', 'Successful logins', report.successful_logins),
+            ('views', 'Project views', report.views),
+            ('shortlists', 'New shortlists', report.shortlists)
+        ] %}
+        <article class="report-card">
+            <span>{{ label }}</span>
+            <strong>{{ value }}</strong>
+            <small class="report-change">
+                {% if report.changes[key] is none %}
+                    New activity vs previous period
+                {% elif report.changes[key] > 0 %}
+                    +{{ report.changes[key] }}% vs previous period
+                {% elif report.changes[key] < 0 %}
+                    {{ report.changes[key] }}% vs previous period
+                {% else %}
+                    No change vs previous period
+                {% endif %}
+            </small>
+        </article>
+        {% endfor %}
+    </div>
+
+    <div class="report-section-title">
+        <h2>Project and customer engagement</h2>
+        <p>How customers interacted with Interior Design Projects.</p>
+    </div>
+
+    <div class="report-grid report-grid-four">
+        <article class="report-card">
+            <span>IDPs created</span>
+            <strong>{{ report.idps_created }}</strong>
+        </article>
+        <article class="report-card">
+            <span>IDPs updated</span>
+            <strong>{{ report.idps_updated }}</strong>
+        </article>
+        <article class="report-card">
+            <span>Unique project viewers</span>
+            <strong>{{ report.unique_viewers }}</strong>
+        </article>
+        <article class="report-card">
+            <span>Unshortlists</span>
+            <strong>{{ report.unshortlists }}</strong>
+        </article>
+    </div>
+
+    <div class="report-two-column">
+        <div class="panel report-panel">
+            <h3>User activity by role</h3>
+            <div class="role-activity-list">
+                {% for role, count in report.role_activity.items() %}
+                <div>
+                    <span>{{ role }}</span>
+                    <strong>{{ count }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel report-panel">
+            <h3>Top performers</h3>
+            <div class="top-performer-list">
+                <div>
+                    <span>Most viewed IDP</span>
+                    {% if report.top_viewed %}
+                    <strong>{{ report.top_viewed.title }}</strong>
+                    <small>{{ report.top_viewed.metric }} views</small>
+                    {% else %}
+                    <strong>No activity</strong>
+                    {% endif %}
+                </div>
+                <div>
+                    <span>Most shortlisted IDP</span>
+                    {% if report.top_shortlisted %}
+                    <strong>{{ report.top_shortlisted.title }}</strong>
+                    <small>{{ report.top_shortlisted.metric }} shortlists</small>
+                    {% else %}
+                    <strong>No activity</strong>
+                    {% endif %}
+                </div>
+                <div>
+                    <span>Most active category</span>
+                    {% if report.top_category %}
+                    <strong>{{ report.top_category.name }}</strong>
+                    <small>{{ report.top_category.engagement }} engagements</small>
+                    {% else %}
+                    <strong>No activity</strong>
+                    {% endif %}
                 </div>
             </div>
         </div>
-        <div class="report-grid">
-            <article>
-                <span>
-                    Active users
-                </span>
-                <strong>
-                    {{report.users}}
-                </strong>
-            </article>
-            <article>
-                <span>
-                    Projects updated
-                </span>
-                <strong>
-                    {{report.projects}}
-                </strong>
-            </article>
-            <article>
-                <span>
-                    Project views
-                </span>
-                <strong>
-                    {{report.views}}
-                </strong>
-            </article>
-            <article>
-                <span>
-                    Shortlists
-                </span>
-                <strong>
-                    {{report.shortlists}}
-                </strong>
-            </article>
+    </div>
+
+    <div class="report-two-column">
+        <div class="panel report-panel">
+            <h3>Top 5 IDPs by views</h3>
+            {% if report.top_projects %}
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>IDP</th>
+                            <th>Designer</th>
+                            <th>Views</th>
+                            <th>Shortlists</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in report.top_projects %}
+                        <tr>
+                            <td>{{ project.title }}</td>
+                            <td>{{ project.designer_name }}</td>
+                            <td>{{ project.views }}</td>
+                            <td>{{ project.shortlists }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No project engagement was recorded for this period.</p>
+            {% endif %}
         </div>
-        <div class="panel">
-            <h3>
-                Report interpretation
-            </h3>
-            <p>
-                This read-only report summarizes platform activity captured for the selected period. Generating it does not modify activity records.
-            </p>
+
+        <div class="panel report-panel">
+            <h3>Category performance</h3>
+            {% if report.category_performance %}
+            <div class="table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Views</th>
+                            <th>Shortlists</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in report.category_performance %}
+                        <tr>
+                            <td>{{ category.name }}</td>
+                            <td>{{ category.views }}</td>
+                            <td>{{ category.shortlists }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No category engagement was recorded for this period.</p>
+            {% endif %}
         </div>
-    </section>
+    </div>
+
+    <div class="panel report-note">
+        <h3>Report interpretation</h3>
+        <p>
+            This read-only report summarises platform activity for the selected period. Active users are accounts
+            that recorded at least one tracked action. Engagement statistics are based on project views, favourites,
+            and recorded activity events. Generating a report does not modify platform data.
+        </p>
+    </div>
+</section>
 {% endblock %}

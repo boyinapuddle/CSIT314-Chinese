@@ -757,7 +757,27 @@ def test_tc096_category_in_use_cannot_be_deleted(app):
 def test_tc097_daily_report_has_expected_fields(app):
     with app.app_context():
         report = DailyReport.generate_daily_report()
-        assert {"period", "from", "to", "selected", "users", "projects", "views", "shortlists"} <= set(report)
+        expected = {
+            "period",
+            "from",
+            "to",
+            "selected",
+            "active_users",
+            "new_accounts",
+            "successful_logins",
+            "idps_created",
+            "idps_updated",
+            "views",
+            "unique_viewers",
+            "shortlists",
+            "unshortlists",
+            "role_activity",
+            "top_viewed",
+            "top_shortlisted",
+            "top_category",
+            "changes",
+        }
+        assert expected <= set(report)
         assert report["period"] == "Daily"
 
 

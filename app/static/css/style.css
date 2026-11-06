@@ -810,3 +810,149 @@ footer {
     }
 
 }
+
+/* Platform analytics reports */
+.report-page {
+    max-width: 1500px;
+}
+
+.report-heading {
+    align-items: flex-start;
+}
+
+.report-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.report-tabs a.active {
+    background: var(--ink);
+    color: #fff;
+}
+
+.report-section-title {
+    margin: 34px 0 16px;
+}
+
+.report-section-title h2 {
+    font-size: 28px;
+    margin-bottom: 4px;
+}
+
+.report-section-title p {
+    margin: 0;
+    color: #6d746f;
+}
+
+.report-grid-five {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.report-grid-four {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.report-card {
+    min-height: 135px;
+}
+
+.report-card strong {
+    display: block;
+    margin-top: 10px;
+}
+
+.report-change {
+    display: block;
+    margin-top: 10px;
+    color: #69706b;
+    line-height: 1.35;
+}
+
+.report-two-column {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.report-panel {
+    margin: 0;
+}
+
+.role-activity-list,
+.top-performer-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.role-activity-list > div,
+.top-performer-list > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.top-performer-list > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.top-performer-list small {
+    color: #69706b;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+}
+
+.report-table th,
+.report-table td {
+    text-align: left;
+    padding: 11px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+}
+
+.report-table th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #69706b;
+}
+
+.report-note {
+    margin-top: 24px;
+}
+
+@media (max-width: 1100px) {
+    .report-grid-five,
+    .report-grid-four {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .report-controls {
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .report-two-column,
+    .report-grid-five,
+    .report-grid-four {
+        grid-template-columns: 1fr;
+    }
+}

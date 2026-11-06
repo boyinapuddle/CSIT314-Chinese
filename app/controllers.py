@@ -64,6 +64,7 @@ class RoleLoginControllerBase:
         if profile["role"] != self.role:
             return None
         session_id = Session.create_session(account["account_id"], self.role)
+        ActivityEvent.log_event("login_success", account["account_id"])
         return account, session_id
 
 
@@ -102,8 +103,8 @@ class DeleteUserProfileController:
 
 # User Story 5 (Search User Profile)
 class SearchUserProfileController:
-    def search_profiles(self, keyword=""):
-        return UserProfile.search_profiles(keyword)
+    def search_profile(self, keyword=""):
+        return UserProfile.search_profile(keyword)
 
 
 # User Story 6 (Create User Account)
@@ -111,8 +112,8 @@ class CreateUserAccountController:
     def create_account(self, username, password, profile_id, display_name, email):
         return UserAccount.create_account(username, password, profile_id, display_name, email)
 
-    def search_profiles(self):
-        return UserProfile.search_profiles("")
+    def search_profile(self):
+        return UserProfile.search_profile("")
 
 
 # User Story 7 (View User Account)
