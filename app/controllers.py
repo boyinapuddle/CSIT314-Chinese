@@ -64,6 +64,7 @@ class RoleLoginControllerBase:
         if profile["role"] != self.role:
             return None
         session_id = Session.create_session(account["account_id"], self.role)
+        ActivityEvent.log_event("login_success", account["account_id"])
         return account, session_id
 
 

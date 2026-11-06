@@ -75,10 +75,37 @@ def close_db(_e=None):
 def init_db():
     db = get_db()
     db.executescript(SCHEMA)
+
     columns = {row["name"] for row in db.execute("PRAGMA table_info(user_profiles)")}
+
+    # Migrate databases created by older project versions.
     if "role" not in columns:
-        db.execute("ALTER TABLE user_profiles ADD COLUMN role TEXT NOT NULL DEFAULT 'Customer'")
-        db.execute("UPDATE user_profiles SET role=name WHERE name IN ('User Admin','Interior Designer','Customer','Platform Manager')")
+        db.execute(
+            "ALTER TABLE user_profiles "
+            "ADD COLUMN role TEXT NOT NULL DEFAULT 'Customer'"
+        )
+        db.execute(
+            "UPDATE user_profiles SET role=name "
+            "WHERE name IN "
+            "('User Admin','Interior Designer','Customer','Platform Manager')"
+        )
+
+    # A previous version temporarily used role as the only profile identity.
+    # Restore profile name so the current profile/account queries remain compatible.
+    columns = {row["name"] for row in db.execute("PRAGMA table_info(user_profiles)")}
+    if "name" not in columns:
+        db.execute("ALTER TABLE user_profiles ADD COLUMN name TEXT")
+        db.execute(
+            "UPDATE user_profiles "
+            "SET name=role "
+            "WHERE name IS NULL OR trim(name)=''"
+        )
+
+    # Keep profile names unique even for databases migrated from the role-only version.
+    db.execute(
+        "CREATE UNIQUE INDEX IF NOT EXISTS "
+        "idx_user_profiles_name_unique ON user_profiles(name)"
+    )
     db.commit()
 
 def init_app(app):
