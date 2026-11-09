@@ -4,8 +4,8 @@ sequenceDiagram
     participant P2 as ViewAvailableIDPController
     participant P3 as IDP
     P0-->>P1: request(session, project_id)
-    P1-->>P2: view(session, project_id)
-    P2-->>P3: get_available_project(project_id)
+    P1-->>P2: view_available_idp(session, project_id)
+    P2-->>P3: view_available_idp(project_id)
     P3-->>P2: project details
     P2->>P2: if role is Customer, read customer_id from session
     P2-->>P3: record_view(project_id, customer_id)

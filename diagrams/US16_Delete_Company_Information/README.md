@@ -6,10 +6,10 @@
 flowchart LR
     N0["Actor<br/>Interior Designer"]
     N1["boundary<br/>DeleteCompanyInformationBoundary<br/><br/>+submit()"]
-    N2["control<br/>DeleteCompanyInformationController<br/><br/>+delete()"]
+    N2["control<br/>DeleteCompanyInformationController<br/><br/>+delete_company()"]
     N3["entity<br/>Company<br/><br/>+delete_company(designer_id)"]
     N0 -->|"submit(session)"| N1
-    N1 -->|"delete(session)"| N2
+    N1 -->|"delete_company(session)"| N2
     N2 -->|"delete_company(designer_id)"| N3
     N3 -->|"delete result"| N2
     N2 -->|"result"| N1
@@ -24,7 +24,7 @@ sequenceDiagram
     participant P2 as DeleteCompanyInformationController
     participant P3 as Company
     P0->>P1: submit(session)
-    P1->>P2: delete(session)
+    P1->>P2: delete_company(session)
     P2->>P2: read designer_id from trusted session
     P2->>P3: delete_company(designer_id)
     P3-->>P2: delete result

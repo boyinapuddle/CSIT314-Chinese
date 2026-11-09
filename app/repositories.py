@@ -87,25 +87,46 @@ class AccountRepository(BaseRepository):
     def search(self, keyword=""):
         value = f"%{keyword}%"
         return self.all(
-            "SELECT a.*,p.name profile_name,p.role role FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.username LIKE ? OR a.display_name LIKE ? OR a.email LIKE ? ORDER BY a.account_id DESC",
+            (
+                "SELECT a.*, p.name profile_name, p.role role "
+                "FROM user_accounts a "
+                "JOIN user_profiles p ON p.profile_id = a.profile_id "
+                "WHERE a.username LIKE ? OR a.display_name LIKE ? OR a.email LIKE ? "
+                "ORDER BY a.account_id DESC"
+            ),
             (value, value, value),
         )
 
     def get(self, account_id):
         return self.one(
-            "SELECT a.*,p.name profile_name,p.role role,p.status profile_status FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.account_id=?",
+            (
+                "SELECT a.*, p.name profile_name, p.role role, p.status profile_status "
+                "FROM user_accounts a "
+                "JOIN user_profiles p ON p.profile_id = a.profile_id "
+                "WHERE a.account_id = ?"
+            ),
             (account_id,),
         )
 
     def by_username(self, username):
         return self.one(
-            "SELECT a.*,p.name profile_name,p.role role,p.status profile_status FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.username=?",
+            (
+                "SELECT a.*, p.name profile_name, p.role role, p.status profile_status "
+                "FROM user_accounts a "
+                "JOIN user_profiles p ON p.profile_id = a.profile_id "
+                "WHERE a.username = ?"
+            ),
             (username,),
         )
 
     def access_state(self, account_id):
         return self.one(
-            "SELECT a.status account_status,p.status profile_status,p.role role FROM user_accounts a JOIN user_profiles p ON p.profile_id=a.profile_id WHERE a.account_id=?",
+            (
+                "SELECT a.status account_status, p.status profile_status, p.role role "
+                "FROM user_accounts a "
+                "JOIN user_profiles p ON p.profile_id = a.profile_id "
+                "WHERE a.account_id = ?"
+            ),
             (account_id,),
         )
 
@@ -252,7 +273,17 @@ class CategoryRepository(BaseRepository):
 
 
 class ProjectRepository(BaseRepository):
-    BASE = "SELECT p.*,c.name category_name,c.status category_status,a.display_name designer_name,co.name company_name,CASE WHEN p.visible=1 AND c.status='Active' THEN 1 ELSE 0 END available,(SELECT COUNT(*) FROM project_views v WHERE v.project_id=p.project_id) views,(SELECT COUNT(*) FROM favourites f WHERE f.project_id=p.project_id) shortlists FROM projects p JOIN idp_categories c ON c.category_id=p.category_id JOIN user_accounts a ON a.account_id=p.designer_id LEFT JOIN companies co ON co.designer_id=p.designer_id"
+    BASE = (
+        "SELECT p.*, c.name category_name, c.status category_status, "
+        "a.display_name designer_name, co.name company_name, "
+        "CASE WHEN p.visible = 1 AND c.status = 'Active' THEN 1 ELSE 0 END available, "
+        "(SELECT COUNT(*) FROM project_views v WHERE v.project_id = p.project_id) views, "
+        "(SELECT COUNT(*) FROM favourites f WHERE f.project_id = p.project_id) shortlists "
+        "FROM projects p "
+        "JOIN idp_categories c ON c.category_id = p.category_id "
+        "JOIN user_accounts a ON a.account_id = p.designer_id "
+        "LEFT JOIN companies co ON co.designer_id = p.designer_id"
+    )
 
     def search_owned(self, designer_id, project_status, keyword=""):
         value = f"%{keyword}%"
@@ -294,7 +325,12 @@ class ProjectRepository(BaseRepository):
 
     def update_owned(self, project_id, designer_id, category_id, title, description, project_status, progress, image_url):
         return self.execute(
-            "UPDATE projects SET category_id=?,title=?,description=?,project_status=?,progress=?,image_url=?,updated_at=? WHERE project_id=? AND designer_id=? AND project_status=?",
+            (
+                "UPDATE projects "
+                "SET category_id = ?, title = ?, description = ?, project_status = ?, "
+                "progress = ?, image_url = ?, updated_at = ? "
+                "WHERE project_id = ? AND designer_id = ? AND project_status = ?"
+            ),
             (
                 category_id,
                 title,
@@ -331,7 +367,13 @@ class FavouriteRepository(BaseRepository):
 
     def add_available(self, customer_id, project_id):
         return self.execute(
-            "INSERT OR IGNORE INTO favourites(customer_id,project_id,saved_at) SELECT ?,p.project_id,? FROM projects p JOIN idp_categories c ON c.category_id=p.category_id WHERE p.project_id=? AND p.visible=1 AND c.status='Active'",
+            (
+                "INSERT OR IGNORE INTO favourites(customer_id, project_id, saved_at) "
+                "SELECT ?, p.project_id, ? "
+                "FROM projects p "
+                "JOIN idp_categories c ON c.category_id = p.category_id "
+                "WHERE p.project_id = ? AND p.visible = 1 AND c.status = 'Active'"
+            ),
             (customer_id, datetime.utcnow().isoformat(), project_id),
         ).rowcount
 
@@ -344,7 +386,13 @@ class FavouriteRepository(BaseRepository):
     def search(self, customer_id, keyword=""):
         value = f"%{keyword}%"
         return self.all(
-            ProjectRepository.BASE + " JOIN favourites fav ON fav.project_id=p.project_id WHERE fav.customer_id=? AND (p.title LIKE ? OR p.description LIKE ? OR c.name LIKE ?) ORDER BY fav.saved_at DESC",
+            (
+                ProjectRepository.BASE
+                + " JOIN favourites fav ON fav.project_id = p.project_id"
+                + " WHERE fav.customer_id = ?"
+                + " AND (p.title LIKE ? OR p.description LIKE ? OR c.name LIKE ?)"
+                + " ORDER BY fav.saved_at DESC"
+            ),
             (customer_id, value, value, value),
         )
 
@@ -356,8 +404,146 @@ class ActivityRepository(BaseRepository):
             (event_type, account_id, project_id, datetime.utcnow().isoformat()),
         ).lastrowid
 
-    def report(self, start, end):
-        return self.one(
-            "SELECT (SELECT COUNT(*) FROM user_accounts WHERE account_id IN (SELECT account_id FROM activity_events WHERE created_at BETWEEN ? AND ?)) users,(SELECT COUNT(*) FROM projects WHERE updated_at BETWEEN ? AND ?) projects,(SELECT COUNT(*) FROM project_views WHERE viewed_at BETWEEN ? AND ?) views,(SELECT COUNT(*) FROM favourites WHERE saved_at BETWEEN ? AND ?) shortlists",
-            (start, end, start, end, start, end, start, end),
+    def _count_event(self, event_type, start, end):
+        row = self.one(
+            "SELECT COUNT(*) count FROM activity_events WHERE event_type=? AND created_at BETWEEN ? AND ?",
+            (event_type, start, end),
         )
+        return row["count"]
+
+    def report(self, start, end):
+        active_users = self.one(
+            "SELECT COUNT(DISTINCT account_id) count FROM activity_events "
+            "WHERE account_id IS NOT NULL AND created_at BETWEEN ? AND ?",
+            (start, end),
+        )["count"]
+
+        views = self.one(
+            "SELECT COUNT(*) count FROM project_views WHERE viewed_at BETWEEN ? AND ?",
+            (start, end),
+        )["count"]
+        unique_viewers = self.one(
+            "SELECT COUNT(DISTINCT customer_id) count FROM project_views "
+            "WHERE customer_id IS NOT NULL AND viewed_at BETWEEN ? AND ?",
+            (start, end),
+        )["count"]
+        shortlists = self.one(
+            "SELECT COUNT(*) count FROM favourites WHERE saved_at BETWEEN ? AND ?",
+            (start, end),
+        )["count"]
+
+        role_rows = self.all(
+            "SELECT p.role, COUNT(DISTINCT ae.account_id) count "
+            "FROM activity_events ae "
+            "JOIN user_accounts a ON a.account_id=ae.account_id "
+            "JOIN user_profiles p ON p.profile_id=a.profile_id "
+            "WHERE ae.created_at BETWEEN ? AND ? "
+            "GROUP BY p.role",
+            (start, end),
+        )
+        role_activity = {
+            "User Admin": 0,
+            "Interior Designer": 0,
+            "Customer": 0,
+            "Platform Manager": 0,
+        }
+        for row in role_rows:
+            role_activity[row["role"]] = row["count"]
+
+        top_viewed_row = self.one(
+            "SELECT p.project_id, p.title, COUNT(*) metric "
+            "FROM project_views v JOIN projects p ON p.project_id=v.project_id "
+            "WHERE v.viewed_at BETWEEN ? AND ? "
+            "GROUP BY p.project_id, p.title ORDER BY metric DESC, p.title LIMIT 1",
+            (start, end),
+        )
+        top_shortlisted_row = self.one(
+            "SELECT p.project_id, p.title, COUNT(*) metric "
+            "FROM favourites f JOIN projects p ON p.project_id=f.project_id "
+            "WHERE f.saved_at BETWEEN ? AND ? "
+            "GROUP BY p.project_id, p.title ORDER BY metric DESC, p.title LIMIT 1",
+            (start, end),
+        )
+
+        top_category_row = self.one(
+            "WITH view_counts AS ("
+            "SELECT p.category_id, COUNT(*) views FROM project_views v "
+            "JOIN projects p ON p.project_id=v.project_id "
+            "WHERE v.viewed_at BETWEEN ? AND ? GROUP BY p.category_id"
+            "), shortlist_counts AS ("
+            "SELECT p.category_id, COUNT(*) shortlists FROM favourites f "
+            "JOIN projects p ON p.project_id=f.project_id "
+            "WHERE f.saved_at BETWEEN ? AND ? GROUP BY p.category_id"
+            ") "
+            "SELECT c.category_id, c.name, COALESCE(v.views,0) views, "
+            "COALESCE(s.shortlists,0) shortlists, "
+            "COALESCE(v.views,0)+COALESCE(s.shortlists,0) engagement "
+            "FROM idp_categories c "
+            "LEFT JOIN view_counts v ON v.category_id=c.category_id "
+            "LEFT JOIN shortlist_counts s ON s.category_id=c.category_id "
+            "WHERE COALESCE(v.views,0)+COALESCE(s.shortlists,0) > 0 "
+            "ORDER BY engagement DESC, c.name LIMIT 1",
+            (start, end, start, end),
+        )
+
+        top_projects = self.all(
+            "WITH views AS ("
+            "SELECT project_id, COUNT(*) views FROM project_views "
+            "WHERE viewed_at BETWEEN ? AND ? GROUP BY project_id"
+            "), shortlists AS ("
+            "SELECT project_id, COUNT(*) shortlists FROM favourites "
+            "WHERE saved_at BETWEEN ? AND ? GROUP BY project_id"
+            ") "
+            "SELECT p.project_id, p.title, a.display_name designer_name, "
+            "COALESCE(v.views,0) views, COALESCE(s.shortlists,0) shortlists "
+            "FROM projects p "
+            "JOIN user_accounts a ON a.account_id=p.designer_id "
+            "LEFT JOIN views v ON v.project_id=p.project_id "
+            "LEFT JOIN shortlists s ON s.project_id=p.project_id "
+            "WHERE COALESCE(v.views,0)+COALESCE(s.shortlists,0) > 0 "
+            "ORDER BY views DESC, shortlists DESC, p.title LIMIT 5",
+            (start, end, start, end),
+        )
+
+        category_performance = self.all(
+            "WITH views AS ("
+            "SELECT p.category_id, COUNT(*) views FROM project_views v "
+            "JOIN projects p ON p.project_id=v.project_id "
+            "WHERE v.viewed_at BETWEEN ? AND ? GROUP BY p.category_id"
+            "), shortlists AS ("
+            "SELECT p.category_id, COUNT(*) shortlists FROM favourites f "
+            "JOIN projects p ON p.project_id=f.project_id "
+            "WHERE f.saved_at BETWEEN ? AND ? GROUP BY p.category_id"
+            ") "
+            "SELECT c.name, COALESCE(v.views,0) views, COALESCE(s.shortlists,0) shortlists "
+            "FROM idp_categories c "
+            "LEFT JOIN views v ON v.category_id=c.category_id "
+            "LEFT JOIN shortlists s ON s.category_id=c.category_id "
+            "WHERE COALESCE(v.views,0)+COALESCE(s.shortlists,0) > 0 "
+            "ORDER BY views DESC, shortlists DESC, c.name LIMIT 5",
+            (start, end, start, end),
+        )
+
+        result = {
+            "active_users": active_users,
+            "new_accounts": self._count_event("account_created", start, end),
+            "successful_logins": self._count_event("login_success", start, end),
+            "idps_created": self._count_event("project_created", start, end),
+            "idps_updated": self._count_event("project_updated", start, end),
+            "views": views,
+            "unique_viewers": unique_viewers,
+            "shortlists": shortlists,
+            "unshortlists": self._count_event("project_unshortlisted", start, end),
+            "role_activity": role_activity,
+            "top_viewed": dict(top_viewed_row) if top_viewed_row else None,
+            "top_shortlisted": dict(top_shortlisted_row) if top_shortlisted_row else None,
+            "top_category": dict(top_category_row) if top_category_row else None,
+            "top_projects": [dict(row) for row in top_projects],
+            "category_performance": [dict(row) for row in category_performance],
+        }
+
+        # Backwards-compatible keys used by existing tests and report code.
+        result["users"] = result["active_users"]
+        result["projects"] = result["idps_updated"]
+        return result
+

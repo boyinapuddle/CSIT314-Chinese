@@ -4,9 +4,9 @@ sequenceDiagram
     participant P2 as UpdateCurrentIDPController
     participant P3 as IDP
     P0-->>P1: submit(session, project_id, form)
-    P1-->>P2: update(session, project_id, data)
+    P1-->>P2: update_current_idp(session, project_id, data)
     P2->>P2: read designer_id from trusted session
-    P2-->>P3: update_owned_project(project_id, designer_id, data, "Current")
+    P2-->>P3: update_current_idp(project_id, designer_id, data)
     P3->>P2: updated or rejected
     P2-->>P1: result
     P1-->>P0: display result

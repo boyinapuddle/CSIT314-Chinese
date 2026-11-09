@@ -48,7 +48,7 @@ class AuthenticationController:
             return None
         if not UserAccount.verify_password(account, password):
             return None
-        profile = UserProfile.get_profile(account["profile_id"])
+        profile = UserProfile.view_profile(account["profile_id"])
         if not profile or profile["status"] != "Active":
             return None
         controller_class = ROLE_LOGIN_CONTROLLERS.get(profile["role"])
@@ -64,81 +64,82 @@ class RoleLoginControllerBase:
         if profile["role"] != self.role:
             return None
         session_id = Session.create_session(account["account_id"], self.role)
+        ActivityEvent.log_event("login_success", account["account_id"])
         return account, session_id
 
 
 # User Story 1 (Create User Profile)
 class CreateUserProfileController:
-    def create(self, name, description="", role="Customer"):
+    def create_profile(self, name, description="", role="Customer"):
         return UserProfile.create_profile(name, description, role)
 
 
 # User Story 2 (View User Profile)
 class ViewUserProfileController:
-    def view(self, profile_id):
-        return UserProfile.get_profile(profile_id)
+    def view_profile(self, profile_id):
+        return UserProfile.view_profile(profile_id)
 
 
 # User Story 3 (Update User Profile)
 class UpdateUserProfileController:
-    def update(self, profile_id, name, description="", role="Customer"):
+    def update_profile(self, profile_id, name, description="", role="Customer"):
         return UserProfile.update_profile(profile_id, name, description, role)
 
 
 # User Story 4 (Suspend and Reactivate User Profile)
 class SuspendUserProfileController:
-    def suspend(self, profile_id):
+    def suspend_profile(self, profile_id):
         return UserProfile.suspend_profile(profile_id)
 
-    def reactivate(self, profile_id):
+    def reactivate_profile(self, profile_id):
         return UserProfile.reactivate_profile(profile_id)
 
 
 # User Story 49 (Delete User Profile)
 class DeleteUserProfileController:
-    def delete(self, profile_id):
+    def delete_profile(self, profile_id):
         return UserProfile.delete_profile(profile_id)
 
 
 # User Story 5 (Search User Profile)
 class SearchUserProfileController:
-    def search(self, keyword=""):
-        return UserProfile.search_profiles(keyword)
+    def search_profile(self, keyword=""):
+        return UserProfile.search_profile(keyword)
 
 
 # User Story 6 (Create User Account)
 class CreateUserAccountController:
-    def create(self, username, password, profile_id, display_name, email):
+    def create_account(self, username, password, profile_id, display_name, email):
         return UserAccount.create_account(username, password, profile_id, display_name, email)
 
-    def profiles(self):
-        return UserProfile.search_profiles("")
+    def search_profile(self):
+        return UserProfile.search_profile("")
 
 
 # User Story 7 (View User Account)
 class ViewUserAccountController:
-    def view(self, account_id):
-        return UserAccount.get_account(account_id)
+    def view_account(self, account_id):
+        return UserAccount.view_account(account_id)
 
 
 # User Story 8 (Update User Account)
 class UpdateUserAccountController:
-    def update(self, account_id, display_name, email, profile_id):
+    def update_account(self, account_id, display_name, email, profile_id):
         return UserAccount.update_account(account_id, display_name, email, profile_id)
 
 
 # User Story 9 (Suspend and Reactivate User Account)
 class SuspendUserAccountController:
-    def suspend(self, account_id):
+    def suspend_account(self, account_id):
         return UserAccount.suspend_account(account_id)
 
-    def reactivate(self, account_id):
+    def reactivate_account(self, account_id):
         return UserAccount.reactivate_account(account_id)
 
 
 # User Story 10 (Search User Account)
 class SearchUserAccountController:
-    def search(self, keyword=""):
+    def search_accounts(self, keyword=""):
         return UserAccount.search_accounts(keyword)
 
 
@@ -158,35 +159,35 @@ class UserAdminLogoutController:
 
 # User Story 13 (Create Company Information)
 class CreateCompanyInformationController:
-    def create(self, session_context, data):
+    def create_company(self, session_context, data):
         designer_id = _account_id(session_context)
         return Company.create_company(designer_id, data)
 
 
 # User Story 14 (View Company Information)
 class ViewCompanyInformationController:
-    def view(self, session_context):
+    def view_company(self, session_context):
         designer_id = _account_id(session_context)
-        return Company.get_company(designer_id)
+        return Company.view_company(designer_id)
 
 
 # User Story 15 (Update Company Information)
 class UpdateCompanyInformationController:
-    def update(self, session_context, data):
+    def update_company(self, session_context, data):
         designer_id = _account_id(session_context)
         return Company.update_company(designer_id, data)
 
 
 # User Story 16 (Delete Company Information)
 class DeleteCompanyInformationController:
-    def delete(self, session_context):
+    def delete_company(self, session_context):
         designer_id = _account_id(session_context)
         return Company.delete_company(designer_id)
 
 
 # User Story 17 (Search Company Information)
 class SearchCompanyInformationController:
-    def search(self, session_context, keyword=""):
+    def search_company(self, session_context, keyword=""):
         designer_id = _account_id(session_context)
         return Company.search_company(designer_id, keyword)
 
@@ -207,135 +208,135 @@ class InteriorDesignerLogoutController:
 
 # User Story 20 (Create Current IDP)
 class CreateCurrentIDPController:
-    def create(self, session_context, data):
+    def create_current_idp(self, session_context, data):
         designer_id = _account_id(session_context)
-        return IDP.create_project(designer_id, data, "Current")
+        return IDP.create_current_idp(designer_id, data)
 
-    def categories(self):
-        return IDPCategory.get_categories(True)
+    def view_categories(self):
+        return IDPCategory.view_categories(True)
 
 
 # User Story 21 (View Current IDP)
 class ViewCurrentIDPController:
-    def view(self, session_context):
+    def view_current_idps(self, session_context):
         designer_id = _account_id(session_context)
-        return IDP.get_owned_projects(designer_id, "Current")
+        return IDP.view_current_idps(designer_id)
 
 
 # User Story 22 (Update Current IDP)
 class UpdateCurrentIDPController:
-    def update(self, session_context, project_id, data):
+    def update_current_idp(self, session_context, project_id, data):
         designer_id = _account_id(session_context)
-        return IDP.update_owned_project(project_id, designer_id, data, "Current")
+        return IDP.update_current_idp(project_id, designer_id, data)
 
 
 # User Story 23 (Delete Current IDP)
 class DeleteCurrentIDPController:
-    def delete(self, session_context, project_id):
+    def delete_current_idp(self, session_context, project_id):
         designer_id = _account_id(session_context)
-        return IDP.delete_owned_project(project_id, designer_id, "Current")
+        return IDP.delete_current_idp(project_id, designer_id)
 
 
 # User Story 24 (Search Current IDP)
 class SearchCurrentIDPController:
-    def search(self, session_context, keyword=""):
+    def search_current_idps(self, session_context, keyword=""):
         designer_id = _account_id(session_context)
-        return IDP.search_owned_projects(designer_id, "Current", keyword)
+        return IDP.search_current_idps(designer_id, keyword)
 
 
 # User Story 25 (Create Past IDP)
 class CreatePastIDPController:
-    def create(self, session_context, data):
+    def create_past_idp(self, session_context, data):
         designer_id = _account_id(session_context)
-        return IDP.create_project(designer_id, data, "Past")
+        return IDP.create_past_idp(designer_id, data)
 
-    def categories(self):
-        return IDPCategory.get_categories(True)
+    def view_categories(self):
+        return IDPCategory.view_categories(True)
 
 
 # User Story 26 (View Past IDP)
 class ViewPastIDPController:
-    def view(self, session_context):
+    def view_past_idps(self, session_context):
         designer_id = _account_id(session_context)
-        return IDP.get_owned_projects(designer_id, "Past")
+        return IDP.view_past_idps(designer_id)
 
 
 # User Story 27 (Update Past IDP)
 class UpdatePastIDPController:
-    def update(self, session_context, project_id, data):
+    def update_past_idp(self, session_context, project_id, data):
         designer_id = _account_id(session_context)
-        return IDP.update_owned_project(project_id, designer_id, data, "Past")
+        return IDP.update_past_idp(project_id, designer_id, data)
 
 
 # User Story 28 (Delete Past IDP)
 class DeletePastIDPController:
-    def delete(self, session_context, project_id):
+    def delete_past_idp(self, session_context, project_id):
         designer_id = _account_id(session_context)
-        return IDP.delete_owned_project(project_id, designer_id, "Past")
+        return IDP.delete_past_idp(project_id, designer_id)
 
 
 # User Story 29 (Search Past IDP)
 class SearchPastIDPController:
-    def search(self, session_context, keyword=""):
+    def search_past_idps(self, session_context, keyword=""):
         designer_id = _account_id(session_context)
-        return IDP.search_owned_projects(designer_id, "Past", keyword)
+        return IDP.search_past_idps(designer_id, keyword)
 
 
 # User Story 30 (Search Available IDP)
 class SearchAvailableIDPController:
-    def search(self, keyword=""):
-        return IDP.search_available_projects(keyword)
+    def search_available_idps(self, keyword=""):
+        return IDP.search_available_idps(keyword)
 
 
 # User Story 31 (View Available IDP)
 class ViewAvailableIDPController:
-    def view(self, session_context, project_id):
+    def view_available_idp(self, session_context, project_id):
         account_id = _account_id(session_context)
-        project = IDP.get_available_project(project_id)
+        project = IDP.view_available_idp(project_id)
         if project:
             IDP.record_view(project_id, account_id)
-            project = IDP.get_available_project(project_id)
+            project = IDP.view_available_idp(project_id)
         return project
 
 
 # User Story 50 (Browse IDPs as Authenticated Non Customer)
 class BrowseIDPController:
-    def search(self, session_context, keyword=""):
+    def search_available_idps(self, session_context, keyword=""):
         _require_non_customer(session_context)
-        return IDP.search_available_projects(keyword)
+        return IDP.search_available_idps(keyword)
 
-    def view(self, session_context, project_id):
+    def view_available_idp(self, session_context, project_id):
         _require_non_customer(session_context)
-        return IDP.get_available_project(project_id)
+        return IDP.view_available_idp(project_id)
 
 
 # User Story 32 (Save and Unsave IDP)
 class SaveIDPController:
-    def save(self, session_context, project_id):
+    def save_idp(self, session_context, project_id):
         customer_id = _require_role(session_context, "Customer")
-        return Favourite.save_project(customer_id, project_id)
+        return Favourite.save_idp(customer_id, project_id)
 
-    def unsave(self, session_context, project_id):
+    def unsave_idp(self, session_context, project_id):
         customer_id = _require_role(session_context, "Customer")
-        return Favourite.remove_project(customer_id, project_id)
+        return Favourite.unsave_idp(customer_id, project_id)
 
     def check_saved(self, session_context, project_id):
         customer_id = _require_role(session_context, "Customer")
-        return Favourite.is_saved(customer_id, project_id)
+        return Favourite.check_saved(customer_id, project_id)
 
 
 # User Story 33 (Search Saved IDP)
 class SearchSavedIDPController:
-    def search(self, session_context, keyword=""):
+    def search_saved_idps(self, session_context, keyword=""):
         customer_id = _account_id(session_context)
-        return Favourite.search_saved_projects(customer_id, keyword)
+        return Favourite.search_saved_idps(customer_id, keyword)
 
 
 # User Story 34 (View Saved IDP)
 class ViewSavedIDPController:
-    def view(self, session_context):
+    def view_saved_idps(self, session_context):
         customer_id = _account_id(session_context)
-        return Favourite.view_saved_projects(customer_id)
+        return Favourite.view_saved_idps(customer_id)
 
 
 # User Story 35 (Customer Login)
@@ -354,73 +355,73 @@ class CustomerLogoutController:
 
 # User Story 37 (View IDP View Count)
 class ViewIDPViewsController:
-    def view(self, session_context):
+    def view_count(self, session_context):
         designer_id = _account_id(session_context)
-        return ViewMetric.for_designer(designer_id)
+        return ViewMetric.view_count(designer_id)
 
 
 # User Story 38 (View IDP Shortlist Count)
 class ViewIDPShortlistsController:
-    def view(self, session_context):
+    def shortlist_count(self, session_context):
         designer_id = _account_id(session_context)
-        return ShortlistMetric.for_designer(designer_id)
+        return ShortlistMetric.shortlist_count(designer_id)
 
 
 # User Story 39 (Create IDP Category)
 class CreateIDPCategoryController:
-    def create(self, name, description=""):
+    def create_category(self, name, description=""):
         return IDPCategory.create_category(name, description)
 
 
 # User Story 40 (View IDP Category)
 class ViewIDPCategoryController:
-    def view(self, category_id):
-        return IDPCategory.get_category(category_id)
+    def view_category(self, category_id):
+        return IDPCategory.view_category(category_id)
 
-    def view_all(self):
-        return IDPCategory.get_categories()
+    def view_categories(self):
+        return IDPCategory.view_categories()
 
 
 # User Story 41 (Update IDP Category)
 class UpdateIDPCategoryController:
-    def update(self, category_id, name, description=""):
+    def update_category(self, category_id, name, description=""):
         return IDPCategory.update_category(category_id, name, description)
 
 
 # User Story 42 (Suspend Reactivate and Delete IDP Category)
 class SuspendIDPCategoryController:
-    def suspend(self, category_id):
+    def suspend_category(self, category_id):
         return IDPCategory.suspend_category(category_id)
 
-    def reactivate(self, category_id):
+    def reactivate_category(self, category_id):
         return IDPCategory.reactivate_category(category_id)
 
-    def delete(self, category_id):
+    def delete_category(self, category_id):
         return IDPCategory.delete_category(category_id)
 
 
 # User Story 43 (Search IDP Category)
 class SearchIDPCategoryController:
-    def search(self, keyword=""):
+    def search_categories(self, keyword=""):
         return IDPCategory.search_categories(keyword)
 
 
 # User Story 44 (Generate Daily Report)
 class GenerateDailyReportController:
-    def generate(self, date_value=None):
-        return DailyReport.generate(date_value)
+    def generate_daily_report(self, date_value=None):
+        return DailyReport.generate_daily_report(date_value)
 
 
 # User Story 45 (Generate Weekly Report)
 class GenerateWeeklyReportController:
-    def generate(self, date_value=None):
-        return WeeklyReport.generate(date_value)
+    def generate_weekly_report(self, date_value=None):
+        return WeeklyReport.generate_weekly_report(date_value)
 
 
 # User Story 46 (Generate Monthly Report)
 class GenerateMonthlyReportController:
-    def generate(self, date_value=None):
-        return MonthlyReport.generate(date_value)
+    def generate_monthly_report(self, date_value=None):
+        return MonthlyReport.generate_monthly_report(date_value)
 
 
 # User Story 47 (Platform Manager Login)

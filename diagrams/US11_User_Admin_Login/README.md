@@ -8,14 +8,14 @@ flowchart LR
     N1["boundary<br/>LoginBoundary<br/><br/>+submit()"]
     N2["control<br/>AuthenticationController<br/><br/>+login()"]
     N3["entity<br/>UserAccount<br/><br/>+find_by_username(username)<br/>+verify_password(account, password)"]
-    N4["entity<br/>UserProfile<br/><br/>+get_profile(profile_id)"]
+    N4["entity<br/>UserProfile<br/><br/>+view_profile(profile_id)"]
     N5["control<br/>UserAdminLoginController<br/><br/>+complete_login(account, profile)"]
     N6["entity<br/>Session<br/><br/>+create_session(account_id, role)"]
     N0 -->|"submit username and password"| N1
     N1 -->|"login(username, password)"| N2
     N2 -->|"find_by_username(username)"| N3
     N3 -->|"account"| N2
-    N2 -->|"get_profile(profile_id)"| N4
+    N2 -->|"view_profile(profile_id)"| N4
     N4 -->|"active profile with role"| N2
     N2 -->|"complete_login(account, profile)"| N5
     N5 -->|"create_session(account_id, role)"| N6
@@ -41,7 +41,7 @@ sequenceDiagram
     P3->>P2: account
     P2->>P3: verify_password(account, password)
     P3-->>P2: valid or invalid
-    P2-->>P4: get_profile(profile_id)
+    P2-->>P4: view_profile(profile_id)
     P4->>P2: active profile with role
     P2->>P5: complete_login(account, profile)
     P5->>P6: create_session(account_id, role)

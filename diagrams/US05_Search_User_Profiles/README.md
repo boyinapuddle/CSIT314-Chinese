@@ -6,10 +6,10 @@
 flowchart LR
     N0["Actor<br/>User Admin"]
     N1["boundary<br/>SearchUserProfileBoundary<br/><br/>+submit()"]
-    N2["control<br/>SearchUserProfileController<br/><br/>+search()"]
+    N2["control<br/>SearchUserProfileController<br/><br/>+search_profiles()"]
     N3["entity<br/>UserProfile<br/><br/>+search_profiles(keyword)"]
     N0 -->|"submit(keyword)"| N1
-    N1 -->|"search(keyword)"| N2
+    N1 -->|"search_profiles(keyword)"| N2
     N2 -->|"search_profiles(keyword)"| N3
     N3 -->|"matching profiles"| N2
     N2 -->|"results"| N1
@@ -24,7 +24,7 @@ sequenceDiagram
     participant P2 as SearchUserProfileController
     participant P3 as UserProfile
     P0->>P1: submit(keyword)
-    P1->>P2: search(keyword)
+    P1->>P2: search_profiles(keyword)
     P2->>P3: search_profiles(keyword)
     P3-->>P2: matching profiles
     P2-->>P1: results

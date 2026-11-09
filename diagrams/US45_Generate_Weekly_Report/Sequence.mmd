@@ -5,8 +5,8 @@ sequenceDiagram
     participant P3 as WeeklyReport
     participant P4 as ActivityEvent
     P0->>P1: submit(date_value)
-    P1->>P2: generate(date_value)
-    P2->>P3: generate(date_value)
+    P1->>P2: generate_weekly_report(date_value)
+    P2->>P3: generate_weekly_report(date_value)
     P3-->>P4: report_between(start, end)
     P4->>P3: activity totals
     P3-->>P2: report summary

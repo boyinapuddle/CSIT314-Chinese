@@ -6,10 +6,10 @@
 flowchart LR
     N0["Actor<br/>User Admin"]
     N1["boundary<br/>UpdateUserProfileBoundary<br/><br/>+submit()"]
-    N2["control<br/>UpdateUserProfileController<br/><br/>+update()"]
+    N2["control<br/>UpdateUserProfileController<br/><br/>+update_profile()"]
     N3["entity<br/>UserProfile<br/><br/>+update_profile(profile_id, name, description, role)"]
     N0 -->|"submit(profile_id, name, description, role)"| N1
-    N1 -->|"update(...)"| N2
+    N1 -->|"update_profile(...)"| N2
     N2 -->|"update_profile(...) including last active admin validation"| N3
     N3 -->|"updated or validation error"| N2
     N2 -->|"result"| N1
@@ -24,7 +24,7 @@ sequenceDiagram
     participant P2 as UpdateUserProfileController
     participant P3 as UserProfile
     P0-->>P1: submit(profile_id, name, description, role)
-    P1->>P2: update(...)
+    P1->>P2: update_profile(...)
     P2->>P3: update_profile(...) including last active admin validation
     P3->>P2: updated or validation error
     P2-->>P1: result

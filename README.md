@@ -87,4 +87,27 @@ Default accounts:
 | Customer | customer | Customer123! |
 | Platform Manager | manager | Manager123! |
 
+<<<<<<< HEAD
 Run `python seed.py` locally to reset the database back to the demo data.
+=======
+Run `python seed.py` locally to reset the database back to the demo data. Set the environment variable `AUTO_SEED=0` to disable automatic startup seeding.
+
+## Platform Manager reports
+
+Daily, weekly and monthly reports now summarise platform activity and performance using:
+
+- active users
+- new accounts
+- successful logins
+- IDPs created and updated
+- project views and unique viewers
+- new shortlists and unshortlists
+- activity by user role
+- most viewed and most shortlisted IDPs
+- most active category
+- top project and category performance
+- comparison with the previous period
+
+The default seed includes multiple designers, customers, projects, views, favourites and historical activity so these reports contain meaningful demo data immediately after seeding.
+
+>>>>>>> e6fbb044667625c3a02931c9970e64fec20f4cd1

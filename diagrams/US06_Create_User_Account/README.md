@@ -5,12 +5,12 @@
 ```mermaid
 flowchart LR
     N0["Actor<br/>User Admin"]
-    N1["boundary<br/>CreateUserAccountBoundary<br/><br/>+submit()<br/>+profiles()"]
-    N2["control<br/>CreateUserAccountController<br/><br/>+create()<br/>+profiles()"]
+    N1["boundary<br/>CreateUserAccountBoundary<br/><br/>+submit()<br/>+search_profiles()"]
+    N2["control<br/>CreateUserAccountController<br/><br/>+create_account()<br/>+search_search_profiles()"]
     N3["entity<br/>UserProfile<br/><br/>+search_profiles(keyword)"]
     N4["entity<br/>UserAccount<br/><br/>+create_account(username, password, profile_id, display_name, email)"]
     N0 -->|"request available profiles"| N1
-    N1 -->|"profiles()"| N2
+    N1 -->|"search_profiles()"| N2
     N2 -->|"search_profiles(keyword)"| N3
     N3 -->|"profiles with role and status"| N2
     N2 -->|"create_account(...)"| N4
@@ -28,11 +28,11 @@ sequenceDiagram
     participant P3 as UserProfile
     participant P4 as UserAccount
     P0->>P1: request available profiles
-    P1->>P2: profiles()
+    P1->>P2: search_profiles()
     P2->>P3: search_profiles("")
     P3->>P2: profiles with role and status
     P0->>P1: submit account form
-    P1->>P2: create(...)
+    P1->>P2: create_account(...)
     P2->>P4: create_account(...)
     P4->>P2: account_id or duplicate username error
     P2-->>P1: result

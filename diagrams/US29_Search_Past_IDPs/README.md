@@ -6,11 +6,11 @@
 flowchart LR
     N0["Actor<br/>Interior Designer"]
     N1["boundary<br/>SearchPastIDPBoundary<br/><br/>+submit()"]
-    N2["control<br/>SearchPastIDPController<br/><br/>+search()"]
-    N3["entity<br/>IDP<br/><br/>+search_owned_projects(designer_id, statusPast, keyword)"]
+    N2["control<br/>SearchPastIDPController<br/><br/>+search_past_idps()"]
+    N3["entity<br/>IDP<br/><br/>+search_past_idps(designer_id, keyword)"]
     N0 -->|"submit(session, keyword)"| N1
-    N1 -->|"search(session, keyword)"| N2
-    N2 -->|"search_owned_projects(designer_id, statusPast, keyword)"| N3
+    N1 -->|"search_past_idps(session, keyword)"| N2
+    N2 -->|"search_past_idps(designer_id, keyword)"| N3
     N3 -->|"matching projects"| N2
     N2 -->|"results"| N1
 ```
@@ -24,9 +24,9 @@ sequenceDiagram
     participant P2 as SearchPastIDPController
     participant P3 as IDP
     P0->>P1: submit(session, keyword)
-    P1->>P2: search(session, keyword)
+    P1->>P2: search_past_idps(session, keyword)
     P2->>P2: read designer_id from trusted session
-    P2->>P3: search_owned_projects(designer_id, "Past", keyword)
+    P2->>P3: search_past_idps(designer_id, keyword)
     P3-->>P2: matching projects
     P2-->>P1: results
     P1-->>P0: display results

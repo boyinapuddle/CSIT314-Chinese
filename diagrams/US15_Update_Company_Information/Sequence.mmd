@@ -4,7 +4,7 @@ sequenceDiagram
     participant P2 as UpdateCompanyInformationController
     participant P3 as Company
     P0->>P1: submit(session, form)
-    P1->>P2: update(session, data)
+    P1->>P2: update_company(session, data)
     P2->>P2: read designer_id from trusted session
     P2->>P3: update_company(designer_id, data)
     P3-->>P2: result

@@ -6,12 +6,12 @@
 flowchart LR
     N0["Actor<br/>Platform Manager"]
     N1["boundary<br/>GenerateDailyReportBoundary<br/><br/>+submit()"]
-    N2["control<br/>GenerateDailyReportController<br/><br/>+generate()"]
-    N3["entity<br/>DailyReport<br/><br/>+generate(date_value)"]
+    N2["control<br/>GenerateDailyReportController<br/><br/>+generate_daily_report()"]
+    N3["entity<br/>DailyReport<br/><br/>+generate_daily_report(date_value)"]
     N4["entity<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
     N0 -->|"submit(date_value)"| N1
-    N1 -->|"generate(date_value)"| N2
-    N2 -->|"generate(date_value)"| N3
+    N1 -->|"generate_daily_report(date_value)"| N2
+    N2 -->|"generate_daily_report(date_value)"| N3
     N3 -->|"report_between(start, end)"| N4
     N4 -->|"activity totals"| N3
     N3 -->|"report summary"| N2
@@ -28,8 +28,8 @@ sequenceDiagram
     participant P3 as DailyReport
     participant P4 as ActivityEvent
     P0->>P1: submit(date_value)
-    P1->>P2: generate(date_value)
-    P2->>P3: generate(date_value)
+    P1->>P2: generate_daily_report(date_value)
+    P2->>P3: generate_daily_report(date_value)
     P3-->>P4: report_between(start, end)
     P4->>P3: activity totals
     P3-->>P2: report summary

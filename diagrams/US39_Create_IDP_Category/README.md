@@ -6,10 +6,10 @@
 flowchart LR
     N0["Actor<br/>Platform Manager"]
     N1["boundary<br/>CreateIDPCategoryBoundary<br/><br/>+submit()"]
-    N2["control<br/>CreateIDPCategoryController<br/><br/>+create()"]
+    N2["control<br/>CreateIDPCategoryController<br/><br/>+create_category()"]
     N3["entity<br/>IDPCategory<br/><br/>+create_category(name, description)"]
     N0 -->|"submit(name, description)"| N1
-    N1 -->|"create(name, description)"| N2
+    N1 -->|"create_category(name, description)"| N2
     N2 -->|"create_category(name, description)"| N3
     N3 -->|"category_id or duplicate error"| N2
     N2 -->|"result"| N1
@@ -24,7 +24,7 @@ sequenceDiagram
     participant P2 as CreateIDPCategoryController
     participant P3 as IDPCategory
     P0->>P1: submit(name, description)
-    P1->>P2: create(name, description)
+    P1->>P2: create_category(name, description)
     P2->>P3: create_category(name, description)
     P3-->>P2: category_id or duplicate error
     P2-->>P1: result

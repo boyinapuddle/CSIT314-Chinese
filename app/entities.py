@@ -17,12 +17,12 @@ class UserProfile:
     status: str = "Active"
 
     @classmethod
-    def get_profile(cls, profile_id):
+    def view_profile(cls, profile_id):
         from .repositories import ProfileRepository
         return ProfileRepository().get(profile_id)
 
     @classmethod
-    def search_profiles(cls, keyword=""):
+    def search_profile(cls, keyword=""):
         from .repositories import ProfileRepository
         return ProfileRepository().search(keyword)
 
@@ -99,7 +99,7 @@ class UserAccount:
     status: str = "Active"
 
     @classmethod
-    def get_account(cls, account_id):
+    def view_account(cls, account_id):
         from .repositories import AccountRepository
         return AccountRepository().get(account_id)
 
@@ -110,18 +110,20 @@ class UserAccount:
 
     @classmethod
     def create_account(cls, username, password, profile_id, display_name, email):
-        from .repositories import AccountRepository, ProfileRepository
+        from .repositories import ActivityRepository, AccountRepository, ProfileRepository
         profile = ProfileRepository().get(profile_id)
         if not profile or profile["status"] != "Active":
             raise ValueError("An active profile is required to create an account.")
         password_hash = generate_password_hash(password)
-        return AccountRepository().create(
+        account_id = AccountRepository().create(
             username.strip(),
             password_hash,
             profile_id,
             display_name.strip(),
             email.strip(),
         )
+        ActivityRepository().log("account_created", account_id)
+        return account_id
 
     @classmethod
     def update_account(cls, account_id, display_name, email, profile_id):
@@ -230,7 +232,7 @@ class Company:
         )
 
     @classmethod
-    def get_company(cls, designer_id):
+    def view_company(cls, designer_id):
         from .repositories import CompanyRepository
         return CompanyRepository().get_for_designer(designer_id)
 
@@ -272,7 +274,7 @@ class IDP:
     updated_at: str = ""
 
     @classmethod
-    def create_project(cls, designer_id, data, project_status):
+    def _create_project(cls, designer_id, data, project_status):
         from .repositories import ProjectRepository, ActivityRepository
         project_id = ProjectRepository().create(
             designer_id,
@@ -287,19 +289,43 @@ class IDP:
         return project_id
 
     @classmethod
-    def get_owned_projects(cls, designer_id, project_status):
+    def create_current_idp(cls, designer_id, data):
+        return cls._create_project(designer_id, data, "Current")
+
+    @classmethod
+    def create_past_idp(cls, designer_id, data):
+        return cls._create_project(designer_id, data, "Past")
+
+    @classmethod
+    def _view_owned_idps(cls, designer_id, project_status):
         from .repositories import ProjectRepository
         return ProjectRepository().search_owned(designer_id, project_status, "")
 
     @classmethod
-    def search_owned_projects(cls, designer_id, project_status, keyword=""):
+    def view_current_idps(cls, designer_id):
+        return cls._view_owned_idps(designer_id, "Current")
+
+    @classmethod
+    def view_past_idps(cls, designer_id):
+        return cls._view_owned_idps(designer_id, "Past")
+
+    @classmethod
+    def _search_owned_idps(cls, designer_id, project_status, keyword=""):
         from .repositories import ProjectRepository
         return ProjectRepository().search_owned(designer_id, project_status, keyword)
 
     @classmethod
-    def update_owned_project(cls, project_id, designer_id, data, project_status):
-        from .repositories import ProjectRepository
-        return ProjectRepository().update_owned(
+    def search_current_idps(cls, designer_id, keyword=""):
+        return cls._search_owned_idps(designer_id, "Current", keyword)
+
+    @classmethod
+    def search_past_idps(cls, designer_id, keyword=""):
+        return cls._search_owned_idps(designer_id, "Past", keyword)
+
+    @classmethod
+    def _update_owned_idp(cls, project_id, designer_id, data, project_status):
+        from .repositories import ActivityRepository, ProjectRepository
+        updated = ProjectRepository().update_owned(
             project_id,
             designer_id,
             int(data["category_id"]),
@@ -309,19 +335,38 @@ class IDP:
             int(data.get("progress", 0)),
             data.get("image_url", "").strip(),
         )
+        if updated:
+            ActivityRepository().log("project_updated", designer_id, project_id)
+        return updated
 
     @classmethod
-    def delete_owned_project(cls, project_id, designer_id, project_status):
+    def update_current_idp(cls, project_id, designer_id, data):
+        return cls._update_owned_idp(project_id, designer_id, data, "Current")
+
+    @classmethod
+    def update_past_idp(cls, project_id, designer_id, data):
+        return cls._update_owned_idp(project_id, designer_id, data, "Past")
+
+    @classmethod
+    def _delete_owned_idp(cls, project_id, designer_id, project_status):
         from .repositories import ProjectRepository
         return ProjectRepository().delete_owned(project_id, designer_id, project_status)
 
     @classmethod
-    def search_available_projects(cls, keyword=""):
+    def delete_current_idp(cls, project_id, designer_id):
+        return cls._delete_owned_idp(project_id, designer_id, "Current")
+
+    @classmethod
+    def delete_past_idp(cls, project_id, designer_id):
+        return cls._delete_owned_idp(project_id, designer_id, "Past")
+
+    @classmethod
+    def search_available_idps(cls, keyword=""):
         from .repositories import ProjectRepository
         return ProjectRepository().search_available(keyword)
 
     @classmethod
-    def get_available_project(cls, project_id):
+    def view_available_idp(cls, project_id):
         from .repositories import ProjectRepository
         project = ProjectRepository().get(project_id)
         if not project or not project["visible"] or project["category_status"] != "Active":
@@ -335,7 +380,7 @@ class IDP:
         ActivityRepository().log("project_viewed", customer_id, project_id)
 
     @classmethod
-    def get_designer_projects_with_metrics(cls, designer_id):
+    def _projects_with_metrics(cls, designer_id):
         from .repositories import ProjectRepository
         return ProjectRepository().all_owned(designer_id)
 
@@ -348,9 +393,9 @@ class Favourite:
     saved_at: str
 
     @classmethod
-    def save_project(cls, customer_id, project_id):
+    def save_idp(cls, customer_id, project_id):
         from .repositories import FavouriteRepository, ActivityRepository
-        project = IDP.get_available_project(project_id)
+        project = IDP.view_available_idp(project_id)
         if not project:
             return False
         added = FavouriteRepository().add_available(customer_id, project_id)
@@ -359,17 +404,17 @@ class Favourite:
         return bool(added)
 
     @classmethod
-    def search_saved_projects(cls, customer_id, keyword=""):
+    def search_saved_idps(cls, customer_id, keyword=""):
         from .repositories import FavouriteRepository
         return FavouriteRepository().search(customer_id, keyword)
 
     @classmethod
-    def view_saved_projects(cls, customer_id):
+    def view_saved_idps(cls, customer_id):
         from .repositories import FavouriteRepository
         return FavouriteRepository().search(customer_id, "")
 
     @classmethod
-    def remove_project(cls, customer_id, project_id):
+    def unsave_idp(cls, customer_id, project_id):
         from .repositories import FavouriteRepository, ActivityRepository
         removed = FavouriteRepository().remove(customer_id, project_id)
         if removed:
@@ -377,7 +422,7 @@ class Favourite:
         return bool(removed)
 
     @classmethod
-    def is_saved(cls, customer_id, project_id):
+    def check_saved(cls, customer_id, project_id):
         from .repositories import FavouriteRepository
         return FavouriteRepository().exists(customer_id, project_id)
 
@@ -399,12 +444,12 @@ class IDPCategory:
         return repository.create(name, description.strip())
 
     @classmethod
-    def get_category(cls, category_id):
+    def view_category(cls, category_id):
         from .repositories import CategoryRepository
         return CategoryRepository().get(category_id)
 
     @classmethod
-    def get_categories(cls, active_only=False):
+    def view_categories(cls, active_only=False):
         from .repositories import CategoryRepository
         return CategoryRepository().search("", active_only)
 
@@ -449,6 +494,11 @@ class ActivityEvent:
     created_at: str
 
     @classmethod
+    def log_event(cls, event_type, account_id=None, project_id=None):
+        from .repositories import ActivityRepository
+        return ActivityRepository().log(event_type, account_id, project_id)
+
+    @classmethod
     def report_between(cls, start, end):
         from .repositories import ActivityRepository
         return ActivityRepository().report(start.isoformat(), end.isoformat())
@@ -460,8 +510,8 @@ class ViewMetric:
     views: int
 
     @classmethod
-    def for_designer(cls, designer_id):
-        return IDP.get_designer_projects_with_metrics(designer_id)
+    def view_count(cls, designer_id):
+        return IDP._projects_with_metrics(designer_id)
 
 
 @dataclass
@@ -470,8 +520,8 @@ class ShortlistMetric:
     shortlists: int
 
     @classmethod
-    def for_designer(cls, designer_id):
-        return IDP.get_designer_projects_with_metrics(designer_id)
+    def shortlist_count(cls, designer_id):
+        return IDP._projects_with_metrics(designer_id)
 
 
 @dataclass
@@ -492,25 +542,50 @@ class ReportSummary:
         except ValueError:
             return now
 
+    @staticmethod
+    def _change(current, previous):
+        if previous == 0:
+            return 0 if current == 0 else None
+        return round(((current - previous) / previous) * 100, 1)
+
     @classmethod
     def _build(cls, period, start, end, selected):
         now = datetime.utcnow()
         if end > now:
             end = now
-        row = ActivityEvent.report_between(start, end)
+
+        current = dict(ActivityEvent.report_between(start, end))
+        duration = end - start
+        previous_end = start - timedelta(microseconds=1)
+        previous_start = previous_end - duration
+        previous = dict(ActivityEvent.report_between(previous_start, previous_end))
+
+        comparison_keys = [
+            "active_users",
+            "new_accounts",
+            "successful_logins",
+            "views",
+            "shortlists",
+        ]
+        changes = {
+            key: cls._change(current.get(key, 0), previous.get(key, 0))
+            for key in comparison_keys
+        }
+
         return {
             "period": period,
             "from": start.date().isoformat(),
             "to": end.date().isoformat(),
             "selected": selected.date().isoformat(),
-            **dict(row),
+            "changes": changes,
+            **current,
         }
 
 
 @dataclass
 class DailyReport(ReportSummary):
     @classmethod
-    def generate(cls, date_value=None):
+    def generate_daily_report(cls, date_value=None):
         selected = cls._selected_date(date_value)
         start = selected.replace(hour=0, minute=0, second=0, microsecond=0)
         end = start + timedelta(days=1) - timedelta(microseconds=1)
@@ -520,7 +595,7 @@ class DailyReport(ReportSummary):
 @dataclass
 class WeeklyReport(ReportSummary):
     @classmethod
-    def generate(cls, date_value=None):
+    def generate_weekly_report(cls, date_value=None):
         selected = cls._selected_date(date_value)
         start = (selected - timedelta(days=selected.weekday())).replace(
             hour=0,
@@ -535,7 +610,7 @@ class WeeklyReport(ReportSummary):
 @dataclass
 class MonthlyReport(ReportSummary):
     @classmethod
-    def generate(cls, date_value=None):
+    def generate_monthly_report(cls, date_value=None):
         selected = cls._selected_date(date_value)
         start = selected.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         end = (start.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(microseconds=1)

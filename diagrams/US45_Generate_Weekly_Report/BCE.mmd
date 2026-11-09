@@ -1,12 +1,12 @@
 flowchart LR
     N0["Actor<br/>Platform Manager"]
     N1["boundary<br/>GenerateWeeklyReportBoundary<br/><br/>+submit()"]
-    N2["control<br/>GenerateWeeklyReportController<br/><br/>+generate()"]
-    N3["entity<br/>WeeklyReport<br/><br/>+generate(date_value)"]
+    N2["control<br/>GenerateWeeklyReportController<br/><br/>+generate_weekly_report()"]
+    N3["entity<br/>WeeklyReport<br/><br/>+generate_weekly_report(date_value)"]
     N4["entity<br/>ActivityEvent<br/><br/>+report_between(start, end)"]
     N0 -->|"submit(date_value)"| N1
-    N1 -->|"generate(date_value)"| N2
-    N2 -->|"generate(date_value)"| N3
+    N1 -->|"generate_weekly_report(date_value)"| N2
+    N2 -->|"generate_weekly_report(date_value)"| N3
     N3 -->|"report_between(start, end)"| N4
     N4 -->|"activity totals"| N3
     N3 -->|"report summary"| N2

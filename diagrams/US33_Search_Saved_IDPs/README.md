@@ -6,11 +6,11 @@
 flowchart LR
     N0["Actor<br/>Customer"]
     N1["boundary<br/>SearchSavedIDPBoundary<br/><br/>+submit()"]
-    N2["control<br/>SearchSavedIDPController<br/><br/>+search()"]
-    N3["entity<br/>Favourite<br/><br/>+search_saved_projects(customer_id, keyword)"]
+    N2["control<br/>SearchSavedIDPController<br/><br/>+search_saved_idps()"]
+    N3["entity<br/>Favourite<br/><br/>+search_saved_idps(customer_id, keyword)"]
     N0 -->|"submit(session, keyword)"| N1
-    N1 -->|"search(session, keyword)"| N2
-    N2 -->|"search_saved_projects(customer_id, keyword)"| N3
+    N1 -->|"search_saved_idps(session, keyword)"| N2
+    N2 -->|"search_saved_idps(customer_id, keyword)"| N3
     N3 -->|"matching saved projects"| N2
     N2 -->|"results"| N1
 ```
@@ -24,9 +24,9 @@ sequenceDiagram
     participant P2 as SearchSavedIDPController
     participant P3 as Favourite
     P0->>P1: submit(session, keyword)
-    P1->>P2: search(session, keyword)
+    P1->>P2: search_saved_idps(session, keyword)
     P2->>P2: read customer_id from trusted session
-    P2->>P3: search_saved_projects(customer_id, keyword)
+    P2->>P3: search_saved_idps(customer_id, keyword)
     P3-->>P2: matching saved projects
     P2-->>P1: results
     P1-->>P0: display results

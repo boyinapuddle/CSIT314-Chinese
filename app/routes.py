@@ -266,12 +266,15 @@ def delete_company():
     return redirect(url_for("main.designer_company"))
 
 
+@bp.route("/designer/projects", defaults={"status": None}, methods=["GET", "POST"])
 @bp.route("/designer/projects/<status>", methods=["GET", "POST"])
 @role_required("Interior Designer")
 def designer_projects(status):
-    project_status = "Current" if status.lower() == "current" else "Past"
+    selected = request.values.get("view", status or "current").strip().lower()
+    project_status = "Past" if selected == "past" else "Current"
     session_context = dict(session)
-    keyword = request.args.get("q", "")
+    keyword = request.args.get("q", "").strip()
+
     if project_status == "Current":
         create_boundary = CreateCurrentIDPBoundary()
         if request.method == "POST":
@@ -290,11 +293,14 @@ def designer_projects(status):
             items = SearchPastIDPBoundary().submit(session_context, keyword)
         else:
             items = ViewPastIDPBoundary().request(session_context)
+
     return render_template(
         "designer_projects.html",
         status=project_status,
+        active_view=project_status.lower(),
         items=items,
         categories=create_boundary.categories(),
+        q=keyword,
     )
 
 

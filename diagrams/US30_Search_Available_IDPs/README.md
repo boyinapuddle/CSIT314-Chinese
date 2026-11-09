@@ -6,11 +6,11 @@
 flowchart LR
     N0["Actor<br/>Customer"]
     N1["boundary<br/>SearchAvailableIDPBoundary<br/><br/>+submit()"]
-    N2["control<br/>SearchAvailableIDPController<br/><br/>+search()"]
-    N3["entity<br/>IDP<br/><br/>+search_available_projects(keyword)"]
+    N2["control<br/>SearchAvailableIDPController<br/><br/>+search_available_idps()"]
+    N3["entity<br/>IDP<br/><br/>+search_available_idps(keyword)"]
     N0 -->|"submit(keyword)"| N1
-    N1 -->|"search(keyword)"| N2
-    N2 -->|"search_available_projects(keyword)"| N3
+    N1 -->|"search_available_idps(keyword)"| N2
+    N2 -->|"search_available_idps(keyword)"| N3
     N3 -->|"matching available projects"| N2
     N2 -->|"results"| N1
 ```
@@ -24,8 +24,8 @@ sequenceDiagram
     participant P2 as SearchAvailableIDPController
     participant P3 as IDP
     P0->>P1: submit(keyword)
-    P1->>P2: search(keyword)
-    P2->>P3: search_available_projects(keyword)
+    P1->>P2: search_available_idps(keyword)
+    P2->>P3: search_available_idps(keyword)
     P3-->>P2: matching available projects
     P2-->>P1: results
     P1-->>P0: display results
