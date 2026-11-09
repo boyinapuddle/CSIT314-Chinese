@@ -64,10 +64,6 @@ Run
 
 `.github/workflows/ci.yml` runs the test suite in GitHub Actions.
 
-## Additional user stories
-
-User Story 49 covers safe deletion of an unused user profile. User Story 50 covers read only browsing of available IDPs by authenticated non customer roles. The complete wording is in `docs/additional_user_stories.md`.
-
 ## 100 automated test cases
 
 A report-friendly register is available at `docs/testing/100_test_cases.md`. Run them with `run_100_tests.ps1`.
@@ -87,10 +83,7 @@ Default accounts:
 | Customer | customer | Customer123! |
 | Platform Manager | manager | Manager123! |
 
-<<<<<<< HEAD
 Run `python seed.py` locally to reset the database back to the demo data.
-=======
-Run `python seed.py` locally to reset the database back to the demo data. Set the environment variable `AUTO_SEED=0` to disable automatic startup seeding.
 
 ## Platform Manager reports
 
@@ -110,4 +103,3 @@ Daily, weekly and monthly reports now summarise platform activity and performanc
 
 The default seed includes multiple designers, customers, projects, views, favourites and historical activity so these reports contain meaningful demo data immediately after seeding.
 
->>>>>>> e6fbb044667625c3a02931c9970e64fec20f4cd1
