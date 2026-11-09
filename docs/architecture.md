@@ -91,8 +91,6 @@ The persistence layer contains BaseRepository plus repositories for profiles, ac
 | 46 | GenerateMonthlyReportBoundary | GenerateMonthlyReportController |
 | 47 | LoginBoundary | PlatformManagerLoginController |
 | 48 | PlatformManagerLogoutBoundary | PlatformManagerLogoutController |
-| 49 | DeleteUserProfileBoundary | DeleteUserProfileController |
-| 50 | BrowseIDPBoundary | BrowseIDPController |
 
 ## Login flow
 

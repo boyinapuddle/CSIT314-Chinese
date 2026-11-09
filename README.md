@@ -48,7 +48,7 @@ Run
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-The active test suite contains 100 automated test cases plus 5 detailed TDD tests. The 100-case suite covers the main system functions, while the 5 TDD tests are used for the Red, Green and Refactor evidence.
+The active test suite contains 100 automated test cases plus 5 TDD tests. The 100-case suite covers the main system functions, while the 5 TDD tests are used for the Red, Green and Refactor evidence.
 
 ## Large test data
 
@@ -68,25 +68,6 @@ Run
 
 User Story 49 covers safe deletion of an unused user profile. User Story 50 covers read only browsing of available IDPs by authenticated non customer roles. The complete wording is in `docs/additional_user_stories.md`.
 
-## TDD evidence stages
-
-Five test first hardening scenarios are included under `tdd/` and `docs/tdd_evidence/`.
-
-Use a clean branch or disposable copy and run:
-
-```powershell
-.\.venv\Scripts\python.exe tdd\apply_stage.py RED
-.\.venv\Scripts\python.exe -m pytest tests\test_tdd_five_features.py -v
-
-.\.venv\Scripts\python.exe tdd\apply_stage.py GREEN
-.\.venv\Scripts\python.exe -m pytest tests\test_tdd_five_features.py -v
-
-.\.venv\Scripts\python.exe tdd\apply_stage.py REFACTOR
-.\.venv\Scripts\python.exe -m pytest -q
-```
-
-See `docs/tdd_evidence/README.md` for the five features and screenshot procedure.
-
 ## 100 automated test cases
 
 A report-friendly register is available at `docs/testing/100_test_cases.md`. Run them with `run_100_tests.ps1`.
@@ -95,7 +76,7 @@ The full active suite contains 105 tests in total: 100 automated test cases and 
 
 ## Automatic demo seeding
 
-When the application starts outside the test environment, it checks whether any user accounts exist. If the database is empty, the default demo data is inserted automatically. This is useful for free Render deployments where shell access is unavailable.
+When the application starts outside the test environment, it checks whether any user accounts exist. If the database is empty, the default demo data is inserted automatically.
 
 Default accounts:
 
@@ -106,5 +87,4 @@ Default accounts:
 | Customer | customer | Customer123! |
 | Platform Manager | manager | Manager123! |
 
-Run `python seed.py` locally to reset the database back to the demo data. Set the environment variable `AUTO_SEED=0` to disable automatic startup seeding.
-
+Run `python seed.py` locally to reset the database back to the demo data.
